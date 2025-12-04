@@ -7,9 +7,9 @@ import 'config/language/translation.dart';
 import 'config/routes/pages.dart';
 
 void main() async {
-  //await dotenv.load(
-  //  fileName: ".env",
-  //);
+  await dotenv.load(
+    fileName: ".env",
+  );
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
