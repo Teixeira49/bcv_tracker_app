@@ -4,12 +4,14 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../../features/home/presentation/controller/current_dollar_controller.dart';
 import '../../features/home/presentation/controller/dollar_bcv_controller.dart';
+import '../../navigation/navigation_controller.dart';
 import '../../shared/data/datasource/datasource.dart';
 import '../../shared/data/repositories/dollar_repositories.dart';
 import '../../shared/domain/repositories/dollar_repositories.dart';
 import '../../shared/domain/use_cases/get_current_dollar_use_case.dart';
 import '../../shared/domain/use_cases/use_cases.dart';
 import '../../shared/presentation/controller/calc_controller.dart';
+import '../../shared/presentation/controller/settings_controller.dart';
 
 class InitialBinding extends Bindings {
   @override
@@ -20,6 +22,10 @@ class InitialBinding extends Bindings {
         apiUrl: 'https://www.bcv.org.ve',//dotenv.env['MAIN_TAX']!,
         secondApiUrl: 'https://www.bancodevenezuela.com',//dotenv.env['CURRENT_TAX']!,
       ),
+      fenix: true,
+    );
+    Get.lazyPut<NavigationController>(
+        () => NavigationController(),
       fenix: true,
     );
     Get.lazyPut<IDollarRepository>(
@@ -43,5 +49,6 @@ class InitialBinding extends Bindings {
       fenix: true,
     );
     Get.lazyPut<CalcController>(() => CalcController(), fenix: true);
+    Get.lazyPut<SettingsController>(() => SettingsController(), fenix: true);
   }
 }
