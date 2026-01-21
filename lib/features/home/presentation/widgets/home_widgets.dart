@@ -39,93 +39,176 @@ class _RoundedHomeAppBarWidget extends StatelessWidget {
   );
 }
 
-class _HomeAppBarTitle extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 16),
-    child: Text(
-      "Precio del Dolar \u{1F1FB}\u{1F1EA}",
-      style: TextStyle(color: Colors.white),
-    ),
-  );
-}
-
-class _TaxCurrencyItem extends StatelessWidget {
-  const _TaxCurrencyItem({required this.currency, this.color});
-
-  final Currency currency;
-  final Color? color;
+class _DollarCurrencyCard extends StatelessWidget {
+  // GetBuilder<CurrentDollarController>( add later
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8.0),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        /*Image.network(
-        currency.imgUrl ?? "",
-        width: 50,
-        height: 50
-      ),*/
-        Text(
-          currency.keyName,
-          style: TextStyle(fontWeight: FontWeight.bold, color: color),
-        ),
-        Text(currency.value, style: TextStyle(color: color)),
-      ],
+  Widget build(BuildContext context) => Skeletonizer(
+    enabled: false,
+    child: Card(
+      color: Color(0xFFEFF5FF),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ListTile(
+            leading: CircleAvatar(
+              radius: 24,
+              backgroundImage: NetworkImage(
+                'https://exchangemonitor.net/assets/img/rates/ve/bcv.png',
+              ),
+            ),
+            title: Text(
+              'Dolar Oficial',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            subtitle: Text(
+              'Banco Central de Venezuela',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            trailing: CustomBadged(
+              color: Color(0xFF39E079),
+              child: PerformanceIndicatorWidget(isPositive: true, value: 0.24),
+            ),
+          ),
+          ListTile(
+            title: Text('Valor de la divisa', style: TextStyle(fontSize: 14)),
+            subtitle: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  CurrencyHelpers.castCurrency(value: 344.49),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
+                ),
+                Text(
+                  CurrencyHelpers.completeCurrencyExchange('USD'),
+                  style: TextStyle(fontSize: 14),
+                ),
+              ],
+            ),
+          ),
+          Divider(indent: 16, endIndent: 16),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [Text('Ultima Actualizacion'), Text('Ayer')],
+            ),
+          ),
+          SizedBox(height: 16),
+        ],
+      ),
     ),
   );
 }
 
 class _BCVDollarCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) => GetBuilder<DollarBCVController>(
-    builder: (controller) => Skeletonizer(
-      enabled: controller.isLoading.value,
-      child: Card(
-        child: Padding(
-          padding: EdgeInsetsGeometry.all(16),
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: controller.currentDollar.length,
-            itemBuilder: (context, index) =>
-                _TaxCurrencyItem(currency: controller.currentDollar[index]),
-          ),
-        ),
-      ),
-    ),
-  );
-}
+  const _BCVDollarCard({required this.value, required this.currencyCode});
 
-class _CurrentDollarCard extends StatelessWidget {
+  final double value;
+  final String currencyCode;
+
   @override
-  Widget build(BuildContext context) => GetBuilder<CurrentDollarController>(
-    builder: (controller) => Skeletonizer(
-      enabled: controller.isLoading.value,
+  Widget build(BuildContext context) {
+    final currencyCountry = CurrencyHelpers.castCurrencyCountry(
+      currencyCode: currencyCode,
+    );
+    return Skeletonizer(
+      enabled: false,
       child: Card(
-        color: Color(0xFF02466D),
+        color: Color(0xFFEFF5FF),
         child: Padding(
-          padding: EdgeInsetsGeometry.all(16),
+          padding: EdgeInsets.symmetric(vertical: 8),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: controller.currentDollar.length,
-                itemBuilder: (context, index) => _TaxCurrencyItem(
-                  currency: controller.currentDollar[index],
-                  color: Colors.white,
+              ListTile(
+                contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                leading: CircleAvatar(
+                  radius: 20,
+                  backgroundImage: AssetImage(currencyCountry.countryFlag),
                 ),
+                title: Text(
+                  currencyCountry.currencyCountryName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                trailing: SvgPicture.asset(currencyCountry.currencySymbol, width: 20),
               ),
-              Divider(),
-              Text(
-                'Valor del Bs.S Actual',
-                style: TextStyle(color: Colors.white),
+              Divider(indent: 16, endIndent: 16),
+              ListTile(
+                title: Text(
+                  'Valor de la moneda',
+                  style: TextStyle(fontSize: 14),
+                ),
+                subtitle: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      CurrencyHelpers.castCurrency(value: value),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 28,
+                      ),
+                    ),
+                    Text(
+                      CurrencyHelpers.completeCurrencyExchange(currencyCode),
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class _BCVAdvisorCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => CustomBadged(
+    borderRadius: 12,
+    color: Color(0xFF1187CE),
+    hMargin: 3,
+    child: Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Text('Fecha: 18/01/2026 - 2:00 pm'),
+    ),
+  );
+}
+
+class _CurrencyDollarAverageCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => CustomBadged(
+    borderRadius: 12,
+    color: Color(0xFF1187CE),
+    hMargin: 3,
+    child: Padding(
+      padding: EdgeInsets.only(right: 4, top: 8, left: 16, bottom: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Valor Promedio', style: TextStyle(color: Color(0xFF064469))),
+              Text(
+                'Bs.S 344,49',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
+                  color: Color(0xFF064469),
+                ),
+              ),
+            ],
+          ),
+          IconButton(onPressed: () {}, icon: Icon(Icons.settings))
+        ],
+      )
     ),
   );
 }
