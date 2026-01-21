@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-import '../../../../config/routes/routes.dart';
+import '../../../dashboard/presentation/page/dashboard_page.dart';
 import '../../../../config/theme/icons.dart';
 import '../../../../core/constants/constants.dart';
 
@@ -20,7 +20,11 @@ class _SplashPageState extends State<SplashPage> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: Constants.splashDuration), () {
-      Get.offAllNamed(AppRoutes.home);
+      Get.offAll(
+        () => DashboardPage(),
+        transition: Transition.fadeIn,
+        duration: const Duration(milliseconds: 500),
+      );
     });
   }
 
