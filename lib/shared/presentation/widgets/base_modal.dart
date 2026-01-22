@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 
+import '../../../config/theme/colors/colors_values.dart';
+
 class BaseModal extends StatelessWidget {
   const BaseModal({
     super.key,
     required this.title,
     this.externalMargin = const EdgeInsets.all(0),
-    this.internalMargin = const EdgeInsets.only(right: 20, left: 20, top: 6, bottom: 16),
+    this.internalMargin = const EdgeInsets.only(
+      right: 20,
+      left: 20,
+      top: 6,
+      bottom: 16,
+    ),
     required this.child,
   });
 
@@ -30,9 +37,9 @@ class BaseModal extends StatelessWidget {
       ],
     ),
     contentPadding: externalMargin,
-    backgroundColor: Colors.white,
+    backgroundColor: ColorValues.bgPrimaryAlter(context),
     elevation: 16,
-    shadowColor: Color(0xFF02466D),
+    shadowColor: ColorValues.utilityBrand500(context),
     content: SizedBox(
       width: double.maxFinite,
       child: Column(
