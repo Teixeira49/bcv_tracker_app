@@ -14,12 +14,16 @@ class BaseModal extends StatelessWidget {
       bottom: 16,
     ),
     required this.child,
+    this.maxWidth,
+    this.maxHeight,
   });
 
   final String title;
   final EdgeInsets externalMargin;
   final EdgeInsets internalMargin;
   final Widget child;
+  final double? maxWidth;
+  final double? maxHeight;
 
   @override
   Widget build(BuildContext context) => AlertDialog(
@@ -28,11 +32,11 @@ class BaseModal extends StatelessWidget {
       children: [
         Text(
           title,
-          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 22),
+          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 22),
         ),
         IconButton(
           onPressed: () => Navigator.of(context).pop(),
-          icon: Icon(Icons.close),
+          icon: const Icon(Icons.close),
         ),
       ],
     ),
@@ -41,15 +45,17 @@ class BaseModal extends StatelessWidget {
     elevation: 16,
     shadowColor: ColorValues.utilityBrand500(context),
     content: SizedBox(
-      width: double.maxFinite,
-      child: Column(
+      width: maxWidth ?? double.infinity,
+      height: maxHeight,
+      child: SingleChildScrollView(child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Divider(),
+          const Divider(),
           Padding(padding: internalMargin, child: child),
         ],
       ),
     ),
+        )
   );
 }
