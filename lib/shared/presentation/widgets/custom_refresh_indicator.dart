@@ -1,3 +1,4 @@
+import 'package:bcv_tracker_app/config/theme/colors/colors_values.dart';
 import 'package:flutter/material.dart';
 
 enum CustomRefreshIndicatorType {
@@ -50,13 +51,15 @@ class CustomRefreshIndicator extends StatelessWidget {
     }
     if (indicatorType == CustomRefreshIndicatorType.adaptive) {
       return RefreshIndicator.adaptive(
-        color: Colors.blueAccent,
+        color: ColorValues.textBrandTitle(context),
+        backgroundColor: ColorValues.bgPrimary(context),
         onRefresh: onRefresh,
         child: child,
       );
     }
     return RefreshIndicator(
-      color: Colors.blueAccent,
+      color: ColorValues.textBrandTitle(context),
+      backgroundColor: ColorValues.bgPrimary(context),
       onRefresh: onRefresh,
       child: child,
     );
