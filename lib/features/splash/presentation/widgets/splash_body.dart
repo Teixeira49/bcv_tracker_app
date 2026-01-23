@@ -11,7 +11,10 @@ class _SplashBody extends StatelessWidget {
       alignment: AlignmentGeometry.center,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xff070e15), Color(0xFF02466D)],
+          colors: [
+            ColorValues.utilityMidNight(context),
+            ColorValues.utilityBrand500(context),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),

@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
+import '../../../../config/theme/colors/colors_values.dart';
 import '../../../dashboard/presentation/page/dashboard_page.dart';
-import '../../../../config/theme/icons.dart';
+import '../../../../config/theme/icons/icons_constants.dart';
 import '../../../../core/constants/constants.dart';
 
 part '../widgets/splash_body.dart';
