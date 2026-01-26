@@ -24,6 +24,12 @@ class AppMessages {
 
   static String get selectCurrency => 'selectCurrency'.tr;
 
+  static String get originalCurrency => 'originalCurrency'.tr;
+
+  static String get mainMarkets => 'mainMarkets'.tr;
+
+  static String get otherCurrencies => 'otherCurrencies'.tr;
+
   static String get defaultMarket => 'defaultMarket'.tr;
 
   static String get officialDollar => 'officialDollar'.tr;
