@@ -11,6 +11,7 @@ import '../../shared/domain/repositories/dollar_repositories.dart';
 import '../../shared/domain/use_cases/get_current_dollar_use_case.dart';
 import '../../shared/domain/use_cases/use_cases.dart';
 import '../../shared/presentation/controller/calc_controller.dart';
+import '../../shared/presentation/controller/currency_controller.dart';
 import '../../shared/presentation/controller/settings_controller.dart';
 
 class InitialBinding extends Bindings {
@@ -50,5 +51,6 @@ class InitialBinding extends Bindings {
     );
     Get.lazyPut<CalcController>(() => CalcController(), fenix: true);
     Get.lazyPut<SettingsController>(() => SettingsController(), fenix: true);
+    Get.lazyPut<CurrencyController>(() => CurrencyController(), fenix: true);
   }
 }
