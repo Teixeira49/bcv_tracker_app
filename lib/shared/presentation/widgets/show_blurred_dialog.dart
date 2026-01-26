@@ -27,7 +27,7 @@ Future<T?> showBlurredDialog<T>({
       );
     },
     // Es importante hacer el fondo transparente para que se vea el contenido detrás del BackdropFilter
-    barrierColor: ColorValues.textBlack(context),
+    barrierColor: ColorValues.textBlack(context).withAlpha(51),
     barrierDismissible: true,
     barrierLabel: '', // Requerido por la API
   );
