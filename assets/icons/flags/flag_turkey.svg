@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 800 580" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g id="Mesa-de-trabajo1" serif:id="Mesa de trabajo1" transform="matrix(1,0,0,1,-2,-111)">
+        <rect x="2" y="111" width="800" height="580" style="fill:none;"/>
+        <clipPath id="_clip1">
+            <rect x="2" y="111" width="800" height="580"/>
+        </clipPath>
+        <g clip-path="url(#_clip1)">
+            <g transform="matrix(22.222222,0,0,22.222222,0,0)">
+                <path d="M36,27C36,29.194 34.194,31 32,31L4,31C1.806,31 0,29.194 0,27L0,9C-0,6.806 1.806,5 4,5L32,5C34.194,5 36,6.806 36,9L36,27Z" style="fill:rgb(227,9,23);fill-rule:nonzero;"/>
+            </g>
+            <g transform="matrix(22.222222,0,0,22.222222,0,0)">
+                <path d="M16,24C12.708,24 10,21.292 10,18C10,14.708 12.708,12 16,12C17.31,12 18.52,12.425 19.507,13.138C18.116,11.555 16.107,10.647 14,10.647C9.966,10.647 6.647,13.966 6.647,18C6.647,18 6.647,18.001 6.647,18.001C6.647,22.035 9.966,25.354 14,25.354C16.195,25.354 18.16,24.387 19.507,22.862C18.488,23.602 17.26,24.001 16,24ZM19.913,18.23L22.353,18.792L22.573,21.285L23.861,19.139L26.301,19.7L24.657,17.812L25.944,15.665L23.641,16.645L21.997,14.756L22.217,17.25L19.913,18.23Z" style="fill:rgb(238,238,238);fill-rule:nonzero;"/>
+            </g>
+        </g>
+    </g>
+</svg>
