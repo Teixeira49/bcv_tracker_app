@@ -19,8 +19,7 @@ class AppMessages {
 
   static String get moneyValue => 'moneyValue'.tr;
 
-  static String currencyDate({required String date}) =>
-      'currencyDate'.trParams({'date': date});
+  static String get currencyDate => 'currencyDate'.tr;
 
   static String get selectCurrency => 'selectCurrency'.tr;
 
