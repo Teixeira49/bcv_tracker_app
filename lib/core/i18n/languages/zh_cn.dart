@@ -10,7 +10,7 @@ const Map<String, String> zhCn = {
   "officialDollar": "官方美元",
   "parallelDollar": "并行美元",
   "moneyValue": "货币价值",
-  "currencyDate": '日期: @date',
+  "currencyDate": '日期:',
   "selectCurrency": "选择货币",
   "originalCurrency": "原始货币",
   "mainMarkets": "主要市场",

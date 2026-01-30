@@ -10,7 +10,7 @@ const Map<String, String> ruRu = {
   "officialDollar": "Официальная доллар",
   "parallelDollar": "Параллельная доллар",
   "moneyValue": "Стоимость валюты",
-  "currencyDate": 'Дата: @date',
+  "currencyDate": 'Дата:',
   "selectCurrency": "Выберите валюту",
   "originalCurrency": "Оригинальная валюта",
   "mainMarkets": "Основные рынки",

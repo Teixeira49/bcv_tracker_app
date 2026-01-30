@@ -11,7 +11,7 @@ const Map<String, String> jaJp = {
   "officialDollar": "外国為替ドル",
   "parallelDollar": "並列ドル",
   "moneyValue": "通貨価値",
-  "currencyDate": '日付: @date',
+  "currencyDate": '日付:',
   "eeuuDollar": "アメリカドル",
   "europeanEuro": "欧州ユーロ",
   "turkishLira": "トルコリラ",

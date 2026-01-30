@@ -10,7 +10,7 @@ const Map<String, String> koKr = {
   "officialDollar": "외국환율 달러",
   "parallelDollar": "병렬 달러",
   "moneyValue": "통화 가치",
-  "currencyDate": '날짜: @date',
+  "currencyDate": '날짜:',
   "selectCurrency": "통화 선택",
   "originalCurrency": "원본 통화",
   "mainMarkets": "주요 시장",

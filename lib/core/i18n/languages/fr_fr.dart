@@ -10,7 +10,7 @@ const Map<String, String> frFr = {
   "officialDollar": "Dollar officiel",
   "parallelDollar": "Dollar parallèle",
   "moneyValue": "Valeur de la monnaie",
-  "currencyDate": 'Date: @date',
+  "currencyDate": 'Date:',
   "eeuuDollar": "Dollar américain",
   "europeanEuro": "Euro européen",
   "turkishLira": "Lira turque",

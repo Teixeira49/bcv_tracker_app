@@ -10,7 +10,7 @@ const Map<String, String> itIt = {
   "officialDollar": "Dollar ufficiale",
   "parallelDollar": "Dollar parallelo",
   "moneyValue": "Valore della valuta",
-  "currencyDate": 'Data: @date',
+  "currencyDate": 'Data:',
   "eeuuDollar": "Dollar americano",
   "europeanEuro": "Euro europeo",
   "turkishLira": "Lira turca",

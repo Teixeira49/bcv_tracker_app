@@ -10,7 +10,7 @@ const Map<String, String> deDe = {
   "officialDollar": "Offizieller Dollar",
   "parallelDollar": "Parallel Dollar",
   "moneyValue": "Währungswert",
-  "currencyDate": 'Datum: @date',
+  "currencyDate": 'Datum:',
   "eeuuDollar": "Amerikaner Dollar",
   "europeanEuro": "Europäischer Euro",
   "turkishLira": "Türkischer Lira",

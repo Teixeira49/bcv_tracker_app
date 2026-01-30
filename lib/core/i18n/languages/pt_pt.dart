@@ -11,7 +11,7 @@ const Map<String, String> ptPt = {
   "officialDollar": "Dólar Oficial",
   "parallelDollar": "Dólar Paralelo",
   "moneyValue": "Valor da Moeda",
-  "currencyDate": 'Data: @date',
+  "currencyDate": 'Data:',
   "selectCurrency": "Selecionar Moeda",
   "originalCurrency": "Moeda Original",
   "mainMarkets": "Mercados Principais",

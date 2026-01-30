@@ -8,7 +8,7 @@ const Map<String, String> enUs = {
   "currencyValue": "Currency Value",
   "lastUpdate": "Last Update",
   "moneyValue": "Money Value",
-  "currencyDate": 'Date: @date',
+  "currencyDate": 'Date:',
   "officialDollar": "Official Dollar",
   "parallelDollar": "Parallel Dollar",
   "eeuuDollar": "American Dollar",
