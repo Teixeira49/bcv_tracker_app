@@ -1,5 +1,4 @@
 class Currency {
-  final int id;
   final String name;
   final String keyName;
   final String platform;
@@ -10,7 +9,6 @@ class Currency {
   final double? tendency;
 
   const Currency({
-    required this.id,
     required this.name,
     required this.keyName,
     required this.platform,
@@ -31,7 +29,6 @@ class Currency {
     double? tendency,
   }) {
     return Currency(
-      id: id,
       name: name ?? this.name,
       keyName: keyName ?? this.keyName,
       platform: platform ?? this.platform,
@@ -43,7 +40,6 @@ class Currency {
   }
 
   static const empty = Currency(
-    id: 0,
     name: '',
     platform: '',
     keyName: '',
@@ -61,7 +57,6 @@ class Currency {
     createDate: DateTime.now(),
     updateDate: DateTime.now(),
     tendency: 1.0,
-    id: 0,
   );
 
   static final pivotCurrency = Currency(
@@ -69,6 +64,5 @@ class Currency {
     name: 'Banco Central de Venezuela',
     value: 1.0,
     platform: 'Banco Central de Venezuela',
-    id: -1,
   );
 }
