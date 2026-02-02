@@ -10,10 +10,8 @@ import 'core/constants/constants.dart';
 import 'core/i18n/app_translations.dart';
 
 void main() async {
-  await dotenv.load(
-    fileName: ".env",
-  );
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   Get.put(SettingsController());
   runApp(const MyApp());
 }
