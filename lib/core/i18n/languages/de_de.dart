@@ -37,4 +37,11 @@ const Map<String, String> deDe = {
   "koreanLanguage": "Koreanisch",
   "chineseLanguage": "Chinesisch",
   "russianLanguage": "Russisch",
+  'mondayDay': 'Montag',
+  'tuesdayDay': 'Dienstag',
+  'wednesdayDay': 'Mittwoch',
+  'thursdayDay': 'Donnerstag',
+  'fridayDay': 'Freitag',
+  'saturdayDay': 'Samstag',
+  'sundayDay': 'Sonntag',
 };

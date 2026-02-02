@@ -37,4 +37,10 @@ const Map<String, String> koKr = {
   "koreanLanguage": "한국어",
   "chineseLanguage": "중국어",
   "russianLanguage": "러시아어",
+  'mondayDay': '월요일',
+  'tuesdayDay': '화요일',
+  'wednesdayDay': '수요일',
+  'thursdayDay': '목요일',
+  'fridayDay': '금요일',
+  'saturdayDay': '토요일'
 };

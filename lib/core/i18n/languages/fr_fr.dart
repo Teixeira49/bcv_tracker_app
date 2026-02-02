@@ -37,4 +37,11 @@ const Map<String, String> frFr = {
   "koreanLanguage": "Coréen",
   "chineseLanguage": "Chinois",
   "russianLanguage": "Russe",
+  'mondayDay': 'Lundi',
+  'tuesdayDay': 'Mardi',
+  'wednesdayDay': 'Mercredi',
+  'thursdayDay': 'Jeudi',
+  'fridayDay': 'Vendredi',
+  'saturdayDay': 'Samedi',
+  'sundayDay': 'Dimanche',
 };

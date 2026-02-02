@@ -37,4 +37,11 @@ const Map<String, String> ruRu = {
   "koreanLanguage": "Корейский",
   "chineseLanguage": "Китайский",
   "russianLanguage": "Русский",
+  'mondayDay': 'Понедельник',
+  'tuesdayDay': 'Вторник',
+  'wednesdayDay': 'Среда',
+  'thursdayDay': 'Четверг',
+  'fridayDay': 'Пятница',
+  'saturdayDay': 'Суббота',
+  'sundayDay': 'Воскресенье',
 };

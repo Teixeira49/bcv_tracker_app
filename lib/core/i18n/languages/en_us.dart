@@ -37,4 +37,11 @@ const Map<String, String> enUs = {
   "koreanLanguage": "Korean",
   "chineseLanguage": "Chinese",
   "russianLanguage": "Russian",
+  'mondayDay': 'Monday',
+  'tuesdayDay': 'Tuesday',
+  'wednesdayDay': 'Wednesday',
+  'thursdayDay': 'Thursday',
+  'fridayDay': 'Friday',
+  'saturdayDay': 'Saturday',
+  'sundayDay': 'Sunday',
 };

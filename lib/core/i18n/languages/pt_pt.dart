@@ -38,4 +38,11 @@ const Map<String, String> ptPt = {
   "koreanLanguage": "Coreano",
   "chineseLanguage": "Chinês",
   "russianLanguage": "Russo",
+  'mondayDay': 'Segunda-feira',
+  'tuesdayDay': 'Terça-feira',
+  'wednesdayDay': 'Quarta-feira',
+  'thursdayDay': 'Quinta-feira',
+  'fridayDay': 'Sexta-feira',
+  'saturdayDay': 'Sábado',
+  'sundayDay': 'Domingo',
 };

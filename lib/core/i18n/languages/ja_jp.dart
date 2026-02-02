@@ -38,4 +38,11 @@ const Map<String, String> jaJp = {
   "koreanLanguage": "韓国語",
   "chineseLanguage": "中国語",
   "russianLanguage": "ロシア語",
+  'mondayDay': '月曜日',
+  'tuesdayDay': '火曜日',
+  'wednesdayDay': '水曜日',
+  'thursdayDay': '木曜日',
+  'fridayDay': '金曜日',
+  'saturdayDay': '土曜日',
+  'sundayDay': '日曜日',
 };

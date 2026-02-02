@@ -37,4 +37,11 @@ const Map<String, String> itIt = {
   "koreanLanguage": "Coreano",
   "chineseLanguage": "Cinese",
   "russianLanguage": "Russo",
+  'mondayDay': 'Lunedì',
+  'tuesdayDay': 'Martedì',
+  'wednesdayDay': 'Mercoledì',
+  'thursdayDay': 'Giovedì',
+  'fridayDay': 'Venerdì',
+  'saturdayDay': 'Sabato',
+  'sundayDay': 'Domenica',
 };

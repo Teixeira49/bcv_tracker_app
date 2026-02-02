@@ -37,4 +37,11 @@ const Map<String, String> esEs = {
   "koreanLanguage": "Coreano",
   "chineseLanguage": "Chino",
   "russianLanguage": "Ruso",
+  'mondayDay': 'Lunes',
+  'tuesdayDay': 'Martes',
+  'wednesdayDay': 'Miércoles',
+  'thursdayDay': 'Jueves',
+  'fridayDay': 'Viernes',
+  'saturdayDay': 'Sábado',
+  'sundayDay': 'Domingo',
 };

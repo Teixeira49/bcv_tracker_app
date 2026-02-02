@@ -37,4 +37,11 @@ const Map<String, String> zhCn = {
   "koreanLanguage": "韩语",
   "chineseLanguage": "中文",
   "russianLanguage": "俄语",
+  'mondayDay': '星期一',
+  'tuesdayDay': '星期二',
+  'wednesdayDay': '星期三',
+  'thursdayDay': '星期四',
+  'fridayDay': '星期五',
+  'saturdayDay': '星期六',
+  'sundayDay': '星期日',
 };
