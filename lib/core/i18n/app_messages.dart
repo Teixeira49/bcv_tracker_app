@@ -76,4 +76,18 @@ class AppMessages {
   static String get chineseLanguage => 'chineseLanguage'.tr;
 
   static String get russianLanguage => 'russianLanguage'.tr;
+
+  static String get mondayDay => 'mondayDay'.tr;
+
+  static String get tuesdayDay => 'tuesdayDay'.tr;
+
+  static String get wednesdayDay => 'wednesdayDay'.tr;
+
+  static String get thursdayDay => 'thursdayDay'.tr;
+
+  static String get fridayDay => 'fridayDay'.tr;
+
+  static String get saturdayDay => 'saturdayDay'.tr;
+
+  static String get sundayDay => 'sundayDay'.tr;
 }
