@@ -148,7 +148,8 @@ class ColorValues {
 
   static Color textWhite(BuildContext context) => _textWhite.getColor(context);
 
-  static Color textWhite70(BuildContext context) => _textWhite70.getColor(context);
+  static Color textWhite70(BuildContext context) =>
+      _textWhite70.getColor(context);
 
   static Color textBlack(BuildContext context) => _textBlack.getColor(context);
 
@@ -159,7 +160,7 @@ class ColorValues {
   static final _borderPrimary = _ColorScheme(
     light: AppColors.grey.shade300,
     dark:
-        AppColors.midnight.shade700, // Usamos Midnight para bordes en dark mode
+    AppColors.midnight.shade700, // Usamos Midnight para bordes en dark mode
   );
 
   static final _borderSecondary = _ColorScheme(
@@ -413,6 +414,16 @@ class ColorValues {
     dark: AppColors.success.shade600,
   );
 
+  static final _bgCurveInit = _ColorScheme(
+      light: AppColors.midnight.shade50,
+      dark: AppColors.midnight.shade600
+  );
+
+  static final _bgCurveEnd = _ColorScheme(
+      light: AppColors.midnight.shade200,
+      dark: AppColors.midnight.shade800
+  );
+
   // --- Getters Background ---
   static Color bgPrimary(BuildContext context) => _bgPrimary.getColor(context);
 
@@ -458,6 +469,13 @@ class ColorValues {
 
   static Color bgSuccessSolid(BuildContext context) =>
       _bgSuccessSolid.getColor(context);
+
+  static Color bgCurveInit(BuildContext context) =>
+      _bgCurveInit.getColor(context);
+
+  static Color bgCurveEnd(BuildContext context) =>
+      _bgCurveEnd.getColor(context);
+
 
   // ----------------------------------------------------------
   // <---------------- Utility color values ------------------>
@@ -540,16 +558,20 @@ class ColorValues {
       _utilityInfo.getColor(context);
 
   static Color utilityGrey50(BuildContext context) =>
-      Theme.of(context).brightness == Brightness.dark
-      ? AppColors.grey.shade900
-      : AppColors.grey.shade50;
+      Theme
+          .of(context)
+          .brightness == Brightness.dark
+          ? AppColors.grey.shade900
+          : AppColors.grey.shade50;
 
   static Color utilityGrey500(BuildContext context) => AppColors.grey;
 
   static Color utilityGrey900(BuildContext context) =>
-      Theme.of(context).brightness == Brightness.dark
-      ? AppColors.grey.shade50
-      : AppColors.grey.shade900;
+      Theme
+          .of(context)
+          .brightness == Brightness.dark
+          ? AppColors.grey.shade50
+          : AppColors.grey.shade900;
 
   // ---------------------------------------------------------
   // <---------------- Button color values ------------------>
@@ -635,23 +657,31 @@ class _ColorScheme {
   });
 
   Color getColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark ? dark : light;
+    return Theme
+        .of(context)
+        .brightness == Brightness.dark ? dark : light;
   }
 
   Color getOnBrandColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
+    return Theme
+        .of(context)
+        .brightness == Brightness.dark
         ? (onBrandDark ?? dark)
         : (onBrandLight ?? light);
   }
 
   Color getSubtleColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
+    return Theme
+        .of(context)
+        .brightness == Brightness.dark
         ? (subtleDark ?? dark)
         : (subtleLight ?? light);
   }
 
   Color getAltColor(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark
+    return Theme
+        .of(context)
+        .brightness == Brightness.dark
         ? (altDark ?? dark)
         : (altLight ?? light);
   }

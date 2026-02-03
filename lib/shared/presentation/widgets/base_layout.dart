@@ -91,51 +91,80 @@ class _BaseBody extends StatelessWidget {
               topRight: Radius.circular(16),
             ),
           ),
-          padding: margins,
-          child: child,
+          child: Stack(
+            alignment: AlignmentGeometry.topCenter,
+            children: [
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: _RoundedBaseBodyWidget(),
+              ),
+              Padding(padding: margins, child: child),
+            ],
+          ),
         ),
       ],
     ),
   );
 }
 
-/*
-class _RoundedHomeAppBarClipPath extends CustomClipper<Path> {
+class _RoundedBaseBodyClipPath extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     var path = Path();
-    path.lineTo(0.0, size.height * 0.75);
-    final controlPoint = Offset(size.width * 0.4, size.height);
-    final endPoint = Offset(size.width, size.height / 1.75);
+
+    // Esto determina qué tan altas y bajas son las curvas
+    const double waveHeight = 50.0;
+
+    // para que la ola tenga espacio para subir.
+    path.moveTo(0, waveHeight);
+
+    // El punto de control (x1, y1) está hacia arriba (0) para jalar la curva.
     path.quadraticBezierTo(
-      controlPoint.dx,
-      controlPoint.dy,
-      endPoint.dx,
-      endPoint.dy,
+      size.width * 0.25,
+      0, // Punto de control (1/4 del ancho, pegado al techo)
+      size.width * 0.5,
+      waveHeight, // Punto final de esta curva (centro)
     );
-    path.lineTo(size.width, 0);
+
+    // El punto de control está hacia abajo (waveHeight * 2) para jalar la curva.
+    path.quadraticBezierTo(
+      size.width * 0.75,
+      waveHeight * 2,
+      // Punto de control (3/4 del ancho, hacia abajo)
+      size.width,
+      waveHeight, // Punto final (borde derecho)
+    );
+
+    path.lineTo(size.width, size.height); // Línea recta hacia abajo-derecha
+    path.lineTo(0, size.height); // Línea recta hacia abajo-izquierda
+
     path.close();
+
     return path;
   }
 
   @override
-  bool shouldReclip(_RoundedHomeAppBarClipPath oldClipper) =>
+  bool shouldReclip(_RoundedBaseBodyClipPath oldClipper) =>
       oldClipper != this;
 }
 
-class _RoundedHomeAppBarWidget extends StatelessWidget {
+class _RoundedBaseBodyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ClipPath(
-    clipper: _RoundedHomeAppBarClipPath(),
+    clipper: _RoundedBaseBodyClipPath(),
     child: Container(
       width: double.infinity,
-      height: 200,
+      height: MediaQuery.of(context).size.height * 0.6,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xff070e15), Color(0xFF02466D)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            ColorValues.bgCurveInit(context),
+            ColorValues.bgCurveEnd(context),
+          ],
         ),
       ),
     ),
   );
 }
- */
