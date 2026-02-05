@@ -12,7 +12,6 @@ import 'package:dio/io.dart';
 
 import 'http_operation.dart';
 
-
 // Project imports:
 
 enum HttpManagerUtilError { error }
@@ -56,10 +55,12 @@ class HttpManager {
 
     final dio = Dio(setDioOptions);
 
-    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (client) {
-      client.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
-      return client;
-    };
+    (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate =
+        (client) {
+          client.badCertificateCallback =
+              (X509Certificate cert, String host, int port) => true;
+          return client;
+        };
 
     Response? response;
 
@@ -91,12 +92,16 @@ class HttpManager {
           response = await dio.patch(endpoint, data: data);
           break;
         case HttpOperation.options:
-          response =
-              await dio.request(endpoint, options: Options(method: 'OPTIONS'));
+          response = await dio.request(
+            endpoint,
+            options: Options(method: 'OPTIONS'),
+          );
           break;
         case HttpOperation.head:
-          response =
-              await dio.request(endpoint, options: Options(method: 'HEAD'));
+          response = await dio.request(
+            endpoint,
+            options: Options(method: 'HEAD'),
+          );
           break;
       }
 
