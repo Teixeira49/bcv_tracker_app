@@ -2,7 +2,6 @@ import 'package:bcv_tracker_app/shared/domain/entities/entities.dart';
 
 class CurrencyModel extends Currency {
   CurrencyModel({
-    required super.id,
     required super.name,
     required super.keyName,
     required super.platform,
@@ -15,11 +14,10 @@ class CurrencyModel extends Currency {
 
   factory CurrencyModel.fromJson(Map<String, dynamic> json) {
     return CurrencyModel(
-      id: json['id'],
       name: json['name'],
       keyName: json['code'],
       platform: json['platform'],
-      value: json['value'],
+      value: json['value'].toDouble(),
       imgUrl: json['platform_img'],
       createDate: DateTime.parse(json['createDate']),
       updateDate: DateTime.parse(json['updateDate']),
@@ -37,7 +35,6 @@ class CurrencyModel extends Currency {
       createDate: createDate,
       updateDate: updateDate,
       tendency: tendency,
-      id: id,
     );
   }
 }

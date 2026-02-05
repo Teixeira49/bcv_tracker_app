@@ -44,7 +44,7 @@ class Currency {
     platform: '',
     keyName: '',
     value: 0.00,
-    imgUrl: '',
+    imgUrl: 'https://placehold.co/600x400/png',
     tendency: 0.00,
   );
 
@@ -53,7 +53,7 @@ class Currency {
     keyName: 'keyName',
     platform: 'platform',
     value: 1.0,
-    imgUrl: 'imgUrl',
+    imgUrl: 'https://placehold.co/600x400/png',
     createDate: DateTime.now(),
     updateDate: DateTime.now(),
     tendency: 1.0,
@@ -61,7 +61,7 @@ class Currency {
 
   static final pivotCurrency = Currency(
     keyName: 'VES',
-    name: 'Banco Central de Venezuela',
+    name: 'Bolivares',
     value: 1.0,
     platform: 'Banco Central de Venezuela',
   );
