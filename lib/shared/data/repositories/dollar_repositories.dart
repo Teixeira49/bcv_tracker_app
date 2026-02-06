@@ -8,12 +8,12 @@ class DollarRepository implements IDollarRepository {
   final IDollarApi _dollarApi;
 
   @override
-  Future<List<Currency>> getCurrentBCVDollar() async {
+  Future<BcvCurrencies> getCurrentBCVDollar() async {
     try {
       final data = await _dollarApi.getCurrentBCVDollar();
 
-      return data.map((e) => e.toEntity()).toList();
-    } catch (e, s) {
+      return data.toEntity();
+    } catch (e) {
       rethrow;
     }
   }
@@ -22,9 +22,8 @@ class DollarRepository implements IDollarRepository {
   Future<List<Currency>> getCurrentDollar() async {
     try {
       final data = await _dollarApi.getCurrentDollar();
-
       return data.map((e) => e.toEntity()).toList();
-    } catch (e, s) {
+    } catch (e) {
       rethrow;
     }
   }
