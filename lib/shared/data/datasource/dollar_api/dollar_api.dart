@@ -3,7 +3,7 @@ import '../../model/model.dart';
 
 abstract class IDollarApi {
 
-  Future<List<CurrencyModel>> getCurrentBCVDollar();
+  Future<BcvCurrenciesModel> getCurrentBCVDollar();
 
   Future<List<CurrencyModel>> getCurrentDollar();
 }
