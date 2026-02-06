@@ -16,7 +16,7 @@ class ConvertibleCurrency extends Equatable {
   });
 
   /// Propiedad de conveniencia para acceder al valor original inmutable.
-  String get originalValue => currency.value;
+  double get originalValue => currency.value;
 
   /// Propiedad de conveniencia para acceder al nombre de la moneda.
   String get name => currency.name;
@@ -33,17 +33,8 @@ class ConvertibleCurrency extends Equatable {
     );
   }
 
-  ConvertibleCurrency copyWithFabric({Currency? currency}) {
-    return ConvertibleCurrency(
-      currency: currency ?? this.currency,
-      convertedValue: double.parse(
-        currency != null ? currency.value : this.currency.value,
-      ),
-    );
-  }
-
   // 3. Sobrescribimos `props` de Equatable para una comparación correcta.
   // Dos `ConvertibleCurrency` son iguales si su moneda base es la misma.
   @override
-  List<Object?> get props => [currency];
+  List<Object?> get props => [currency, convertedValue];
 }
