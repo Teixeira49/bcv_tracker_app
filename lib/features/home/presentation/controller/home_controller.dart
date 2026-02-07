@@ -7,6 +7,7 @@ class HomeController extends GetxController {
 
   List<Currency> get averageCurrencies => _repository.averageCurrencies;
   List<Currency> get bcvCurrencies => _repository.bcvCurrencies;
+  String get bcvCurrentDate => _repository.bcvCurrentDate.value;
   bool get isLoading => _repository.isLoading.value;
 
   @override
