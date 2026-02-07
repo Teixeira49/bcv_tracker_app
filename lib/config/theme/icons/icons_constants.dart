@@ -14,17 +14,17 @@ class AppIcons {
   // ---------------------------------------------------------------------------
   // Country Icons
 
-  static const String flagEEUUIcon = '$imagesRoute/flags/flag_eeuu.png';
+  static const String flagEEUUIcon = '$iconsRoute/flags/flag_united_states.svg';
 
-  static const String flagTurkeyIcon = '$imagesRoute/flags/flag_turkey.png';
+  static const String flagTurkeyIcon = '$iconsRoute/flags/flag_turkey.svg';
 
-  static const String flagChinaIcon = '$imagesRoute/flags/flag_china.png';
+  static const String flagChinaIcon = '$iconsRoute/flags/flag_china.svg';
 
-  static const String flagRussiaIcon = '$imagesRoute/flags/flag_russia.png';
+  static const String flagRussiaIcon = '$iconsRoute/flags/flag_russia.svg';
 
-  static const String flagEuropeIcon = '$imagesRoute/flags/flag_europe.png';
+  static const String flagEuropeIcon = '$iconsRoute/flags/flag_europe.svg';
 
-  static const String flagVenezuelaIcon = '$imagesRoute/flags/flag_venezuela.png';
+  static const String flagVenezuelaIcon = '$iconsRoute/flags/flag_venezuela.svg';
 
   // ---------------------------------------------------------------------------
   // Currencies Icons
@@ -39,4 +39,9 @@ class AppIcons {
 
   static const String rubCurrencyIcon = '$iconsRoute/symbol_russian_currency.svg';
 
+  static const String cryptoBTCIcon = '$iconsRoute/crypto_bitcoin_logo.svg';
+
+  static const String cryptoUSDCIcon = '$iconsRoute/crypto_usdc_logo.svg';
+
+  static const String cryptoUSDTIcon = '$iconsRoute/crypto_usdt_logo.svg';
 }
