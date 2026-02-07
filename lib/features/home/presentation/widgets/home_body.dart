@@ -42,11 +42,10 @@ class _HomeBodyState extends State<_HomeBody>
 
 class _HomeBodyAverageCurrency extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => GetBuilder<CurrencyController>(
+  Widget build(BuildContext context) => GetBuilder<HomeController>(
     builder: (controller) => CustomRefreshIndicator.adaptive(
       onRefresh: () async {
-        //controllerBCV.getCurrentDollar();
-        //controllerCurrent.getCurrentDollar();
+        await controller.refreshHomeData();
       },
       child: ListView(
         children: [
@@ -55,6 +54,7 @@ class _HomeBodyAverageCurrency extends StatelessWidget {
             SizedBox(height: 8),
             _DollarCurrencyCard(currency: e),
           ],
+          SizedBox(height: 48),
         ],
       ),
     ),
@@ -63,11 +63,10 @@ class _HomeBodyAverageCurrency extends StatelessWidget {
 
 class _HomeBodyBCVCurrency extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => GetBuilder<CurrencyController>(
+  Widget build(BuildContext context) => GetBuilder<HomeController>(
     builder: (controller) => CustomRefreshIndicator.adaptive(
       onRefresh: () async {
-        //controllerBCV.getCurrentDollar();
-        //controllerCurrent.getCurrentDollar();
+        await controller.refreshHomeData();
       },
       child: ListView(
         children: [

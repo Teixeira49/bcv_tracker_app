@@ -1,166 +1,177 @@
 part of '../page/home_page.dart';
 
-class _RoundedHomeAppBarClipPath extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    var path = Path();
-    path.lineTo(0.0, size.height * 0.75);
-    final controlPoint = Offset(size.width * 0.4, size.height);
-    final endPoint = Offset(size.width, size.height / 1.75);
-    path.quadraticBezierTo(
-      controlPoint.dx,
-      controlPoint.dy,
-      endPoint.dx,
-      endPoint.dy,
-    );
-    path.lineTo(size.width, 0);
-    path.close();
-    return path;
-  }
+class _DollarCurrencyCard extends StatelessWidget {
+  const _DollarCurrencyCard({required this.currency});
+
+  final Currency currency;
 
   @override
-  bool shouldReclip(_RoundedHomeAppBarClipPath oldClipper) =>
-      oldClipper != this;
-}
-
-class _RoundedHomeAppBarWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) => ClipPath(
-    clipper: _RoundedHomeAppBarClipPath(),
-    child: Container(
-      width: double.infinity,
-      height: 200,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xff070e15), Color(0xFF02466D)],
+  Widget build(BuildContext context) => GetBuilder<HomeController>(
+    builder: (controller) => CustomSkeletonizer(
+      isLoading: controller.isLoading,
+      child: Card(
+        color: ColorValues.utilityBrand50(context),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ListTile(
+              leading: CircleAvatar(
+                radius: 24,
+                backgroundColor: ColorValues.borderTertiary(context),
+                backgroundImage: currency.imgUrl == null
+                    ? null
+                    : NetworkImage(currency.imgUrl!),
+                child: currency.imgUrl == null
+                    ? Text(
+                        currency.keyName.substring(0, 2),
+                        style: TextStyle(
+                          color: ColorValues.textPrimary(context),
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    : null,
+              ),
+              title: Text(
+                currency.platform,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              subtitle: Text(
+                currency.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              trailing: PerformanceIndicatorWidget(
+                value: currency.tendency ?? 0,
+              ),
+            ),
+            ListTile(
+              title: Text(
+                AppMessages.currencyValue,
+                style: TextStyle(fontSize: 14),
+              ),
+              subtitle: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    CurrencyHelpers.castCurrency(
+                      value: currency.value,
+                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
+                  ),
+                  Text(
+                    CurrencyHelpers.completeCurrencyExchange(currency.keyName),
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ],
+              ),
+            ),
+            Divider(indent: 16, endIndent: 16),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(AppMessages.lastUpdate),
+                  Text(
+                    currency.updateDate != null
+                        ? CurrencyHelpers.parseDate(
+                            date: currency.updateDate!.toIso8601String(),
+                            format: Constants.defaultFormatDate,
+                            addDayName: false,
+                          )
+                        : '--',
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 16),
+          ],
         ),
       ),
     ),
   );
 }
 
-class _DollarCurrencyCard extends StatelessWidget {
-  // GetBuilder<CurrentDollarController>( add later
-
-  @override
-  Widget build(BuildContext context) => Skeletonizer(
-    enabled: false,
-    child: Card(
-      color: Color(0xFFEFF5FF),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ListTile(
-            leading: CircleAvatar(
-              radius: 24,
-              backgroundImage: NetworkImage(
-                'https://exchangemonitor.net/assets/img/rates/ve/bcv.png',
-              ),
-            ),
-            title: Text(
-              'Dolar Oficial',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            subtitle: Text(
-              'Banco Central de Venezuela',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            trailing: CustomBadged(
-              color: Color(0xFF39E079),
-              child: PerformanceIndicatorWidget(isPositive: true, value: 0.24),
-            ),
-          ),
-          ListTile(
-            title: Text('Valor de la divisa', style: TextStyle(fontSize: 14)),
-            subtitle: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  CurrencyHelpers.castCurrency(value: 344.49),
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
-                ),
-                Text(
-                  CurrencyHelpers.completeCurrencyExchange('USD'),
-                  style: TextStyle(fontSize: 14),
-                ),
-              ],
-            ),
-          ),
-          Divider(indent: 16, endIndent: 16),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [Text('Ultima Actualizacion'), Text('Ayer')],
-            ),
-          ),
-          SizedBox(height: 16),
-        ],
-      ),
-    ),
-  );
-}
-
 class _BCVDollarCard extends StatelessWidget {
-  const _BCVDollarCard({required this.value, required this.currencyCode});
+  const _BCVDollarCard({required this.currency});
 
-  final double value;
-  final String currencyCode;
+  final Currency currency;
 
   @override
   Widget build(BuildContext context) {
     final currencyCountry = CurrencyHelpers.castCurrencyCountry(
-      currencyCode: currencyCode,
+      currencyCode: currency.keyName,
     );
-    return Skeletonizer(
-      enabled: false,
-      child: Card(
-        color: Color(0xFFEFF5FF),
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 8),
-          child: Column(
-            children: [
-              ListTile(
-                contentPadding: EdgeInsets.symmetric(horizontal: 16),
-                leading: CircleAvatar(
-                  radius: 20,
-                  backgroundImage: AssetImage(currencyCountry.countryFlag),
-                ),
-                title: Text(
-                  currencyCountry.currencyCountryName,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                trailing: SvgPicture.asset(currencyCountry.currencySymbol, width: 20),
-              ),
-              Divider(indent: 16, endIndent: 16),
-              ListTile(
-                title: Text(
-                  'Valor de la moneda',
-                  style: TextStyle(fontSize: 14),
-                ),
-                subtitle: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      CurrencyHelpers.castCurrency(value: value),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 28,
+    return GetBuilder<HomeController>(
+      builder: (controller) => CustomSkeletonizer(
+        isLoading: controller.isLoading,
+        child: Card(
+          color: ColorValues.utilityBrand50(context),
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 8),
+            child: Column(
+              children: [
+                ListTile(
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                  leading: CircleAvatar(
+                    radius: 20,
+                    backgroundColor: ColorValues.borderTertiary(context),
+                    child: ClipOval(
+                      child: SvgPicture.asset(
+                        currencyCountry.countryFlag,
+                        width: 40,
+                        height: 40,
+                        fit: BoxFit.cover,
                       ),
                     ),
-                    Text(
-                      CurrencyHelpers.completeCurrencyExchange(currencyCode),
-                      style: TextStyle(fontSize: 16),
+                  ),
+                  title: Text(
+                    currencyCountry.currencyCountryName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  trailing: SvgPicture.asset(
+                    currencyCountry.currencySymbol,
+                    width: 20,
+                    colorFilter: ColorFilter.mode(
+                      ColorValues.textPrimary(context),
+                      BlendMode.srcIn,
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
+                Divider(indent: 16, endIndent: 16),
+                ListTile(
+                  title: Text(
+                    AppMessages.moneyValue,
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        CurrencyHelpers.castCurrency(
+                          value: currency.value,
+                        ),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 28,
+                        ),
+                      ),
+                      Text(
+                        CurrencyHelpers.completeCurrencyExchange(
+                          currency.keyName,
+                        ),
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -170,45 +181,83 @@ class _BCVDollarCard extends StatelessWidget {
 
 class _BCVAdvisorCard extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => CustomBadged(
-    borderRadius: 12,
-    color: Color(0xFF1187CE),
-    hMargin: 3,
-    child: Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Text('Fecha: 18/01/2026 - 2:00 pm'),
+  Widget build(BuildContext context) => GetBuilder<HomeController>(
+    builder: (controller) => CustomSkeletonizer(
+      isLoading: controller.isLoading,
+      color: ColorValues.utilityInfo(context).withAlpha(51),
+      highlightColor: ColorValues.utilityInfo(context).withAlpha(145),
+      child: CustomBadged(
+        borderRadius: 12,
+        color: ColorValues.utilityInfo(context),
+        hMargin: 3,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                AppMessages.currencyDate,
+                style: TextStyle(
+                  color: ColorValues.textBrandTitle(context),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                CurrencyHelpers.parseDate(date: controller.bcvCurrentDate),
+                style: TextStyle(color: ColorValues.textBrandTitle(context)),
+              ),
+            ],
+          ),
+        ),
+      ),
     ),
   );
 }
 
 class _CurrencyDollarAverageCard extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => CustomBadged(
-    borderRadius: 12,
-    color: Color(0xFF1187CE),
-    hMargin: 3,
-    child: Padding(
-      padding: EdgeInsets.only(right: 4, top: 8, left: 16, bottom: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+  Widget build(BuildContext context) => GetBuilder<HomeController>(
+    builder: (controller) => CustomSkeletonizer(
+      isLoading: controller.isLoading,
+      color: ColorValues.utilityInfo(context).withAlpha(51),
+      highlightColor: ColorValues.utilityInfo(context).withAlpha(145),
+      child: CustomBadged(
+        borderRadius: 12,
+        color: ColorValues.utilityInfo(context),
+        hMargin: 3,
+        child: Padding(
+          padding: EdgeInsets.only(right: 4, top: 8, left: 16, bottom: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Valor Promedio', style: TextStyle(color: Color(0xFF064469))),
-              Text(
-                'Bs.S 344,49',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24,
-                  color: Color(0xFF064469),
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    AppMessages.averageValue,
+                    style: TextStyle(
+                      color: ColorValues.textBrandTitle(context),
+                    ),
+                  ),
+                  Text(
+                    'Bs.S ${CurrencyHelpers.getAverageValue(currencies: controller.averageCurrencies).toStringAsFixed(2)}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24,
+                      color: ColorValues.textBrandTitle(context),
+                    ),
+                  ),
+                ],
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.settings),
+                color: ColorValues.textBrandTitle(context),
               ),
             ],
           ),
-          IconButton(onPressed: () {}, icon: Icon(Icons.settings))
-        ],
-      )
+        ),
+      ),
     ),
   );
 }
