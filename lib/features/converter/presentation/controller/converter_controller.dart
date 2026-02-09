@@ -9,17 +9,16 @@ class ConverterController extends GetxController {
   bool get isLoading => _repository.isLoading.value;
 
   // Single consolidated list of currencies
-  final RxList<Currency> currencies = List.generate(5, (e) => Currency.emptySkeletonizer).obs;
+  final RxList<Currency> currencies = List.generate(
+    5,
+    (e) => Currency.emptySkeletonizer,
+  ).obs;
 
   Future<void> refreshConverterData() async {
     await _repository.refreshData();
   }
 
-  Currency pivotCurrency = Currency(
-    keyName: 'VES',
-    name: 'Banco Central de Venezuela',
-    value: '1.00',
-  );
+  Currency pivotCurrency = Currency.pivotCurrency;
 
   final Rx<ConvertibleCurrency> _fromCurrency = ConvertibleCurrency(
     currency: Currency.emptySkeletonizer,
@@ -27,6 +26,7 @@ class ConverterController extends GetxController {
   ).obs;
 
   ConvertibleCurrency get fromCurrency => _fromCurrency.value;
+
   set fromCurrency(ConvertibleCurrency value) => _fromCurrency.value = value;
 
   final Rx<ConvertibleCurrency> _toCurrency = ConvertibleCurrency(
@@ -35,6 +35,7 @@ class ConverterController extends GetxController {
   ).obs;
 
   ConvertibleCurrency get toCurrency => _toCurrency.value;
+
   set toCurrency(ConvertibleCurrency value) => _toCurrency.value = value;
 
   @override
@@ -51,38 +52,37 @@ class ConverterController extends GetxController {
   }
 
   void _updateCurrenciesAndInit() {
-    // Merge lists directly without extra filtering logic in UI
+    // Use a composite key for uniqueness based on keyName, platform, and name.
     final Set<String> addedKeys = {};
     final List<Currency> mergedList = [];
 
-    // 1. Add Pivot if not already handled?
-    // Usually pivot is distinct, but let's assume it should be available for selection.
-    // In original code, pivot was separate.
-    // Plan says "Merge average and bcv". Pivot is usually VES.
+    // Helper to create a unique composite key for each currency.
+    String compositeKey(Currency c) => "${c.keyName}-${c.platform}-${c.name}";
 
-    // 2. Add Average Currencies
+    // 1. Add Average Currencies
     for (var c in _repository.averageCurrencies) {
-      if (addedKeys.add(c.keyName)) {
+      if (addedKeys.add(compositeKey(c))) {
         mergedList.add(c);
       }
     }
 
-    // 3. Add BCV Currencies (excluding duplicates)
+    // 2. Add BCV Currencies (excluding duplicates)
     for (var c in _repository.bcvCurrencies) {
-      if (addedKeys.add(c.keyName)) {
+      if (addedKeys.add(compositeKey(c))) {
         mergedList.add(c);
       }
     }
 
-     currencies.assignAll(mergedList);
+    currencies.assignAll(mergedList);
     _initializeSelection();
   }
 
   void _initializeSelection() {
     // If already initialized, don't overwrite unless empty
     if (fromCurrency.currency.keyName.isNotEmpty &&
-        fromCurrency.currency != Currency.emptySkeletonizer)
+        fromCurrency.currency != Currency.emptySkeletonizer) {
       return;
+    }
 
     if (currencies.isNotEmpty) {
       // Default: VES as from, First from list (usually USD) as to.
@@ -97,12 +97,12 @@ class ConverterController extends GetxController {
 
       fromCurrency = ConvertibleCurrency(
         currency: pivotCurrency,
-        convertedValue: double.parse(initialTo.value),
+        convertedValue: initialTo.value,
       );
 
       toCurrency = ConvertibleCurrency(
-        currency: initialTo,
-        convertedValue: 1.0,
+        currency: pivotCurrency,
+        convertedValue: initialTo.value,
       );
 
       // Format/Calculate
@@ -152,8 +152,8 @@ class ConverterController extends GetxController {
 
       // Reverse Calculation: From = (ToAmount * ToRate) / FromRate
       final double toAmount = 1.0;
-      final double toRate = double.parse(newTo.value.replaceAll(',', '.'));
-      final double fromRate = double.parse(newFrom.value.replaceAll(',', '.'));
+      final double toRate = newTo.value;
+      final double fromRate = newFrom.value;
 
       final double fromAmount = (toAmount * toRate) / fromRate;
       fromCurrency = fromCurrency.copyWith(convertedValue: fromAmount);
@@ -194,12 +194,8 @@ class ConverterController extends GetxController {
 
     fromCurrency = fromCurrency.copyWith(convertedValue: amount);
 
-    final double fromRate = double.parse(
-      fromCurrency.currency.value.replaceAll(',', '.'),
-    );
-    final double toRate = double.parse(
-      toCurrency.currency.value.replaceAll(',', '.'),
-    );
+    final double fromRate = fromCurrency.currency.value;
+    final double toRate = toCurrency.currency.value;
 
     final double result = (amount * fromRate) / toRate;
 
