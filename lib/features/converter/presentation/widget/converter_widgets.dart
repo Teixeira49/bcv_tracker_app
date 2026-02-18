@@ -61,17 +61,21 @@ class _CurrencyInputSelectorCard extends StatelessWidget {
   Widget build(BuildContext context) => GetBuilder<ConverterController>(
     builder: (controller) => Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      spacing: 20,
       children: [
         _SelectCurrencyButton(currencyCode: currency.keyName, isInput: isInput),
-        Text(
+        Flexible(child: Text(
           currency.keyName != 'VES'
-              ? currency.name
+              ? "${currency.name} - ${currency.platform}"
               : controller.getRoundedCurrency(),
           style: TextStyle(
             color: ColorValues.textQuaternary(context),
             fontSize: 14,
           ),
-        ),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.end,
+        ),)
       ],
     ),
   );
