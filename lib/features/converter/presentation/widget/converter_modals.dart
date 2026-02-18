@@ -29,6 +29,7 @@ class _CurrencySelectorDialogBody extends StatelessWidget {
             label: AppMessages.originalCurrency,
             includeDivider: false,
           ),
+          SizedBox(height: 6),
           _CurrencyTileButton(
             currency: controller.pivotCurrency,
             onTap: () => changeCurrency(
@@ -40,7 +41,7 @@ class _CurrencySelectorDialogBody extends StatelessWidget {
           ),
           if (controller.currencies.isNotEmpty)
             _CurrenciesCategoryTitleWidget(label: AppMessages.mainMarkets),
-
+          if (controller.currencies.isNotEmpty) SizedBox(height: 6),
           // Use the consolidated list
           ...controller.currencies.map(
             (e) => _CurrencyTileButton(

@@ -122,7 +122,10 @@ class ConverterController extends GetxController {
         : fromCurrency.currency;
 
     // 1. Same currency selected? Do nothing.
-    if (current.keyName == selected.keyName) return null;
+    if (current.keyName == selected.keyName &&
+        current.platform == selected.platform) {
+      return null;
+    }
 
     // 2. Selected the other side's currency? Swap.
     if (other.keyName == selected.keyName) {

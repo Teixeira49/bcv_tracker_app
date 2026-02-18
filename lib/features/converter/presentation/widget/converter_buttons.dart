@@ -109,6 +109,8 @@ class _CurrencyTileButton extends StatelessWidget {
       : null;
 
   bool isCurrencyActive(Currency currency, ConverterController controller) =>
-      currency.keyName == controller.fromCurrency.keyName ||
-      currency.keyName == controller.toCurrency.keyName;
+      (currency.keyName == controller.fromCurrency.keyName &&
+          controller.fromCurrency.platform == currency.platform) ||
+      (currency.keyName == controller.toCurrency.keyName &&
+          controller.toCurrency.platform == currency.platform);
 }

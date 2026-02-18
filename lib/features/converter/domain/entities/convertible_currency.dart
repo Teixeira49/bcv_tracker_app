@@ -24,6 +24,9 @@ class ConvertibleCurrency extends Equatable {
   /// Propiedad de conveniencia para acceder a la clave de la moneda.
   String get keyName => currency.keyName;
 
+  /// Propiedad de conveniencia para acceder a la plataforma de la moneda
+  String get platform => currency.platform;
+
   /// Crea una copia de la instancia actual con valores modificados.
   /// Esto es útil para actualizar el estado de forma inmutable.
   ConvertibleCurrency copyWith({Currency? currency, double? convertedValue}) {
