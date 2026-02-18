@@ -19,7 +19,7 @@ class PerformanceIndicatorWidget extends StatelessWidget {
       children: [
         _PerformanceArrow(value: value),
         Text(
-          value.toStringAsFixed(4),
+          '${value.toStringAsFixed(4)}%',
           style: TextStyle(color: selectValueColor(context)),
         ),
       ],
