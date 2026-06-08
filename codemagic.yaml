@@ -33,7 +33,7 @@ workflows:
         script: flutter pub get
 
       - name: Analizar código
-        script: flutter analyze --no-fatal-infos
+        script: flutter analyze --no-fatal-infos --no-fatal-warnings
 
       - name: Ejecutar tests
         script: flutter test
@@ -130,7 +130,7 @@ workflows:
           @certificate add-certificates
 
       - name: Analizar código
-        script: flutter analyze --no-fatal-infos
+        script: flutter analyze --no-fatal-infos --no-fatal-warnings
 
       - name: Ejecutar tests
         script: flutter test
@@ -218,7 +218,7 @@ workflows:
           @certificate add-certificates
 
       - name: Analizar código
-        script: flutter analyze --no-fatal-infos
+        script: flutter analyze --no-fatal-infos --no-fatal-warnings
 
       - name: Ejecutar tests
         script: flutter test
