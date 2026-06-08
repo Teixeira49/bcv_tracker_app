@@ -1,0 +1,277 @@
+workflows:
+
+  # ─────────────────────────────────────────────
+  # WORKFLOW: Android → Firebase App Distribution
+  # ─────────────────────────────────────────────
+  android-firebase:
+    name: Android – Firebase App Distribution
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+
+    environment:
+      flutter: stable
+      groups:
+        - firebase_credentials   # FIREBASE_TOKEN o GOOGLE_APPLICATION_CREDENTIALS
+        - app_env                # CURRENCY_BACK
+      vars:
+        PACKAGE_NAME: "com.example.bcv_tracker_app"
+        FIREBASE_PROJECT_ID: "bcv-tracker-6a452"
+        # FIREBASE_APP_ID_ANDROID → definido en el grupo firebase_credentials en Codemagic
+
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: master
+          include: true
+
+    scripts:
+      - name: Crear .env
+        script: echo "CURRENCY_BACK=$CURRENCY_BACK" > .env
+
+      - name: Instalar dependencias
+        script: flutter pub get
+
+      - name: Analizar código
+        script: flutter analyze --no-fatal-infos
+
+      - name: Ejecutar tests
+        script: flutter test
+
+      - name: Configurar firma con debug keystore
+        script: |
+          # Firma con debug keystore para distribución cerrada.
+          # Cuando tengas keystore de release, reemplaza esta sección con
+          # las variables CM_KEYSTORE, CM_KEY_ALIAS, CM_KEY_PASSWORD, CM_KEYSTORE_PASSWORD
+          # y usa el signing config de release en android/app/build.gradle.kts
+          echo "Usando debug keystore para distribución cerrada"
+
+      - name: Build APK release
+        script: |
+          flutter build apk --release \
+            --build-name=$(grep "^version:" pubspec.yaml | awk '{print $2}' | cut -d'+' -f1) \
+            --build-number=$CM_BUILD_NUMBER
+
+      - name: Distribuir a Firebase App Distribution
+        script: |
+          firebase appdistribution:distribute \
+            build/app/outputs/flutter-apk/app-release.apk \
+            --app "$FIREBASE_APP_ID_ANDROID" \
+            --groups "testers" \
+            --release-notes "Build #$CM_BUILD_NUMBER – rama $CM_BRANCH"
+
+    artifacts:
+      - build/app/outputs/flutter-apk/app-release.apk
+      - build/app/outputs/flutter-apk/app-release.apk.sha1
+
+    publishing:
+      email:
+        recipients:
+          - jtexeira@estei.app
+        notify:
+          success: true
+          failure: true
+
+    # ── Play Store (comentado – activar cuando tengas cuenta de developer) ──
+    # publishing:
+    #   google_play:
+    #     credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+    #     track: internal   # internal → alpha → beta → production
+    #     submit_as_draft: true
+
+
+  # ─────────────────────────────────────────────
+  # WORKFLOW: iOS → Firebase App Distribution
+  # ─────────────────────────────────────────────
+  ios-firebase:
+    name: iOS – Firebase App Distribution
+    max_build_duration: 90
+    instance_type: mac_mini_m2
+
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      groups:
+        - firebase_credentials   # FIREBASE_TOKEN o GOOGLE_APPLICATION_CREDENTIALS
+        - app_env                # CURRENCY_BACK
+        - ios_signing            # CM_CERTIFICATE, CM_CERTIFICATE_PASSWORD, CM_PROVISIONING_PROFILE
+      vars:
+        BUNDLE_ID: "com.example.bcvTrackerApp"          # <-- actualizar cuando cambies el bundle ID
+        FIREBASE_PROJECT_ID: "bcv-tracker-6a452"
+        # FIREBASE_APP_ID_IOS → definido en el grupo firebase_credentials en Codemagic
+        XCODE_PROJECT: "ios/Runner.xcodeproj"
+        XCODE_SCHEME: "Runner"
+
+    # Desactivado hasta tener certificados Apple listos
+    triggering:
+      events: []
+
+    scripts:
+      - name: Crear .env
+        script: echo "CURRENCY_BACK=$CURRENCY_BACK" > .env
+
+      - name: Instalar dependencias Flutter
+        script: flutter pub get
+
+      - name: Instalar pods
+        script: |
+          cd ios
+          pod install
+
+      - name: Configurar firma de código
+        script: |
+          # Requiere que el grupo ios_signing tenga:
+          #   CM_CERTIFICATE            → certificado P12 en base64
+          #   CM_CERTIFICATE_PASSWORD   → contraseña del P12
+          #   CM_PROVISIONING_PROFILE   → perfil de aprovisionamiento en base64
+          keychain initialize
+          @certificate add-provisioning-profiles
+          @certificate add-certificates
+
+      - name: Analizar código
+        script: flutter analyze --no-fatal-infos
+
+      - name: Ejecutar tests
+        script: flutter test
+
+      - name: Build IPA
+        script: |
+          flutter build ipa --release \
+            --build-name=$(grep "^version:" pubspec.yaml | awk '{print $2}' | cut -d'+' -f1) \
+            --build-number=$CM_BUILD_NUMBER \
+            --export-options-plist=/usr/local/lib/flutter/packages/flutter_tools/templates/app/ios.tmpl/ExportOptions.plist
+
+      - name: Distribuir a Firebase App Distribution
+        script: |
+          firebase appdistribution:distribute \
+            $(find build/ios/ipa -name "*.ipa" | head -1) \
+            --app "$FIREBASE_APP_ID_IOS" \
+            --groups "testers" \
+            --release-notes "Build #$CM_BUILD_NUMBER – rama $CM_BRANCH"
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+
+    publishing:
+      email:
+        recipients:
+          - jtexeira@estei.app
+        notify:
+          success: true
+          failure: true
+
+    # ── TestFlight (comentado – activar cuando tengas Apple Developer account) ──
+    # publishing:
+    #   app_store_connect:
+    #     api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+    #     key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+    #     issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+    #     submit_to_testflight: true
+    #     submit_to_app_store: false   # true para release a producción
+
+
+  # ─────────────────────────────────────────────
+  # WORKFLOW: Android + iOS simultáneo
+  # ─────────────────────────────────────────────
+  all-platforms-firebase:
+    name: Android + iOS – Firebase App Distribution
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      groups:
+        - firebase_credentials
+        - app_env
+        - ios_signing
+      vars:
+        PACKAGE_NAME: "com.example.bcv_tracker_app"
+        BUNDLE_ID: "com.example.bcvTrackerApp"
+        FIREBASE_PROJECT_ID: "bcv-tracker-6a452"
+        # FIREBASE_APP_ID_ANDROID y FIREBASE_APP_ID_IOS → definidos en el grupo firebase_credentials en Codemagic
+
+    # Desactivado hasta tener iOS listo
+    triggering:
+      events: []
+
+    scripts:
+      - name: Crear .env
+        script: echo "CURRENCY_BACK=$CURRENCY_BACK" > .env
+
+      - name: Instalar dependencias Flutter
+        script: flutter pub get
+
+      - name: Instalar pods
+        script: |
+          cd ios
+          pod install
+
+      - name: Configurar firma iOS
+        script: |
+          keychain initialize
+          @certificate add-provisioning-profiles
+          @certificate add-certificates
+
+      - name: Analizar código
+        script: flutter analyze --no-fatal-infos
+
+      - name: Ejecutar tests
+        script: flutter test
+
+      - name: Build APK
+        script: |
+          flutter build apk --release \
+            --build-name=$(grep "^version:" pubspec.yaml | awk '{print $2}' | cut -d'+' -f1) \
+            --build-number=$CM_BUILD_NUMBER
+
+      - name: Build IPA
+        script: |
+          flutter build ipa --release \
+            --build-name=$(grep "^version:" pubspec.yaml | awk '{print $2}' | cut -d'+' -f1) \
+            --build-number=$CM_BUILD_NUMBER
+
+      - name: Distribuir Android a Firebase
+        script: |
+          firebase appdistribution:distribute \
+            build/app/outputs/flutter-apk/app-release.apk \
+            --app "$FIREBASE_APP_ID_ANDROID" \
+            --groups "testers" \
+            --release-notes "Build #$CM_BUILD_NUMBER – rama $CM_BRANCH"
+
+      - name: Distribuir iOS a Firebase
+        script: |
+          firebase appdistribution:distribute \
+            $(find build/ios/ipa -name "*.ipa" | head -1) \
+            --app "$FIREBASE_APP_ID_IOS" \
+            --groups "testers" \
+            --release-notes "Build #$CM_BUILD_NUMBER – rama $CM_BRANCH"
+
+    artifacts:
+      - build/app/outputs/flutter-apk/app-release.apk
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+
+    publishing:
+      email:
+        recipients:
+          - jtexeira@estei.app
+        notify:
+          success: true
+          failure: true
+
+    # ── Tiendas (comentado – activar cuando estés listo para producción) ──
+    # publishing:
+    #   google_play:
+    #     credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+    #     track: internal
+    #     submit_as_draft: true
+    #   app_store_connect:
+    #     api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+    #     key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+    #     issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+    #     submit_to_testflight: true
+    #     submit_to_app_store: false

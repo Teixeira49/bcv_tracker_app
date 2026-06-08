@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "928521851239",
+    "project_id": "bcv-tracker-6a452",
+    "storage_bucket": "bcv-tracker-6a452.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:928521851239:android:646d17abe717499fd05fc2",
+        "android_client_info": {
+          "package_name": "com.example.bcv_tracker_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYVStJt02mw2cdfPC2NqF1OuhOu2j51Mw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
