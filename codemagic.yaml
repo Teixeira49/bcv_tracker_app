@@ -50,7 +50,7 @@ workflows:
         script: |
           flutter build apk --release \
             --build-name=$(grep "^version:" pubspec.yaml | awk '{print $2}' | cut -d'+' -f1) \
-            --build-number=$CM_BUILD_NUMBER
+            --build-number=${CM_BUILD_NUMBER:-1}
 
       - name: Distribuir a Firebase App Distribution
         script: |
@@ -58,7 +58,7 @@ workflows:
             build/app/outputs/flutter-apk/app-release.apk \
             --app "$FIREBASE_APP_ID_ANDROID" \
             --groups "testers" \
-            --release-notes "Build #$CM_BUILD_NUMBER – rama $CM_BRANCH"
+            --release-notes "Build #${CM_BUILD_NUMBER:-1} – rama ${CM_BRANCH:-master}"
 
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
@@ -139,7 +139,7 @@ workflows:
         script: |
           flutter build ipa --release \
             --build-name=$(grep "^version:" pubspec.yaml | awk '{print $2}' | cut -d'+' -f1) \
-            --build-number=$CM_BUILD_NUMBER \
+            --build-number=${CM_BUILD_NUMBER:-1} \
             --export-options-plist=/usr/local/lib/flutter/packages/flutter_tools/templates/app/ios.tmpl/ExportOptions.plist
 
       - name: Distribuir a Firebase App Distribution
@@ -148,7 +148,7 @@ workflows:
             $(find build/ios/ipa -name "*.ipa" | head -1) \
             --app "$FIREBASE_APP_ID_IOS" \
             --groups "testers" \
-            --release-notes "Build #$CM_BUILD_NUMBER – rama $CM_BRANCH"
+            --release-notes "Build #${CM_BUILD_NUMBER:-1} – rama ${CM_BRANCH:-master}"
 
     artifacts:
       - build/ios/ipa/*.ipa
@@ -227,13 +227,13 @@ workflows:
         script: |
           flutter build apk --release \
             --build-name=$(grep "^version:" pubspec.yaml | awk '{print $2}' | cut -d'+' -f1) \
-            --build-number=$CM_BUILD_NUMBER
+            --build-number=${CM_BUILD_NUMBER:-1}
 
       - name: Build IPA
         script: |
           flutter build ipa --release \
             --build-name=$(grep "^version:" pubspec.yaml | awk '{print $2}' | cut -d'+' -f1) \
-            --build-number=$CM_BUILD_NUMBER
+            --build-number=${CM_BUILD_NUMBER:-1}
 
       - name: Distribuir Android a Firebase
         script: |
@@ -241,7 +241,7 @@ workflows:
             build/app/outputs/flutter-apk/app-release.apk \
             --app "$FIREBASE_APP_ID_ANDROID" \
             --groups "testers" \
-            --release-notes "Build #$CM_BUILD_NUMBER – rama $CM_BRANCH"
+            --release-notes "Build #${CM_BUILD_NUMBER:-1} – rama ${CM_BRANCH:-master}"
 
       - name: Distribuir iOS a Firebase
         script: |
@@ -249,7 +249,7 @@ workflows:
             $(find build/ios/ipa -name "*.ipa" | head -1) \
             --app "$FIREBASE_APP_ID_IOS" \
             --groups "testers" \
-            --release-notes "Build #$CM_BUILD_NUMBER – rama $CM_BRANCH"
+            --release-notes "Build #${CM_BUILD_NUMBER:-1} – rama ${CM_BRANCH:-master}"
 
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
