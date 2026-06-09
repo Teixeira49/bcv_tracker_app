@@ -57,7 +57,7 @@ workflows:
           firebase appdistribution:distribute \
             build/app/outputs/flutter-apk/app-release.apk \
             --app "$FIREBASE_APP_ID_ANDROID" \
-            --groups "testers" \
+            --groups "testers-pre-produccion" \
             --release-notes "Build #${CM_BUILD_NUMBER:-1} – rama ${CM_BRANCH:-master}"
 
     artifacts:
@@ -147,7 +147,7 @@ workflows:
           firebase appdistribution:distribute \
             $(find build/ios/ipa -name "*.ipa" | head -1) \
             --app "$FIREBASE_APP_ID_IOS" \
-            --groups "testers" \
+            --groups "testers-pre-produccion" \
             --release-notes "Build #${CM_BUILD_NUMBER:-1} – rama ${CM_BRANCH:-master}"
 
     artifacts:
@@ -239,7 +239,7 @@ workflows:
           firebase appdistribution:distribute \
             build/app/outputs/flutter-apk/app-release.apk \
             --app "$FIREBASE_APP_ID_ANDROID" \
-            --groups "testers" \
+            --groups "testers-pre-produccion" \
             --release-notes "Build #${CM_BUILD_NUMBER:-1} – rama ${CM_BRANCH:-master}"
 
       - name: Distribuir iOS a Firebase
@@ -247,7 +247,7 @@ workflows:
           firebase appdistribution:distribute \
             $(find build/ios/ipa -name "*.ipa" | head -1) \
             --app "$FIREBASE_APP_ID_IOS" \
-            --groups "testers" \
+            --groups "testers-pre-produccion" \
             --release-notes "Build #${CM_BUILD_NUMBER:-1} – rama ${CM_BRANCH:-master}"
 
     artifacts:
