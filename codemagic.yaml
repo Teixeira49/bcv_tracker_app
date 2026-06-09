@@ -15,8 +15,8 @@ workflows:
         - app_env                # CURRENCY_BACK
       vars:
         PACKAGE_NAME: "com.example.bcv_tracker_app"
-        FIREBASE_APP_ID_ANDROID: $FIREBASE_APP_ID_ANDROID  # <-- reemplazar
         FIREBASE_PROJECT_ID: "bcv-tracker-6a452"
+        # FIREBASE_APP_ID_ANDROID viene del grupo firebase_credentials
 
     triggering:
       events:
@@ -98,8 +98,8 @@ workflows:
         - ios_signing            # CM_CERTIFICATE, CM_CERTIFICATE_PASSWORD, CM_PROVISIONING_PROFILE
       vars:
         BUNDLE_ID: "com.example.bcvTrackerApp"          # <-- actualizar cuando cambies el bundle ID
-        FIREBASE_APP_ID_IOS: $FIREBASE_APP_ID_IOS  # <-- reemplazar
         FIREBASE_PROJECT_ID: "bcv-tracker-6a452"
+        # FIREBASE_APP_ID_IOS viene del grupo firebase_credentials
         XCODE_PROJECT: "ios/Runner.xcodeproj"
         XCODE_SCHEME: "Runner"
 
@@ -191,9 +191,8 @@ workflows:
       vars:
         PACKAGE_NAME: "com.example.bcv_tracker_app"
         BUNDLE_ID: "com.example.bcvTrackerApp"
-        FIREBASE_APP_ID_ANDROID: $FIREBASE_APP_ID_ANDROID  # <-- reemplazar
-        FIREBASE_APP_ID_IOS: $FIREBASE_APP_ID_IOS         # <-- reemplazar
         FIREBASE_PROJECT_ID: "bcv-tracker-6a452"
+        # FIREBASE_APP_ID_ANDROID y FIREBASE_APP_ID_IOS vienen del grupo firebase_credentials
 
     # Desactivado hasta tener iOS listo
     triggering:
