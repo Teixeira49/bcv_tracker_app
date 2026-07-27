@@ -1,3 +1,4 @@
+import '../../../core/constants/market_constants.dart';
 import '../../domain/entities/currency.dart';
 import '../../domain/entities/market.dart';
 
@@ -8,13 +9,20 @@ import '../../domain/entities/market.dart';
 ///
 /// 1. keeps only the platforms of [MarketSelection], as a guard against a
 ///    market answering with a platform that was not requested;
-/// 2. drops repeated `(platform, code, name)` rows, keeping the first one —
+/// 2. keeps a single Exchange Monitor rate — the one filter the Body cannot
+///    express, see [_withoutRedundantExchangeMonitor];
+/// 3. drops repeated `(platform, code, name)` rows, keeping the first one —
 ///    reads from the database come ordered by descending id, so that is the
 ///    most recent;
-/// 3. merges the `-buy` / `-sell` sides of a pair into a single averaged rate,
+/// 4. merges the `-buy` / `-sell` sides of a pair into a single averaged rate,
 ///    which is what Airtm returns and what any market in `ambas` would;
-/// 4. sorts by the order of the selection, so it does not depend on the order
+/// 5. sorts by the order of the selection, so it does not depend on the order
 ///    the backend concatenates database reads and live fetches in.
+///
+/// Steps 3 and 4 are guards for most markets: with the modes the catalogue
+/// uses, the backend already returns the latest row per `(code, platform)` and
+/// crypto arrives averaged. They still do real work for Airtm, and they cover
+/// any market switched to `ambas` or `bd-todas`.
 class CurrencyNormalizer {
   const CurrencyNormalizer._();
 
@@ -31,9 +39,34 @@ class CurrencyNormalizer {
     final allowed = currencies.where(
       (currency) => platforms.contains(currency.platform),
     );
-    final merged = _mergeSides(_dedupe(allowed));
+    final merged = _mergeSides(
+      _dedupe(_withoutRedundantExchangeMonitor(allowed)),
+    );
     merged.sort((a, b) => _byMarketThenCode(a, b, order));
     return merged;
+  }
+
+  /// Keeps only the estimated average of Exchange Monitor, when it is there.
+  ///
+  /// No mode returns just that rate: `own+monitor` and `bd-todas` bring its own
+  /// value (`em`) alongside the average (`average`), and the old contract
+  /// trimmed it server side with `enforce_em_average`. The other rows are only
+  /// dropped if the average is present, so a market asked in `own` still shows.
+  static Iterable<Currency> _withoutRedundantExchangeMonitor(
+    Iterable<Currency> currencies,
+  ) {
+    final hasAverage = currencies.any(
+      (currency) =>
+          currency.platform == Markets.exchangeMonitor &&
+          currency.keyName == Markets.emAverageCode,
+    );
+    if (!hasAverage) return currencies;
+
+    return currencies.where(
+      (currency) =>
+          currency.platform != Markets.exchangeMonitor ||
+          currency.keyName == Markets.emAverageCode,
+    );
   }
 
   /// Removes exact repeats of `(platform, code, name)`, keeping the first.

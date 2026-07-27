@@ -144,6 +144,42 @@ void main() {
       );
     });
 
+    test('keeps only the estimated average of Exchange Monitor', () {
+      // No mode returns just the average: own+monitor brings the own value too,
+      // and the old contract trimmed it with enforce_em_average.
+      final result = CurrencyNormalizer.forAverageTab([
+        _rate(
+          platform: Markets.exchangeMonitor,
+          code: Markets.emOwnCode,
+          name: 'Exchange monitor',
+          value: 814,
+        ),
+        _rate(
+          platform: Markets.exchangeMonitor,
+          code: Markets.emAverageCode,
+          name: 'Promedio',
+          value: 803,
+        ),
+      ], _selection);
+
+      expect(result, hasLength(1));
+      expect(result.single.keyName, Markets.emAverageCode);
+    });
+
+    test('keeps the own value when the average is not there', () {
+      // A market asked in `own` must not vanish from the list.
+      final result = CurrencyNormalizer.forAverageTab([
+        _rate(
+          platform: Markets.exchangeMonitor,
+          code: Markets.emOwnCode,
+          name: 'Exchange monitor',
+          value: 814,
+        ),
+      ], _selection);
+
+      expect(result.single.keyName, Markets.emOwnCode);
+    });
+
     test('an empty payload does not throw', () {
       expect(CurrencyNormalizer.forAverageTab([], _selection), isEmpty);
     });
