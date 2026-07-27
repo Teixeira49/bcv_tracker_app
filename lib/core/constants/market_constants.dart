@@ -63,15 +63,21 @@ class Markets {
   /// database would collapse buy and sell — the backend keys its rows by
   /// `(code, platform)`, so only the last side written survives.
   static const List<Market> catalog = <Market>[
-    Market(key: bcvKey, platform: bcv, mode: modeDbDollar),
+    Market(key: bcvKey, platform: bcv, mode: modeDbDollar, shortName: 'BCV'),
     // No mode returns only the estimated average, so this brings its own value
     // too and [emAverageCode] keeps just "Monitor Dólar".
     Market(
       key: exchangeMonitorKey,
       platform: exchangeMonitor,
       mode: modeEmOwnMonitor,
+      shortName: 'Monitor',
     ),
-    Market(key: yadioKey, platform: yadio, mode: modeLiveDollar),
+    Market(
+      key: yadioKey,
+      platform: yadio,
+      mode: modeLiveDollar,
+      shortName: 'Yadio',
+    ),
     Market(key: binanceKey, platform: binance, mode: modeAverage),
     Market(key: bybitKey, platform: bybit, mode: modeAverage),
     Market(key: okxKey, platform: okx, mode: modeAverage),

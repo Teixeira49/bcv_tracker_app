@@ -30,7 +30,14 @@ class InitialBinding extends Bindings {
     Get.lazyPut<SettingsController>(() => SettingsController(), fenix: true);
 
     // New Injections
-    Get.put<CurrencyRepository>(CurrencyRepository(), permanent: true);
+    final SettingsController settings = Get.find<SettingsController>();
+    final CurrencyRepository currencies = Get.put<CurrencyRepository>(
+      CurrencyRepository(selection: () => settings.marketSelection),
+      permanent: true,
+    );
+    // Following or dropping a market changes the request itself, so the rates
+    // are fetched again as soon as the choice changes.
+    ever(settings.selectedMarketKeys, (_) => currencies.refreshData());
     Get.lazyPut<HomeController>(() => HomeController(), fenix: true);
     Get.lazyPut<ConverterController>(() => ConverterController(), fenix: true);
   }

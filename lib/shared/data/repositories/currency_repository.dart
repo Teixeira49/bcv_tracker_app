@@ -8,6 +8,16 @@ import '../../domain/repositories/dollar_repositories.dart';
 import '../mapper/currency_normalizer.dart';
 
 class CurrencyRepository extends GetxService {
+  /// [selection] resolves which markets to ask for on every refresh. The
+  /// binding wires it to the user's choice; without it the catalogue default
+  /// is used, which keeps the service usable on its own.
+  CurrencyRepository({MarketSelection Function()? selection})
+    : _selection = selection ?? _defaultSelection;
+
+  static MarketSelection _defaultSelection() => Markets.defaultSelection;
+
+  final MarketSelection Function() _selection;
+
   final IDollarRepository _dollarRepository = Get.find<IDollarRepository>();
 
   final RxList<Currency> averageCurrencies = List.generate(
@@ -60,7 +70,7 @@ class CurrencyRepository extends GetxService {
   }
 
   Future<void> getAveragedCurrencies() async {
-    final MarketSelection selection = Markets.defaultSelection;
+    final MarketSelection selection = _selection();
     final List<Currency> result = await _dollarRepository.getCurrentDollar(
       selection,
     );

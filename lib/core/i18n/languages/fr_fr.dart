@@ -47,4 +47,5 @@ const Map<String, String> frFr = {
   'loadingError': 'Impossible de charger les taux',
   'retryAction': 'Réessayer',
   'marketAverage': 'Moyenne',
+  'followedMarkets': 'Marchés suivis',
 };

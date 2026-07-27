@@ -4,7 +4,12 @@
 /// instead of query flags: every market declares a `mode` and the ones left out
 /// of the request are `off`. See `api/models/market_request.py` in the backend.
 class Market {
-  const Market({required this.key, required this.platform, required this.mode});
+  const Market({
+    required this.key,
+    required this.platform,
+    required this.mode,
+    String? shortName,
+  }) : _shortName = shortName;
 
   /// Key inside the `markets` Body — the backend's `MarketName`.
   final String key;
@@ -13,11 +18,21 @@ class Market {
   /// It is not the same string as [key], and it is also what the UI shows.
   final String platform;
 
+  final String? _shortName;
+
+  /// Name for tight spots, where [platform] does not fit. Not translated:
+  /// every market is a brand or an institution.
+  String get shortName => _shortName ?? platform;
+
   /// Mode requested for this market, out of the ones its type allows.
   final String mode;
 
-  Market copyWith({String? mode}) =>
-      Market(key: key, platform: platform, mode: mode ?? this.mode);
+  Market copyWith({String? mode}) => Market(
+    key: key,
+    platform: platform,
+    mode: mode ?? this.mode,
+    shortName: _shortName,
+  );
 }
 
 /// The set of markets a request asks for, ready to travel as the Body.
