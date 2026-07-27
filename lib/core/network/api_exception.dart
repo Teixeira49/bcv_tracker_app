@@ -34,9 +34,8 @@ class ApiException implements Exception {
     if (body is! String || body.isEmpty) return null;
     try {
       final decoded = json.decode(body);
-      if (decoded is Map && decoded['message'] is String) {
-        final message = (decoded['message'] as String).trim();
-        return message.isEmpty ? null : message;
+      if (decoded is Map) {
+        return _text(decoded['message']) ?? _detail(decoded['detail']);
       }
     } catch (_) {
       // Not JSON (e.g. an HTML error page from the edge): fall back to the code.
@@ -44,7 +43,30 @@ class ApiException implements Exception {
     return null;
   }
 
+  /// Reads the `detail` FastAPI answers with when the Body fails validation.
+  ///
+  /// That response is built by FastAPI itself, so it never reaches the error
+  /// envelope of the backend and carries no `message`. Since v3.0.0 it is how a
+  /// mode that a market does not allow arrives, and without this the user only
+  /// saw "HTTP 422".
+  static String? _detail(Object? detail) {
+    if (detail is String) return _text(detail);
+    if (detail is List) {
+      final messages = detail
+          .whereType<Map>()
+          .map((entry) => _text(entry['msg']))
+          .whereType<String>();
+      if (messages.isNotEmpty) return messages.join(' · ');
+    }
+    return null;
+  }
+
+  static String? _text(Object? value) {
+    if (value is! String) return null;
+    final text = value.trim();
+    return text.isEmpty ? null : text;
+  }
+
   @override
-  String toString() =>
-      'ApiException(${statusCode ?? 'no response'}): $message';
+  String toString() => 'ApiException(${statusCode ?? 'no response'}): $message';
 }

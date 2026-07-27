@@ -64,6 +64,17 @@ class CurrencyRepository extends GetxService {
     final List<Currency> result = await _dollarRepository.getCurrentDollar(
       selection,
     );
+
+    if (result.isEmpty && !selection.isEmpty) {
+      // A Body the backend cannot read answers 200 with an empty list instead
+      // of failing, so an empty answer to a non-empty selection is worth a line
+      // in the log: from the UI it is indistinguishable from "no rates".
+      log(
+        'saved-currencies devolvió una lista vacía para ${selection.toJson()}',
+        name: "CurrencyRepository.getAveragedCurrencies()",
+      );
+    }
+
     averageCurrencies.assignAll(
       CurrencyNormalizer.forAverageTab(result, selection),
     );

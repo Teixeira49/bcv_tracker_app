@@ -121,6 +121,41 @@ void main() {
       },
     );
 
+    test('reads the validation detail of FastAPI on a 422', () async {
+      // A mode a market does not allow: this response is built by FastAPI, so
+      // it never goes through the error envelope of the backend.
+      await expectLater(
+        _api(
+          statusCode: 422,
+          body:
+              '{"detail":[{"type":"value_error","loc":["body","markets"],'
+              '"msg":"Value error, El modo \'solo-dolar\' no es válido para el '
+              'mercado \'binance\'."}]}',
+        ).getCurrentDollar(Markets.defaultSelection),
+        throwsA(
+          isA<ApiException>()
+              .having((e) => e.statusCode, 'statusCode', 422)
+              .having((e) => e.message, 'message', contains('no es válido')),
+        ),
+      );
+    });
+
+    test('reads a detail that comes as a plain string', () async {
+      await expectLater(
+        _api(
+          statusCode: 405,
+          body: '{"detail":"Method Not Allowed"}',
+        ).getCurrentDollar(Markets.defaultSelection),
+        throwsA(
+          isA<ApiException>().having(
+            (e) => e.message,
+            'message',
+            'Method Not Allowed',
+          ),
+        ),
+      );
+    });
+
     test('reports a malformed body instead of crashing', () async {
       await expectLater(
         _api(body: 'not json').getCurrentDollar(Markets.defaultSelection),
