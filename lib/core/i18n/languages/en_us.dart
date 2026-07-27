@@ -44,4 +44,7 @@ const Map<String, String> enUs = {
   'fridayDay': 'Friday',
   'saturdayDay': 'Saturday',
   'sundayDay': 'Sunday',
+  'loadingError': 'Rates could not be loaded',
+  'retryAction': 'Retry',
+  'marketAverage': 'Average',
 };

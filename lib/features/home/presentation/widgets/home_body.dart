@@ -43,38 +43,71 @@ class _HomeBodyState extends State<_HomeBody>
 class _HomeBodyAverageCurrency extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<HomeController>(
-    builder: (controller) => CustomRefreshIndicator.adaptive(
-      onRefresh: () async {
-        await controller.refreshHomeData();
-      },
-      child: ListView(
-        children: [
-          _CurrencyDollarAverageCard(),
-          for (var e in controller.averageCurrencies) ...[
-            SizedBox(height: 8),
-            _DollarCurrencyCard(currency: e),
+    builder: (controller) {
+      final String? error = controller.errorMessage;
+      // While the first refresh has not succeeded the list still holds the
+      // skeleton placeholders, so showing them once loading stopped would pass
+      // fake rates off as real ones.
+      final bool showCurrencies = controller.hasAverageData || error == null;
+
+      return CustomRefreshIndicator.adaptive(
+        onRefresh: () async {
+          await controller.refreshHomeData();
+        },
+        child: ListView(
+          // Keeps pull-to-refresh usable when the list is too short to scroll,
+          // which is exactly the case in the error state.
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: [
+            if (error != null) ...[
+              _ErrorAdvisorCard(message: error),
+              SizedBox(height: 8),
+            ],
+            if (showCurrencies) ...[
+              _CurrencyDollarAverageCard(),
+              for (var e in controller.averageCurrencies) ...[
+                SizedBox(height: 8),
+                _DollarCurrencyCard(currency: e),
+              ],
+            ],
+            SizedBox(height: 48),
           ],
-          SizedBox(height: 48),
-        ],
-      ),
-    ),
+        ),
+      );
+    },
   );
 }
 
 class _HomeBodyBCVCurrency extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<HomeController>(
-    builder: (controller) => CustomRefreshIndicator.adaptive(
-      onRefresh: () async {
-        await controller.refreshHomeData();
-      },
-      child: ListView(
-        children: [
-          _BCVAdvisorCard(),
-          SizedBox(height: 16),
-          ...controller.bcvCurrencies.map((e) => _BCVDollarCard(currency: e)),
-        ],
-      ),
-    ),
+    builder: (controller) {
+      final String? error = controller.errorMessage;
+      final bool showCurrencies = controller.hasBcvData || error == null;
+
+      return CustomRefreshIndicator.adaptive(
+        onRefresh: () async {
+          await controller.refreshHomeData();
+        },
+        child: ListView(
+          // Keeps pull-to-refresh usable when the list is too short to scroll,
+          // which is exactly the case in the error state.
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: [
+            if (error != null) ...[
+              _ErrorAdvisorCard(message: error),
+              SizedBox(height: 8),
+            ],
+            if (showCurrencies) ...[
+              _BCVAdvisorCard(),
+              SizedBox(height: 16),
+              ...controller.bcvCurrencies.map(
+                (e) => _BCVDollarCard(currency: e),
+              ),
+            ],
+          ],
+        ),
+      );
+    },
   );
 }

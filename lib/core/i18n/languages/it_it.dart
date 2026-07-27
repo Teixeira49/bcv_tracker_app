@@ -44,4 +44,7 @@ const Map<String, String> itIt = {
   'fridayDay': 'Venerdì',
   'saturdayDay': 'Sabato',
   'sundayDay': 'Domenica',
+  'loadingError': 'Impossibile caricare i tassi',
+  'retryAction': 'Riprova',
+  'marketAverage': 'Media',
 };

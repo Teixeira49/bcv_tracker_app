@@ -1,4 +1,6 @@
 import 'package:bcv_tracker_app/core/constants/constants.dart';
+import 'package:bcv_tracker_app/core/constants/market_constants.dart';
+import 'package:bcv_tracker_app/core/helpers/backend_date.dart';
 import 'package:bcv_tracker_app/core/i18n/app_messages.dart';
 import 'package:intl/intl.dart';
 
@@ -60,8 +62,49 @@ class CurrencyHelpers {
     }
   }
 
+  /// Code to show for a rate.
+  ///
+  /// Exchange Monitor identifies its rates with its own codes (`em`, `average`,
+  /// `md`) instead of a currency one, but all of them quote the dollar.
+  static String castCurrencyDisplayCode(String currencyCode) {
+    switch (currencyCode) {
+      case Markets.emOwnCode:
+      case Markets.emAverageCode:
+      case Markets.emMonitorCode:
+        return 'USD';
+      default:
+        return currencyCode;
+    }
+  }
+
+  /// Translated name of a rate, falling back to the name given by the backend.
+  ///
+  /// The backend names rates in Spanish ("Dolar", "Promedio"), so rendering
+  /// them raw left the average tab untranslated in the other nine languages.
+  static String castCurrencyDisplayName(Currency currency) {
+    switch (currency.keyName) {
+      case 'USD':
+        return AppMessages.eeuuDollar;
+      case 'EUR':
+        return AppMessages.europeanEuro;
+      case 'USDT':
+        return 'Tether';
+      case 'USDC':
+        return 'USD Coin';
+      case 'BTC':
+        return 'Bitcoin';
+      case Markets.emAverageCode:
+      case Markets.emMonitorCode:
+        return AppMessages.marketAverage;
+      case Markets.emOwnCode:
+        return Markets.exchangeMonitor;
+      default:
+        return currency.name;
+    }
+  }
+
   static String completeCurrencyExchange(String currencyCode) {
-    return '$currencyCode/VES';
+    return '${castCurrencyDisplayCode(currencyCode)}/VES';
   }
 
   static String castCurrency({required double value}) {
@@ -69,7 +112,7 @@ class CurrencyHelpers {
   }
 
   static String castCurrencySymbolText({required String currencyCode}) {
-    switch (currencyCode) {
+    switch (castCurrencyDisplayCode(currencyCode)) {
       case 'USD':
         return '\$';
       case 'EUR':
@@ -94,7 +137,7 @@ class CurrencyHelpers {
   }
 
   static String castCurrencySymbolIcon({required String currencyCode}) {
-    switch (currencyCode) {
+    switch (castCurrencyDisplayCode(currencyCode)) {
       case 'VES':
         return AppIcons.flagVenezuelaIcon;
       case 'USD':
@@ -118,34 +161,70 @@ class CurrencyHelpers {
     }
   }
 
+  /// Average of the parallel market, in VES per dollar.
+  ///
+  /// Every dollar-equivalent quote counts (see
+  /// [Markets.dollarEquivalentCodes]): the crypto markets quote USDT/USDC and
+  /// Exchange Monitor uses its own codes, so matching `USD` alone left the
+  /// average resting on the few markets that use that exact code. The BCV is
+  /// excluded on purpose: it is the official rate, not a parallel one, and
+  /// averaging it in dragged the figure away from the market.
   static double getAverageValue({
     required List<Currency> currencies,
-    String currencyCode = 'USD',
+    Set<String>? currencyCodes,
+    String excludedPlatform = Markets.bcv,
   }) {
-    if (currencies.isEmpty) {
+    final codes = currencyCodes ?? Markets.dollarEquivalentCodes;
+    final values = currencies
+        .where(
+          (currency) =>
+              currency.platform != excludedPlatform &&
+              codes.contains(currency.keyName),
+        )
+        .map((currency) => currency.value);
+
+    if (values.isEmpty) {
       return 0.0;
     }
-    double sum = 0.0;
-    double count = 0.0;
-    for (var currency in currencies) {
-      if (currency.keyName == currencyCode) {
-        sum += currency.value;
-        count++;
-      }
-    }
-    return sum / count;
+    return values.reduce((a, b) => a + b) / values.length;
   }
 
+  /// Shown instead of a date when there is none to format.
+  static const String emptyDatePlaceholder = '--';
+
+  /// Formats a date **published** by a source, keeping its wall clock.
+  ///
+  /// Meant for the BCV effective date, which names a day for Venezuela rather
+  /// than an instant: converting it to the device zone would move it to the
+  /// previous day for anyone west of Caracas. Returns [emptyDatePlaceholder]
+  /// when the string is empty or unparseable — the date is optional in the
+  /// contract and is also empty while the first refresh is in flight.
   static String parseDate({
     required String date,
     String format = Constants.bcvFormatDate,
     bool addDayName = true,
   }) {
-    final dateTime = DateTime.parse(date);
-    final formattedDate = DateFormat(format).format(dateTime);
+    final dateTime = BackendDate.asPublished(date);
+    if (dateTime == null) {
+      return emptyDatePlaceholder;
+    }
+    return formatDate(date: dateTime, format: format, addDayName: addDayName);
+  }
+
+  /// Formats an instant in the device's local zone.
+  ///
+  /// Rate timestamps reach here already local ([BackendDate.toLocal] converts
+  /// them while parsing); the `toLocal()` is a guard for any other source.
+  static String formatDate({
+    required DateTime date,
+    String format = Constants.defaultFormatDate,
+    bool addDayName = false,
+  }) {
+    final local = date.isUtc ? date.toLocal() : date;
+    final formattedDate = DateFormat(format).format(local);
 
     if (addDayName) {
-      String dayName = getDayName(dayNumber: dateTime.weekday);
+      String dayName = getDayName(dayNumber: local.weekday);
       return '$dayName, $formattedDate';
     }
     return formattedDate;

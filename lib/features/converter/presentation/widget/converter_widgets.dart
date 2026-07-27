@@ -66,7 +66,7 @@ class _CurrencyInputSelectorCard extends StatelessWidget {
         _SelectCurrencyButton(currencyCode: currency.keyName, isInput: isInput),
         Flexible(child: Text(
           currency.keyName != 'VES'
-              ? "${currency.name} - ${currency.platform}"
+              ? "${CurrencyHelpers.castCurrencyDisplayName(currency)} - ${currency.platform}"
               : controller.getRoundedCurrency(),
           style: TextStyle(
             color: ColorValues.textQuaternary(context),

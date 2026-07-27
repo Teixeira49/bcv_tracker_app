@@ -45,4 +45,7 @@ const Map<String, String> jaJp = {
   'fridayDay': '金曜日',
   'saturdayDay': '土曜日',
   'sundayDay': '日曜日',
+  'loadingError': 'レートを読み込めませんでした',
+  'retryAction': '再試行',
+  'marketAverage': '平均',
 };

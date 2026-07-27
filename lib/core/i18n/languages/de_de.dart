@@ -44,4 +44,7 @@ const Map<String, String> deDe = {
   'fridayDay': 'Freitag',
   'saturdayDay': 'Samstag',
   'sundayDay': 'Sonntag',
+  'loadingError': 'Die Kurse konnten nicht geladen werden',
+  'retryAction': 'Wiederholen',
+  'marketAverage': 'Durchschnitt',
 };

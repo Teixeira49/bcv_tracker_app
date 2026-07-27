@@ -25,6 +25,7 @@ class Currency {
     String? platform,
     double? value,
     String? imgUrl,
+    DateTime? createDate,
     DateTime? updateDate,
     double? tendency,
   }) {
@@ -34,6 +35,7 @@ class Currency {
       platform: platform ?? this.platform,
       value: value ?? this.value,
       imgUrl: imgUrl ?? this.imgUrl,
+      createDate: createDate ?? this.createDate,
       updateDate: updateDate ?? this.updateDate,
       tendency: tendency ?? this.tendency,
     );

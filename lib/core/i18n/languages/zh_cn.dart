@@ -44,4 +44,7 @@ const Map<String, String> zhCn = {
   'fridayDay': '星期五',
   'saturdayDay': '星期六',
   'sundayDay': '星期日',
+  'loadingError': '无法加载汇率',
+  'retryAction': '重试',
+  'marketAverage': '平均值',
 };

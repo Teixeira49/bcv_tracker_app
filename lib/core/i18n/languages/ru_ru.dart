@@ -44,4 +44,7 @@ const Map<String, String> ruRu = {
   'fridayDay': 'Пятница',
   'saturdayDay': 'Суббота',
   'sundayDay': 'Воскресенье',
+  'loadingError': 'Не удалось загрузить курсы',
+  'retryAction': 'Повторить',
+  'marketAverage': 'Среднее',
 };

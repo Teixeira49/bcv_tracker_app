@@ -44,4 +44,7 @@ const Map<String, String> frFr = {
   'fridayDay': 'Vendredi',
   'saturdayDay': 'Samedi',
   'sundayDay': 'Dimanche',
+  'loadingError': 'Impossible de charger les taux',
+  'retryAction': 'Réessayer',
+  'marketAverage': 'Moyenne',
 };
