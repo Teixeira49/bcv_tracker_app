@@ -6,13 +6,18 @@ import 'package:bcv_tracker_app/shared/data/datasource/dollar_api/dollar_api_res
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// Returns a canned response (or failure) instead of hitting the network.
+/// Returns a canned response (or failure) instead of hitting the network, and
+/// records the request so the tests can pin the contract that was sent.
 class _FakeHttpManager extends HttpManager {
   _FakeHttpManager({this.statusCode = 200, this.responseBody, this.failure});
 
   final int statusCode;
   final Object? responseBody;
   final DioException? failure;
+
+  String? sentEndpoint;
+  HttpOperation? sentMethod;
+  Map<String, dynamic>? sentBody;
 
   @override
   Future<Response> request({
@@ -22,6 +27,9 @@ class _FakeHttpManager extends HttpManager {
     Map<String, dynamic>? customHeader,
     String? clientCode,
   }) async {
+    sentEndpoint = endpoint;
+    sentMethod = method;
+    sentBody = body;
     if (failure != null) throw failure!;
     return Response(
       requestOptions: RequestOptions(path: endpoint),
@@ -45,6 +53,49 @@ DollarApiRest _api({
 );
 
 void main() {
+  group('the request the backend receives', () {
+    test('is a POST carrying the per-market Body', () async {
+      final client = _FakeHttpManager(
+        responseBody: '{"status":"Success","message":"ok","data":[]}',
+      );
+      await DollarApiRest(
+        apiUrl: 'https://backend.test',
+        client: client,
+      ).getCurrentDollar(
+        Markets.selectionOf({Markets.bcvKey, Markets.binanceKey}),
+      );
+
+      expect(client.sentMethod, HttpOperation.post);
+      expect(client.sentEndpoint, endsWith('/saved-currencies'));
+      // A market absent from the Body is `off`: the request asks for exactly
+      // the two markets selected, in the modes the catalogue declares.
+      expect(client.sentBody, {
+        'markets': {
+          Markets.bcvKey: Markets.modeDbDollar,
+          Markets.binanceKey: Markets.modeAverage,
+        },
+      });
+    });
+
+    test('targets the versioned path of the country controller', () async {
+      final client = _FakeHttpManager(
+        responseBody:
+            '{"status":"Success","message":"ok","data":{"date":null,"currencies":[]}}',
+      );
+      await DollarApiRest(
+        apiUrl: 'https://backend.test',
+        client: client,
+      ).getCurrentBCVDollar();
+
+      expect(
+        client.sentEndpoint,
+        'https://backend.test/api/v1/venezuela/bcv/with-memory',
+      );
+      expect(client.sentMethod, HttpOperation.get);
+      expect(client.sentBody, isNull);
+    });
+  });
+
   group('getCurrentDollar()', () {
     test('maps the data list of the envelope', () async {
       final result = await _api(

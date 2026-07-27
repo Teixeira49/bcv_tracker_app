@@ -3,12 +3,8 @@ import 'package:bcv_tracker_app/core/helpers/currency_helpers.dart';
 import 'package:bcv_tracker_app/shared/domain/entities/currency.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-Currency _rate(String platform, String code, double value) => Currency(
-  name: code,
-  keyName: code,
-  platform: platform,
-  value: value,
-);
+Currency _rate(String platform, String code, double value) =>
+    Currency(name: code, keyName: code, platform: platform, value: value);
 
 void main() {
   group('getAverageValue()', () {
