@@ -12,48 +12,10 @@ class DollarEndpoints {
 
   static const String _apiEndpoints = '/api/$_apiVersion/$_country';
 
-  /// Sources and filters for `saved-currencies`.
-  ///
-  /// `fill_missing` fetches live every market left at `false`, and there is no
-  /// way to leave a market out: one at `true` is read from the database and one
-  /// at `false` is scraped live, but both come back. So this map does not pick
-  /// *which* markets arrive — [Markets.averageTab] does that on the client —
-  /// it picks **where each one comes from**:
-  ///
-  /// - live (`false`) only the three the app shows as fresh rates. Each live
-  ///   source adds latency and is a failure point: the backend gathers them
-  ///   without `return_exceptions`, so one source answering 502 fails the whole
-  ///   request.
-  /// - from the database (`true`) the rest, which is cheap, plus BCV and
-  ///   Exchange Monitor, refreshed by the backend cron six times a day.
-  ///
-  /// Once the per-market Body (#71) is deployed this whole dance is replaced by
-  /// `off` for the markets we do not want and `average` for the crypto ones.
-  static const Map<String, String> _currentDollarParams = {
-    // Live.
-    'yadio': 'false',
-    'binance': 'false',
-    'bybit': 'false',
-    // From the database.
-    'bcv': 'true',
-    'exchange_monitor': 'true',
-    'okx': 'true',
-    'bitget': 'true',
-    'airtm': 'true',
-    'dolarapi': 'true',
-    'fill_missing': 'true',
-    // Only the official dollar out of the BCV, only the dollar out of Yadio
-    // (it also publishes euro and bitcoin) and only the estimated average of
-    // Exchange Monitor ("Monitor Dólar").
-    'enforce_bcv_dollar': 'true',
-    'enforce_yadio_dollar': 'true',
-    'enforce_em_average': 'true',
-  };
-
-  static final String currentDollar = Uri(
-    path: '$_apiEndpoints/saved-currencies',
-    queryParameters: _currentDollarParams,
-  ).toString();
+  /// Rates of the selected markets. **POST since backend v3.0.0**: it takes a
+  /// per-market Body (`MarketSelection`) instead of the old query flags, so the
+  /// request carries no query string — see `MarketSelection.toJson()`.
+  static const String currentDollar = '$_apiEndpoints/saved-currencies';
 
   static const String currentBCVDollar = '$_apiEndpoints/bcv/with-memory';
 }

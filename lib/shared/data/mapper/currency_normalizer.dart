@@ -1,29 +1,38 @@
-import '../../../core/constants/market_constants.dart';
 import '../../domain/entities/currency.dart';
+import '../../domain/entities/market.dart';
 
 /// Turns the raw `saved-currencies` payload into the list the UI can render.
 ///
-/// The endpoint returns every market it knows (nine today) with one row per
-/// P2P side, and its database keeps rates keyed by `(code, platform)` — which
-/// makes repeated rows for the same pair possible. This collapses all of that:
+/// The Body already asks for the requested markets only, so this closes the
+/// gaps the contract leaves open:
 ///
-/// 1. keeps only the markets in [Markets.averageTab];
+/// 1. keeps only the platforms of [MarketSelection], as a guard against a
+///    market answering with a platform that was not requested;
 /// 2. drops repeated `(platform, code, name)` rows, keeping the first one —
-///    the backend orders by descending id, so that is the most recent;
-/// 3. merges the `-buy` / `-sell` sides of a pair into a single averaged rate;
-/// 4. sorts by market, so the order does not depend on database ids.
+///    reads from the database come ordered by descending id, so that is the
+///    most recent;
+/// 3. merges the `-buy` / `-sell` sides of a pair into a single averaged rate,
+///    which is what Airtm returns and what any market in `ambas` would;
+/// 4. sorts by the order of the selection, so it does not depend on the order
+///    the backend concatenates database reads and live fetches in.
 class CurrencyNormalizer {
   const CurrencyNormalizer._();
 
   static const String _buySuffix = '-buy';
   static const String _sellSuffix = '-sell';
 
-  static List<Currency> forAverageTab(List<Currency> currencies) {
+  static List<Currency> forAverageTab(
+    List<Currency> currencies,
+    MarketSelection selection,
+  ) {
+    final platforms = selection.platforms;
+    final order = [for (final market in selection.markets) market.platform];
+
     final allowed = currencies.where(
-      (currency) => Markets.averageTab.contains(currency.platform),
+      (currency) => platforms.contains(currency.platform),
     );
     final merged = _mergeSides(_dedupe(allowed));
-    merged.sort(_byMarketThenCode);
+    merged.sort((a, b) => _byMarketThenCode(a, b, order));
     return merged;
   }
 
@@ -97,10 +106,10 @@ class CurrencyNormalizer {
       .whereType<DateTime>()
       .fold<DateTime?>(null, (a, b) => a == null || b.isAfter(a) ? b : a);
 
-  static int _byMarketThenCode(Currency a, Currency b) {
-    final byMarket = Markets.averageTab
+  static int _byMarketThenCode(Currency a, Currency b, List<String> order) {
+    final byMarket = order
         .indexOf(a.platform)
-        .compareTo(Markets.averageTab.indexOf(b.platform));
+        .compareTo(order.indexOf(b.platform));
     if (byMarket != 0) return byMarket;
     final byCode = a.keyName.compareTo(b.keyName);
     return byCode != 0 ? byCode : a.name.compareTo(b.name);

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:get/get.dart';
+import '../../../core/constants/market_constants.dart';
 import '../../../core/network/api_exception.dart';
 import '../../domain/entities/entities.dart';
 import '../../domain/repositories/dollar_repositories.dart';
@@ -59,11 +60,13 @@ class CurrencyRepository extends GetxService {
   }
 
   Future<void> getAveragedCurrencies() async {
-    final List<Currency> result = await _dollarRepository.getCurrentDollar();
-    // saved-currencies answers with every market the backend knows, one row per
-    // P2P side and, from the database, occasional repeats; see
-    // [CurrencyNormalizer].
-    averageCurrencies.assignAll(CurrencyNormalizer.forAverageTab(result));
+    final MarketSelection selection = Markets.defaultSelection;
+    final List<Currency> result = await _dollarRepository.getCurrentDollar(
+      selection,
+    );
+    averageCurrencies.assignAll(
+      CurrencyNormalizer.forAverageTab(result, selection),
+    );
     hasAverageData.value = true;
   }
 
