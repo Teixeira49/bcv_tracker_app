@@ -59,7 +59,28 @@ void main() {
       expect(result.first.value, 737.8816);
       expect(result.first.tendency, 33.08);
       expect(result.first.imgUrl, 'https://logo.test/bcv.png');
-      expect(result.first.updateDate, isNotNull);
+      // Stored timestamps arrive with no offset and mean UTC; the model hands
+      // them over already converted to the device zone.
+      expect(
+        result.first.updateDate!.toUtc(),
+        DateTime.utc(2026, 7, 23, 3, 46, 17, 336, 191),
+      );
+      expect(result.first.updateDate!.isUtc, isFalse);
+    });
+
+    test('honours the offset of a live rate', () async {
+      final result = await _api(
+        body:
+            '{"status":"Success","message":"ok","data":['
+            '{"code":"USDT","name":"Tether-buy","platform":"Binance","value":860.6,'
+            '"change":0.1,"createDate":"2026-07-26T21:18:42.522524-04:00",'
+            '"updateDate":"2026-07-26T21:18:42.522529-04:00","platform_img":""}]}',
+      ).getCurrentDollar();
+
+      expect(
+        result.first.updateDate!.toUtc(),
+        DateTime.utc(2026, 7, 27, 1, 18, 42, 522, 529),
+      );
     });
 
     test('keeps the backend message on an error status', () async {

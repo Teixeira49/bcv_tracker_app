@@ -1,3 +1,4 @@
+import 'package:bcv_tracker_app/core/helpers/backend_date.dart';
 import 'package:bcv_tracker_app/shared/domain/entities/entities.dart';
 
 class CurrencyModel extends Currency {
@@ -23,14 +24,13 @@ class CurrencyModel extends Currency {
       platform: json['platform'] as String? ?? '',
       value: (json['value'] as num?)?.toDouble() ?? 0.0,
       imgUrl: _parseImgUrl(json['platform_img']),
-      createDate: _parseDate(json['createDate']),
-      updateDate: _parseDate(json['updateDate']),
+      // Normalized to the device zone here, at the boundary, so the rest of the
+      // app never handles a backend timestamp again (see [BackendDate]).
+      createDate: BackendDate.toLocal(json['createDate']),
+      updateDate: BackendDate.toLocal(json['updateDate']),
       tendency: (json['change'] as num?)?.toDouble(),
     );
   }
-
-  static DateTime? _parseDate(Object? value) =>
-      value is String ? DateTime.tryParse(value) : null;
 
   /// The backend sends an empty string for platforms with no logo mapped
   /// (`PLATFORM_IMAGES.get(platform, "")`); the UI expects `null` there to fall
