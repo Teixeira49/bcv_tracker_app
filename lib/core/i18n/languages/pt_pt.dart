@@ -45,4 +45,7 @@ const Map<String, String> ptPt = {
   'fridayDay': 'Sexta-feira',
   'saturdayDay': 'Sábado',
   'sundayDay': 'Domingo',
+  'loadingError': 'Não foi possível carregar as taxas',
+  'retryAction': 'Tentar novamente',
+  'marketAverage': 'Média',
 };

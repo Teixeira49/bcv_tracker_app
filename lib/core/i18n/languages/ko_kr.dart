@@ -42,5 +42,9 @@ const Map<String, String> koKr = {
   'wednesdayDay': '수요일',
   'thursdayDay': '목요일',
   'fridayDay': '금요일',
-  'saturdayDay': '토요일'
+  'saturdayDay': '토요일',
+  'sundayDay': '일요일',
+  'loadingError': '환율을 불러올 수 없습니다',
+  'retryAction': '다시 시도',
+  'marketAverage': '평균',
 };

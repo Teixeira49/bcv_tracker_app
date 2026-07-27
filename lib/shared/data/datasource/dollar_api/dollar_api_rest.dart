@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:bcv_tracker_app/shared/data/datasource/datasource.dart';
+import 'package:dio/dio.dart';
 
+import '../../../../core/network/api_exception.dart';
 import '../../../../core/network/http_manager.dart';
 import '../../model/model.dart';
 
@@ -17,38 +19,84 @@ class DollarApiRest implements IDollarApi {
 
   @override
   Future<BcvCurrenciesModel> getCurrentBCVDollar() async {
-    try {
-      final response = await _client.request(
-        endpoint: _apiUrl + DollarEndpoints.currentBCVDollar,
+    final data = await _getData(DollarEndpoints.currentBCVDollar);
+
+    if (data is! Map<String, dynamic>) {
+      throw const ApiException.malformed(
+        'La respuesta de bcv/with-memory no trae un objeto en "data".',
       );
+    }
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        return BcvCurrenciesModel.fromJson(
-          json.decode(response.data)['data'] as Map<String, dynamic>,
-        );
-      }
-
-      throw Exception(response.statusCode);
+    try {
+      return BcvCurrenciesModel.fromJson(data);
     } catch (e) {
-      rethrow;
+      throw ApiException.malformed(
+        'No se pudo interpretar la respuesta de bcv/with-memory: $e',
+      );
     }
   }
 
   @override
   Future<List<CurrencyModel>> getCurrentDollar() async {
-    try {
-      final response = await _client.request(
-        endpoint: _apiUrl + DollarEndpoints.currentDollar,
+    final data = await _getData(DollarEndpoints.currentDollar);
+
+    if (data is! List) {
+      throw const ApiException.malformed(
+        'La respuesta de saved-currencies no trae una lista en "data".',
       );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final data = json.decode(response.data)['data'] as List;
-        return data.map((e) => CurrencyModel.fromJson(e)).toList();
-      }
-
-      throw Exception(response.statusCode);
-    } catch (e) {
-      rethrow;
     }
+
+    try {
+      return data
+          .whereType<Map<String, dynamic>>()
+          .map(CurrencyModel.fromJson)
+          .toList();
+    } catch (e) {
+      throw ApiException.malformed(
+        'No se pudo interpretar la respuesta de saved-currencies: $e',
+      );
+    }
+  }
+
+  /// Performs the request and returns the `data` field of the backend envelope
+  /// (`{status, message, data}`), translating every failure into an
+  /// [ApiException] that carries the backend message.
+  Future<Object?> _getData(String endpoint) async {
+    final Response response;
+    try {
+      response = await _client.request(endpoint: _apiUrl + endpoint);
+    } on DioException catch (e) {
+      // HttpManager accepts every status code, so Dio only throws when there is
+      // no response at all (connectivity, DNS, timeout).
+      throw ApiException.network(e.message ?? e.type.name);
+    }
+
+    final body = response.data;
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw ApiException.fromResponse(
+        statusCode: response.statusCode,
+        body: body,
+      );
+    }
+
+    if (body is! String || body.isEmpty) {
+      throw const ApiException.malformed('El backend respondió con un cuerpo vacío.');
+    }
+
+    final Object? envelope;
+    try {
+      envelope = json.decode(body);
+    } catch (e) {
+      throw ApiException.malformed('El backend respondió con un cuerpo no JSON: $e');
+    }
+
+    if (envelope is! Map<String, dynamic> || !envelope.containsKey('data')) {
+      throw const ApiException.malformed(
+        'El backend respondió sin el campo "data" del envelope.',
+      );
+    }
+
+    return envelope['data'];
   }
 }

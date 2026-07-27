@@ -89,7 +89,10 @@ class _CurrencyTileButton extends StatelessWidget {
         child: ListTile(
           trailing: _getIcon(context, isActive),
           leading: _CircleCurrencyTypeWidget(currencyCode: currency.keyName),
-          title: Text("${currency.keyName} ${currency.name}"),
+          title: Text(
+            "${CurrencyHelpers.castCurrencyDisplayCode(currency.keyName)} "
+            "${CurrencyHelpers.castCurrencyDisplayName(currency)}",
+          ),
           subtitle: Text(currency.platform),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),

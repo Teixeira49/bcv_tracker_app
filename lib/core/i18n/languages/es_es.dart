@@ -44,4 +44,7 @@ const Map<String, String> esEs = {
   'fridayDay': 'Viernes',
   'saturdayDay': 'Sábado',
   'sundayDay': 'Domingo',
+  'loadingError': 'No se pudieron cargar las tasas',
+  'retryAction': 'Reintentar',
+  'marketAverage': 'Promedio',
 };

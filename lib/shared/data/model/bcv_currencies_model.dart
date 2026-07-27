@@ -4,12 +4,20 @@ import 'currency_model.dart';
 class BcvCurrenciesModel extends BcvCurrencies {
   BcvCurrenciesModel({required super.date, required super.currencies});
 
+  /// Maps a `BcvResponseData` of the backend: `date` is optional and
+  /// `currencies` may be absent if the source degraded.
   factory BcvCurrenciesModel.fromJson(Map<String, dynamic> json) {
-    final date = json['date'];
-    final currencies = (json['currencies'] as List)
-        .map((e) => CurrencyModel.fromJson(e))
-        .toList();
-    return BcvCurrenciesModel(date: date, currencies: currencies);
+    final rawCurrencies = json['currencies'];
+    final currencies = rawCurrencies is List
+        ? rawCurrencies
+              .whereType<Map<String, dynamic>>()
+              .map(CurrencyModel.fromJson)
+              .toList()
+        : <CurrencyModel>[];
+    return BcvCurrenciesModel(
+      date: json['date'] as String?,
+      currencies: currencies,
+    );
   }
 
   BcvCurrencies toEntity() {
