@@ -77,10 +77,8 @@ class _DollarCurrencyCard extends StatelessWidget {
                   Text(AppMessages.lastUpdate),
                   Text(
                     currency.updateDate != null
-                        ? CurrencyHelpers.parseDate(
-                            date: currency.updateDate!.toIso8601String(),
-                            format: Constants.defaultFormatDate,
-                            addDayName: false,
+                        ? CurrencyHelpers.formatDate(
+                            date: currency.updateDate!,
                           )
                         : CurrencyHelpers.emptyDatePlaceholder,
                   ),

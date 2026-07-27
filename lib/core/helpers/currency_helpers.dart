@@ -1,5 +1,6 @@
 import 'package:bcv_tracker_app/core/constants/constants.dart';
 import 'package:bcv_tracker_app/core/constants/market_constants.dart';
+import 'package:bcv_tracker_app/core/helpers/backend_date.dart';
 import 'package:bcv_tracker_app/core/i18n/app_messages.dart';
 import 'package:intl/intl.dart';
 
@@ -191,24 +192,39 @@ class CurrencyHelpers {
   /// Shown instead of a date when there is none to format.
   static const String emptyDatePlaceholder = '--';
 
-  /// Formats an ISO-8601 date, returning [emptyDatePlaceholder] when the string
-  /// is empty or unparseable.
+  /// Formats a date **published** by a source, keeping its wall clock.
   ///
-  /// The BCV date is optional in the backend contract and is also empty while
-  /// the first refresh is in flight, so this must not throw.
+  /// Meant for the BCV effective date, which names a day for Venezuela rather
+  /// than an instant: converting it to the device zone would move it to the
+  /// previous day for anyone west of Caracas. Returns [emptyDatePlaceholder]
+  /// when the string is empty or unparseable — the date is optional in the
+  /// contract and is also empty while the first refresh is in flight.
   static String parseDate({
     required String date,
     String format = Constants.bcvFormatDate,
     bool addDayName = true,
   }) {
-    final dateTime = DateTime.tryParse(date);
+    final dateTime = BackendDate.asPublished(date);
     if (dateTime == null) {
       return emptyDatePlaceholder;
     }
-    final formattedDate = DateFormat(format).format(dateTime);
+    return formatDate(date: dateTime, format: format, addDayName: addDayName);
+  }
+
+  /// Formats an instant in the device's local zone.
+  ///
+  /// Rate timestamps reach here already local ([BackendDate.toLocal] converts
+  /// them while parsing); the `toLocal()` is a guard for any other source.
+  static String formatDate({
+    required DateTime date,
+    String format = Constants.defaultFormatDate,
+    bool addDayName = false,
+  }) {
+    final local = date.isUtc ? date.toLocal() : date;
+    final formattedDate = DateFormat(format).format(local);
 
     if (addDayName) {
-      String dayName = getDayName(dayNumber: dateTime.weekday);
+      String dayName = getDayName(dayNumber: local.weekday);
       return '$dayName, $formattedDate';
     }
     return formattedDate;

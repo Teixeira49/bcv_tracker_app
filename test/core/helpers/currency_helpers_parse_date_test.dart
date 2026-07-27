@@ -1,5 +1,7 @@
+import 'package:bcv_tracker_app/core/constants/constants.dart';
 import 'package:bcv_tracker_app/core/helpers/currency_helpers.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   group('parseDate()', () {
@@ -19,13 +21,36 @@ void main() {
       );
     });
 
-    test('formats a valid ISO-8601 date', () {
-      final formatted = CurrencyHelpers.parseDate(
-        date: '2026-07-23T00:00:00-04:00',
-        addDayName: false,
+    test('keeps the day the BCV published, in any device zone', () {
+      // Converting this to the device zone would show 2026-07-22 to anyone
+      // west of Caracas: it names a day for Venezuela, not an instant.
+      expect(
+        CurrencyHelpers.parseDate(
+          date: '2026-07-23T00:00:00-04:00',
+          addDayName: false,
+        ),
+        '2026-07-23',
       );
-      expect(formatted, isNot(CurrencyHelpers.emptyDatePlaceholder));
-      expect(formatted, contains('2026'));
+    });
+  });
+
+  group('formatDate()', () {
+    test('prints an instant in the device zone', () {
+      final instant = DateTime.utc(2026, 7, 27, 0, 0, 53).toLocal();
+
+      expect(
+        CurrencyHelpers.formatDate(date: instant),
+        DateFormat(Constants.defaultFormatDate).format(instant),
+      );
+    });
+
+    test('converts a UTC instant instead of printing its UTC clock', () {
+      final utc = DateTime.utc(2026, 7, 27, 0, 0, 53);
+
+      expect(
+        CurrencyHelpers.formatDate(date: utc),
+        DateFormat(Constants.defaultFormatDate).format(utc.toLocal()),
+      );
     });
   });
 }
