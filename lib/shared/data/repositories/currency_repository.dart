@@ -1,12 +1,23 @@
 import 'dart:developer';
 
 import 'package:get/get.dart';
+import '../../../core/constants/market_constants.dart';
 import '../../../core/network/api_exception.dart';
 import '../../domain/entities/entities.dart';
 import '../../domain/repositories/dollar_repositories.dart';
 import '../mapper/currency_normalizer.dart';
 
 class CurrencyRepository extends GetxService {
+  /// [selection] resolves which markets to ask for on every refresh. The
+  /// binding wires it to the user's choice; without it the catalogue default
+  /// is used, which keeps the service usable on its own.
+  CurrencyRepository({MarketSelection Function()? selection})
+    : _selection = selection ?? _defaultSelection;
+
+  static MarketSelection _defaultSelection() => Markets.defaultSelection;
+
+  final MarketSelection Function() _selection;
+
   final IDollarRepository _dollarRepository = Get.find<IDollarRepository>();
 
   final RxList<Currency> averageCurrencies = List.generate(
@@ -59,11 +70,24 @@ class CurrencyRepository extends GetxService {
   }
 
   Future<void> getAveragedCurrencies() async {
-    final List<Currency> result = await _dollarRepository.getCurrentDollar();
-    // saved-currencies answers with every market the backend knows, one row per
-    // P2P side and, from the database, occasional repeats; see
-    // [CurrencyNormalizer].
-    averageCurrencies.assignAll(CurrencyNormalizer.forAverageTab(result));
+    final MarketSelection selection = _selection();
+    final List<Currency> result = await _dollarRepository.getCurrentDollar(
+      selection,
+    );
+
+    if (result.isEmpty && !selection.isEmpty) {
+      // A Body the backend cannot read answers 200 with an empty list instead
+      // of failing, so an empty answer to a non-empty selection is worth a line
+      // in the log: from the UI it is indistinguishable from "no rates".
+      log(
+        'saved-currencies devolvió una lista vacía para ${selection.toJson()}',
+        name: "CurrencyRepository.getAveragedCurrencies()",
+      );
+    }
+
+    averageCurrencies.assignAll(
+      CurrencyNormalizer.forAverageTab(result, selection),
+    );
     hasAverageData.value = true;
   }
 

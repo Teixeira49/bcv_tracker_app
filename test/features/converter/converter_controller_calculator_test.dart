@@ -3,6 +3,7 @@ import 'package:bcv_tracker_app/features/converter/presentation/controller/conve
 import 'package:bcv_tracker_app/shared/data/repositories/currency_repository.dart';
 import 'package:bcv_tracker_app/shared/domain/entities/bcv_currencies.dart';
 import 'package:bcv_tracker_app/shared/domain/entities/currency.dart';
+import 'package:bcv_tracker_app/shared/domain/entities/market.dart';
 import 'package:bcv_tracker_app/shared/domain/repositories/dollar_repositories.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
@@ -13,7 +14,8 @@ class _FakeDollarRepository implements IDollarRepository {
       BcvCurrencies(date: '2024-01-01', currencies: []);
 
   @override
-  Future<List<Currency>> getCurrentDollar() async => [];
+  Future<List<Currency>> getCurrentDollar(MarketSelection selection) async =>
+      [];
 }
 
 void main() {
@@ -48,10 +50,14 @@ void main() {
     double fromConverted = 1.0,
     double toConverted = 36.5,
   }) {
-    controller.fromCurrency =
-        ConvertibleCurrency(currency: from, convertedValue: fromConverted);
-    controller.toCurrency =
-        ConvertibleCurrency(currency: to, convertedValue: toConverted);
+    controller.fromCurrency = ConvertibleCurrency(
+      currency: from,
+      convertedValue: fromConverted,
+    );
+    controller.toCurrency = ConvertibleCurrency(
+      currency: to,
+      convertedValue: toConverted,
+    );
   }
 
   group('calculator()', () {

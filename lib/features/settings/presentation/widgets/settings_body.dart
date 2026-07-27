@@ -13,6 +13,8 @@ class _SettingsBody extends StatelessWidget {
       children: [
         _SettingsSectionTitle(title: AppMessages.defaultMarket),
         const _MarketSelector(),
+        _SettingsSectionTitle(title: AppMessages.followedMarkets),
+        const _FollowedMarketsSelector(),
         _SettingsSectionTitle(title: AppMessages.language),
         const _LanguageSelector(),
         _SettingsSectionTitle(title: AppMessages.theme),
@@ -21,4 +23,3 @@ class _SettingsBody extends StatelessWidget {
     );
   }
 }
-

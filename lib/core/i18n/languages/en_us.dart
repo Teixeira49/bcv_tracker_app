@@ -47,4 +47,5 @@ const Map<String, String> enUs = {
   'loadingError': 'Rates could not be loaded',
   'retryAction': 'Retry',
   'marketAverage': 'Average',
+  'followedMarkets': 'Followed markets',
 };

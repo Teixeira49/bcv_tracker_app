@@ -1,4 +1,3 @@
-
 const Map<String, String> jaJp = {
   "homeView": "ホーム",
   "converterView": "コンバーター",
@@ -48,4 +47,5 @@ const Map<String, String> jaJp = {
   'loadingError': 'レートを読み込めませんでした',
   'retryAction': '再試行',
   'marketAverage': '平均',
+  'followedMarkets': '追跡する市場',
 };

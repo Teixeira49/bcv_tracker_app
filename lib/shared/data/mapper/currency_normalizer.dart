@@ -1,30 +1,72 @@
 import '../../../core/constants/market_constants.dart';
 import '../../domain/entities/currency.dart';
+import '../../domain/entities/market.dart';
 
 /// Turns the raw `saved-currencies` payload into the list the UI can render.
 ///
-/// The endpoint returns every market it knows (nine today) with one row per
-/// P2P side, and its database keeps rates keyed by `(code, platform)` — which
-/// makes repeated rows for the same pair possible. This collapses all of that:
+/// The Body already asks for the requested markets only, so this closes the
+/// gaps the contract leaves open:
 ///
-/// 1. keeps only the markets in [Markets.averageTab];
-/// 2. drops repeated `(platform, code, name)` rows, keeping the first one —
-///    the backend orders by descending id, so that is the most recent;
-/// 3. merges the `-buy` / `-sell` sides of a pair into a single averaged rate;
-/// 4. sorts by market, so the order does not depend on database ids.
+/// 1. keeps only the platforms of [MarketSelection], as a guard against a
+///    market answering with a platform that was not requested;
+/// 2. keeps a single Exchange Monitor rate — the one filter the Body cannot
+///    express, see [_withoutRedundantExchangeMonitor];
+/// 3. drops repeated `(platform, code, name)` rows, keeping the first one —
+///    reads from the database come ordered by descending id, so that is the
+///    most recent;
+/// 4. merges the `-buy` / `-sell` sides of a pair into a single averaged rate,
+///    which is what Airtm returns and what any market in `ambas` would;
+/// 5. sorts by the order of the selection, so it does not depend on the order
+///    the backend concatenates database reads and live fetches in.
+///
+/// Steps 3 and 4 are guards for most markets: with the modes the catalogue
+/// uses, the backend already returns the latest row per `(code, platform)` and
+/// crypto arrives averaged. They still do real work for Airtm, and they cover
+/// any market switched to `ambas` or `bd-todas`.
 class CurrencyNormalizer {
   const CurrencyNormalizer._();
 
   static const String _buySuffix = '-buy';
   static const String _sellSuffix = '-sell';
 
-  static List<Currency> forAverageTab(List<Currency> currencies) {
+  static List<Currency> forAverageTab(
+    List<Currency> currencies,
+    MarketSelection selection,
+  ) {
+    final platforms = selection.platforms;
+    final order = [for (final market in selection.markets) market.platform];
+
     final allowed = currencies.where(
-      (currency) => Markets.averageTab.contains(currency.platform),
+      (currency) => platforms.contains(currency.platform),
     );
-    final merged = _mergeSides(_dedupe(allowed));
-    merged.sort(_byMarketThenCode);
+    final merged = _mergeSides(
+      _dedupe(_withoutRedundantExchangeMonitor(allowed)),
+    );
+    merged.sort((a, b) => _byMarketThenCode(a, b, order));
     return merged;
+  }
+
+  /// Keeps only the estimated average of Exchange Monitor, when it is there.
+  ///
+  /// No mode returns just that rate: `own+monitor` and `bd-todas` bring its own
+  /// value (`em`) alongside the average (`average`), and the old contract
+  /// trimmed it server side with `enforce_em_average`. The other rows are only
+  /// dropped if the average is present, so a market asked in `own` still shows.
+  static Iterable<Currency> _withoutRedundantExchangeMonitor(
+    Iterable<Currency> currencies,
+  ) {
+    final hasAverage = currencies.any(
+      (currency) =>
+          currency.platform == Markets.exchangeMonitor &&
+          currency.keyName == Markets.emAverageCode,
+    );
+    if (!hasAverage) return currencies;
+
+    return currencies.where(
+      (currency) =>
+          currency.platform != Markets.exchangeMonitor ||
+          currency.keyName == Markets.emAverageCode,
+    );
   }
 
   /// Removes exact repeats of `(platform, code, name)`, keeping the first.
@@ -97,10 +139,10 @@ class CurrencyNormalizer {
       .whereType<DateTime>()
       .fold<DateTime?>(null, (a, b) => a == null || b.isAfter(a) ? b : a);
 
-  static int _byMarketThenCode(Currency a, Currency b) {
-    final byMarket = Markets.averageTab
+  static int _byMarketThenCode(Currency a, Currency b, List<String> order) {
+    final byMarket = order
         .indexOf(a.platform)
-        .compareTo(Markets.averageTab.indexOf(b.platform));
+        .compareTo(order.indexOf(b.platform));
     if (byMarket != 0) return byMarket;
     final byCode = a.keyName.compareTo(b.keyName);
     return byCode != 0 ? byCode : a.name.compareTo(b.name);

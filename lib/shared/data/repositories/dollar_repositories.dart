@@ -19,9 +19,9 @@ class DollarRepository implements IDollarRepository {
   }
 
   @override
-  Future<List<Currency>> getCurrentDollar() async {
+  Future<List<Currency>> getCurrentDollar(MarketSelection selection) async {
     try {
-      final data = await _dollarApi.getCurrentDollar();
+      final data = await _dollarApi.getCurrentDollar(selection);
       return data.map((e) => e.toEntity()).toList();
     } catch (e) {
       rethrow;

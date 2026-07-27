@@ -47,4 +47,5 @@ const Map<String, String> deDe = {
   'loadingError': 'Die Kurse konnten nicht geladen werden',
   'retryAction': 'Wiederholen',
   'marketAverage': 'Durchschnitt',
+  'followedMarkets': 'Verfolgte Märkte',
 };

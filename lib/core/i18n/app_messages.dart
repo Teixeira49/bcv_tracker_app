@@ -91,6 +91,8 @@ class AppMessages {
 
   static String get sundayDay => 'sundayDay'.tr;
 
+  static String get followedMarkets => 'followedMarkets'.tr;
+
   static String get marketAverage => 'marketAverage'.tr;
 
   static String get loadingError => 'loadingError'.tr;

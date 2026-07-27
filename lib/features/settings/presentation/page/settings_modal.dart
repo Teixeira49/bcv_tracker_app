@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../config/theme/colors/colors_values.dart';
+import '../../../../core/constants/market_constants.dart';
 import '../../../../core/i18n/app_messages.dart';
 import '../../../../shared/domain/entities/language.dart';
+import '../../../../shared/domain/entities/market.dart';
 import '../../../../shared/presentation/controller/settings_controller.dart';
 import '../../../../shared/presentation/widgets/base_modal.dart';
 
