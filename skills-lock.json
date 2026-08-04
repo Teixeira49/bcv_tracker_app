@@ -25,6 +25,15 @@
       "skillPath": "skills/design-polish/SKILL.md",
       "computedHash": "384b9f8eacea72a1f115ac32d182f4a61a9bf6fc3a7de82411bdd3fd5958ceb3",
       "localModifications": "notas de alcance: solo Android, coste, y obligación de AppMessages/AppColors/WidthValues (DTA-001)"
+    },
+    "effective-dart": {
+      "source": "Poorgramer-Zack/dart-expert-skills",
+      "sourceType": "github",
+      "license": null,
+      "licenseNote": "el repositorio de origen no declara licencia; ver .agents/ATTRIBUTION.md",
+      "skillPath": "skills/effective-dart/SKILL.md",
+      "sourceCommit": "01677fbf2e3797ac1fa743e569701f9d7915f664",
+      "computedHash": "0102b0f9ca31a4c91d10f9488e92b403d13b516363f10fe5f90553e8815ff8dc"
     }
   }
 }
