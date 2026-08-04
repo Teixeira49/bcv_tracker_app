@@ -52,7 +52,9 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Variables de entorno: se ignoran todas salvo la plantilla pública
 .env
+!.env.example
 
 # Tooling agéntico (rules / skills)
 # SÍ se versiona: .agents/, .claude/pr-config.json y skills-lock.json
