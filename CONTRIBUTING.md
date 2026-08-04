@@ -157,7 +157,7 @@ Este repositorio versiona un conjunto de **convenciones y capacidades para asist
 └── skills/   # Capacidades instalables (guías de Flutter/Dart)
 ```
 
-- **`rules/`** — las 13 convenciones listadas arriba, en el flujo `issue → rama → commits → PR → release` más las reglas técnicas de la app.
+- **`rules/`** — las 15 convenciones listadas arriba, en el flujo `issue → rama → commits → PR → release` más las reglas técnicas de la app.
 - **`skills/`** — 21 skills de cuatro orígenes: 15 de [`dart-expert-skills`](https://github.com/Poorgramer-Zack/dart-expert-skills) (de 37, revisadas una por una contra el código), 5 traídas para cubrir navegación y UI ([`ngxtm/devkit`](https://github.com/ngxtm/devkit), [`dhruvanbhalara/skills`](https://github.com/dhruvanbhalara/skills), [`ChunkyTofuStudios/flutter-skills`](https://github.com/ChunkyTofuStudios/flutter-skills), todas MIT) y **`getx-architecture`, escrita en este repo** porque ningún catálogo externo cubre GetX. Procedencia y licencia en [`.agents/ATTRIBUTION.md`](.agents/ATTRIBUTION.md) y en `skills-lock.json`.
 - **`.claude/pr-config.json`** — config compartida que leen las reglas: `branchProjectCode: "DTA"`, `baseBranch: "development"`, `productionBranch: "master"`, `triggerMode: "ask"`, `assignSelf` y el mapa `labelsByType`.
 

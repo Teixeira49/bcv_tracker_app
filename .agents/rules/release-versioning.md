@@ -68,10 +68,13 @@ Procedimiento:
    grep '^version:' pubspec.yaml                # versión declarada en el código
    ```
    Ambas deben coincidir en la parte SemVer; si no, avisa antes de continuar.
-2. Calcula la versión siguiente según la tabla (usa el cambio de mayor peso si el PR mezcla varios tipos).
-3. **Confirma con el usuario** el número propuesto **siempre**, antes de crear archivos o el release:
+2. Calcula la versión siguiente según la tabla (usa el cambio de mayor peso si el PR mezcla varios tipos). Ese es el número **mecánico**.
+3. **Contrástalo con el valor entregado** siguiendo [`version-value-proposal.md`](version-value-proposal.md). El tipo de commit describe cómo se escribió el código, no lo que recibe el usuario: un `feat` tras un flag apagado no entrega nada, y varios `fix` que juntos habilitan un uso nuevo sí. Si te apartas del número mecánico, el motivo va en la propuesta.
+4. **Confirma con el usuario** el número propuesto **siempre**, antes de crear archivos o el release:
    ```
-   💡 Versión propuesta: vX.Y.Z (desde vA.B.C, por <feat|fix|breaking> del PR #N)
+   💡 Versión propuesta: vX.Y.Z (mecánica: vA.B.C)
+      Valor: <la frase de usuario>
+      <por qué se ajustó, si se ajustó>
    ```
    Si el usuario indica otro número, úsalo. La confirmación de la versión es un gate obligatorio incluso en `triggerMode: auto`; lo que `auto` automatiza es la publicación del release, no la elección de la versión.
 
@@ -144,6 +147,8 @@ El `CHANGELOG.md` sigue el formato **[Keep a Changelog](https://keepachangelog.c
   - <lo que se eliminó>
   ```
 - Usa la fecha de merge del PR (`AAAA-MM-DD`). Incluye solo las subsecciones (`Added`, `Changed`, `Fixed`, `Removed`, `Deprecated`, `Security`) que apliquen; omite las vacías.
+
+> El CHANGELOG es técnico y para desarrolladores. Las notas que **ve el usuario** en TestFlight, las tiendas y Firebase son un tercer documento, `release_notes.json`, con otra voz y otros límites de longitud: ver [`release-notes.md`](release-notes.md). Los tres salen del mismo PR y no pueden contradecirse.
 - Al final del archivo, mantén los enlaces de comparación por versión cuando sea posible:
   ```markdown
   [X.Y.Z]: https://github.com/Teixeira49/bcv_tracker_app/compare/vA.B.C...vX.Y.Z

@@ -25,6 +25,8 @@ Reglas que el asistente debe respetar. Cada archivo lleva un `description` en el
 | [`commit-convention.md`](rules/commit-convention.md) | Conventional Commits + gitmoji (estilo extensión *vivaxy*) |
 | [`pull-request.md`](rules/pull-request.md) | Flujo, título, plantilla y disparo de las PR (lee `.claude/pr-config.json`) |
 | [`release-versioning.md`](rules/release-versioning.md) | SemVer, bump de `pubspec.yaml`, GitHub Releases y `CHANGELOG.md` |
+| [`version-value-proposal.md`](rules/version-value-proposal.md) | Contrasta el número mecánico de SemVer con el valor real entregado al usuario antes de proponerlo |
+| [`release-notes.md`](rules/release-notes.md) | `release_notes.json` para Codemagic: formato, locales, límites de las tiendas, y cómo se reparte la historia con el CHANGELOG |
 
 ### Reglas técnicas de la app (Flutter / Dart / GetX)
 
