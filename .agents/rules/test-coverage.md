@@ -1,5 +1,10 @@
 ---
 description: Obliga a que toda implementación futura (una fuente/mercado nuevo, un endpoint consumido, un controlador o un helper de cálculo) incluya sus propios tests en el MISMO PR, para que la cobertura no se degrade respecto a la suite existente. Aplica cada vez que se toque la capa de datos, un controller de GetX o la lógica de cálculo.
+paths:
+  - "test/**"
+  - "lib/shared/data/**"
+  - "lib/**/controller/**"
+  - "lib/core/helpers/**"
 ---
 
 # Cobertura de Tests Obligatoria

@@ -1,5 +1,10 @@
 ---
 description: Al agregar, renombrar o eliminar una variable de entorno leída por Environment, obliga a sincronizar .env.example, el README y la configuración de CI (codemagic.yaml) en el MISMO cambio. Aplica cada vez que un feature/fix toque la configuración por entorno (URLs de backend, claves, flags).
+paths:
+  - "lib/config/enviroment/**"
+  - ".env.example"
+  - "codemagic.yaml"
+  - "README.md"
 ---
 
 # Variables de Entorno

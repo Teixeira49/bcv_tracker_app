@@ -12,9 +12,11 @@ BCV Tracker is a Flutter mobile app that displays real-time Venezuelan Central B
 
 This file is the **map** of the codebase; `.agents/rules/` holds the **binding conventions**. When they disagree, the rules win — and the contradiction gets fixed in the same PR.
 
-**The rules are not auto-loaded.** Open the one that matches what you are about to do — the table below says which. The skills *are* loaded, through `.claude/skills/` (see below), but a skill is reference material and a rule is binding.
+`.agents/` is the single source. `.claude/rules/` and `.claude/skills/` are symlinks into it, so Claude Code discovers both natively and no file exists twice. **How each loads differs, and it matters:** four rules are always in context, twelve load only when you touch the files they govern, and skills load on demand from their description. If you are about to do something a path-scoped rule covers and it has not loaded, open it.
 
-Workflow rules (shared verbatim with the backend, same `type → gitmoji → label` mapping):
+### Always in context — the git and GitHub procedures
+
+No file edit can trigger these, so they are unconditional. Shared verbatim with the backend, same `type → gitmoji → label` mapping.
 
 | Rule | Applies when |
 |---|---|
@@ -22,23 +24,23 @@ Workflow rules (shared verbatim with the backend, same `type → gitmoji → lab
 | `.agents/rules/branch-naming.md` | Creating a branch (`<type>/DTA-<n>`, linked to its issue) |
 | `.agents/rules/commit-convention.md` | Every commit (Conventional Commits + gitmoji) |
 | `.agents/rules/pull-request.md` | Preparing or opening a PR (reads `.claude/pr-config.json`) |
-| `.agents/rules/release-versioning.md` | Cutting a release (SemVer, `pubspec.yaml` bump, CHANGELOG) |
-| `.agents/rules/version-value-proposal.md` | Choosing the version number — check the mechanical bump against delivered value |
-| `.agents/rules/version-sources.md` | Bumping the version — `pubspec.yaml` is the only file you edit |
-| `.agents/rules/release-notes.md` | Writing `release_notes.json` for Codemagic (store locales, length limits) |
 
-App rules — each section below points to the rule that governs it:
+### Path-scoped — load when you touch what they govern
 
-| Rule | Applies when |
+| Rule | Triggered by |
 |---|---|
-| `.agents/rules/entities-vs-models.md` | Touching `shared/data/model/` or a domain entity |
-| `.agents/rules/dependency-injection.md` | Adding a controller, repository, datasource or service |
-| `.agents/rules/navigation-convention.md` | Adding a screen or navigating between views |
-| `.agents/rules/i18n-convention.md` | Adding or changing any user-visible text |
-| `.agents/rules/constants-centralization.md` | Introducing a reusable literal |
-| `.agents/rules/environment-variables.md` | Adding, renaming or removing an env var |
-| `.agents/rules/test-coverage.md` | Touching data, controllers or calculation helpers |
-| `.agents/rules/documentation-convention.md` | Adding or changing public API |
+| `.agents/rules/entities-vs-models.md` | `shared/data/model/`, `shared/data/datasource/`, any `domain/entities/` |
+| `.agents/rules/dependency-injection.md` | `config/bindings/`, any `controller/`, `shared/data/repositories/`, `main.dart` |
+| `.agents/rules/navigation-convention.md` | `config/routes/`, any `page/` or `widget(s)/`, `navigation/` |
+| `.agents/rules/i18n-convention.md` | `core/i18n/`, any `page/` or `widget(s)/` |
+| `.agents/rules/constants-centralization.md` | `core/constants/`, `config/theme/`, any `page/` or `widget(s)/` |
+| `.agents/rules/environment-variables.md` | `config/enviroment/`, `.env.example`, `codemagic.yaml`, `README.md` |
+| `.agents/rules/test-coverage.md` | `test/`, `shared/data/`, any `controller/`, `core/helpers/` |
+| `.agents/rules/documentation-convention.md` | any `.dart` under `lib/` |
+| `.agents/rules/version-sources.md` | `pubspec.yaml`, `android/`, `ios/`, `codemagic.yaml` |
+| `.agents/rules/release-versioning.md` | `pubspec.yaml`, `CHANGELOG.md`, `docs/release/` |
+| `.agents/rules/version-value-proposal.md` | `pubspec.yaml`, `CHANGELOG.md`, `docs/release/` |
+| `.agents/rules/release-notes.md` | `release_notes.json`, `CHANGELOG.md`, `docs/release/` |
 
 `.agents/skills/` holds 24 skills from six sources, surfaced to Claude Code through per-skill symlinks in `.claude/skills/` — one source of truth, no copies. Start with **`getx-architecture`** (written for this repo) for anything reactive or structural, and **`getx-navigation`** for routing — no external catalogue covers GetX properly. For UI work: `frontend-design` (aesthetic direction), `flutter-ui` (design tokens), `flutter-fix-layout-issues` (constraints and overflow), `design-polish` (deliberate design passes on a device). Need a capability that is missing? `find-skills` looks for one — but read its note first: installing here does not end with `npx skills add`. The rest is reference material, not policy; four still carry examples in packages this app does not use, flagged as pending adaptation in `.agents/README.md`. Provenance and licences are in `.agents/ATTRIBUTION.md`. **Rules override skills.**
 
@@ -104,7 +106,7 @@ Entities live in `shared/domain/entities/` and `features/*/domain/entities/`. JS
 
 ## Internationalization
 
-10 languages via GetX `Translations`. Language maps in `lib/core/i18n/languages/` (49 keys, all ten in parity). Use `AppMessages.<key>` for all UI text — never a raw string, and never `'<key>'.tr` in a widget: `app_messages.dart` is the only file that calls `.tr`. A new key goes into all ten files in the same commit, or GetX renders the raw key on screen for the other nine.
+10 languages via GetX `Translations`. Language maps in `lib/core/i18n/languages/` (48 keys, all ten in parity, and `AppMessages` exposes exactly those 48). Use `AppMessages.<key>` for all UI text — never a raw string, and never `'<key>'.tr` in a widget: `app_messages.dart` is the only file that calls `.tr`. A new key goes into all ten files in the same commit, or GetX renders the raw key on screen for the other nine.
 
 ## Routing
 

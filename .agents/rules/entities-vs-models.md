@@ -1,5 +1,10 @@
 ---
 description: Prohíbe usar los modelos de la capa de datos (shared/data/model/) en la UI o en los controladores; obliga a convertirlos a entidades de dominio con .toEntity() en la frontera. Aplica cada vez que se deserialice una respuesta del backend o se añada un campo a una entidad.
+paths:
+  - "lib/shared/data/model/**"
+  - "lib/shared/data/datasource/**"
+  - "lib/shared/domain/entities/**"
+  - "lib/features/*/domain/entities/**"
 ---
 
 # Entidades vs. Modelos

@@ -1,5 +1,10 @@
 ---
 description: Obliga a registrar toda dependencia de GetX (controladores, repositorios, datasources, servicios) en lib/config/bindings/initial_bindings.dart y a resolverlas con Get.find(); prohíbe instanciar controladores o repositorios a mano dentro de widgets. Aplica cada vez que se cree un controlador, repositorio o servicio nuevo.
+paths:
+  - "lib/config/bindings/**"
+  - "lib/**/controller/**"
+  - "lib/shared/data/repositories/**"
+  - "lib/main.dart"
 ---
 
 # Inyección de Dependencias (GetX)

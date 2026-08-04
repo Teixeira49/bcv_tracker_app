@@ -1,5 +1,10 @@
 ---
 description: Formato y contenido de las notas de versión que consume Codemagic (release_notes.json), y cómo se derivan del mismo material que el CHANGELOG sin duplicarlo. Aplica cada vez que se prepara una versión para distribuir a testers o a las tiendas.
+paths:
+  - "release_notes.json"
+  - "release_notes*.txt"
+  - "CHANGELOG.md"
+  - "docs/release/**"
 ---
 
 # Notas de Versión

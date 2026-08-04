@@ -1,5 +1,10 @@
 ---
 description: Obliga a navegar con rutas nombradas de GetX (Get.toNamed / Get.offAllNamed) declaradas en lib/config/routes/, y prohíbe usar Navigator de Flutter o pasar widgets directamente. Aplica cada vez que se agregue una pantalla o se navegue entre vistas.
+paths:
+  - "lib/config/routes/**"
+  - "lib/**/page/**"
+  - "lib/**/{widget,widgets}/**"
+  - "lib/navigation/**"
 ---
 
 # Navegación

@@ -158,6 +158,7 @@ Este repositorio versiona un conjunto de **convenciones y capacidades para asist
 
 .claude/
 ├── pr-config.json     # Config compartida que leen las reglas
+├── rules/             # 16 symlinks → ../../.agents/rules/<nombre>.md
 └── skills/            # 24 symlinks → ../../.agents/skills/<nombre>
 ```
 
@@ -167,7 +168,7 @@ Las skills viven **solo** en `.agents/skills/`; `.claude/skills/` son 24 symlink
 ln -s ../../.agents/skills/<nombre> .claude/skills/<nombre>
 ```
 
-Las reglas **no** se enlazan: `.claude/rules/` se carga en cada sesión y 16 reglas saturarían el contexto. Se consultan desde `CLAUDE.md` / `AGENTS.md`.
+Las reglas se enlazan igual, pero con frontmatter `paths:` para no saturar el contexto: `.claude/rules/` se carga en cada sesión, así que solo las 4 de git y GitHub (`issue-convention`, `branch-naming`, `commit-convention`, `pull-request`) quedan sin `paths:` y siempre presentes; las otras 12 se cargan únicamente al tocar los archivos que gobiernan.
 
 - **`rules/`** — las 16 convenciones listadas arriba, en el flujo `issue → rama → commits → PR → release` más las reglas técnicas de la app.
 - **`skills/`** — 24 skills de seis orígenes: 15 de [`dart-expert-skills`](https://github.com/Poorgramer-Zack/dart-expert-skills) (de 37, revisadas una por una contra el código), 5 traídas para cubrir navegación y UI ([`ngxtm/devkit`](https://github.com/ngxtm/devkit), [`dhruvanbhalara/skills`](https://github.com/dhruvanbhalara/skills), [`ChunkyTofuStudios/flutter-skills`](https://github.com/ChunkyTofuStudios/flutter-skills), todas MIT) y **`getx-architecture`, escrita en este repo** porque ningún catálogo externo cubre GetX. Procedencia y licencia en [`.agents/ATTRIBUTION.md`](.agents/ATTRIBUTION.md) y en `skills-lock.json`.

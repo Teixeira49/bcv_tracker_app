@@ -1,5 +1,9 @@
 ---
 description: Cómo proponer el incremento de versión por el valor entregado al usuario y no solo por el tipo de los commits. Aplica cada vez que se vaya a decidir el número de una versión nueva, antes de escribir el release note o el CHANGELOG.
+paths:
+  - "pubspec.yaml"
+  - "CHANGELOG.md"
+  - "docs/release/**"
 ---
 
 # Propuesta de Versión por Valor de Producto

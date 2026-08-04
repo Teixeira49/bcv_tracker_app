@@ -1,0 +1,1 @@
+../../.agents/rules/entities-vs-models.md

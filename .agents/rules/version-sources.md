@@ -1,5 +1,10 @@
 ---
 description: Dónde vive el número de versión de la app, cuál es la única fuente de verdad y qué archivos NO se tocan porque lo derivan. Aplica cada vez que se suba la versión, se prepare un build o alguien proponga editar la versión en Android, iOS o el README.
+paths:
+  - "pubspec.yaml"
+  - "android/**"
+  - "ios/**"
+  - "codemagic.yaml"
 ---
 
 # Fuentes de la Versión

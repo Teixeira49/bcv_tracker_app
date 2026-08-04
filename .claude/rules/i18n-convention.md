@@ -1,0 +1,1 @@
+../../.agents/rules/i18n-convention.md

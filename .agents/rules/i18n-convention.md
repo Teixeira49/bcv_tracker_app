@@ -1,5 +1,9 @@
 ---
 description: Prohíbe strings literales en la UI y obliga a que toda copy pase por AppMessages con su clave presente en los 10 idiomas. Aplica cada vez que se añada o modifique texto visible en pantalla.
+paths:
+  - "lib/core/i18n/**"
+  - "lib/**/page/**"
+  - "lib/**/{widget,widgets}/**"
 ---
 
 # Internacionalización
@@ -72,6 +76,6 @@ print(f"{len(union)} claves — {'paridad OK' if ok else 'DESINCRONIZADO'}")
 PY
 ```
 
-A la fecha de escribir esta regla los 10 archivos están en paridad con **49 claves**. Si el script reporta una diferencia, el cambio está incompleto.
+A la fecha de escribir esta regla los 10 archivos están en paridad con **48 claves**. Si el script reporta una diferencia, el cambio está incompleto.
 
 Además, si la clave nueva no se expone en `AppMessages`, no la uses: agrégala primero como getter.

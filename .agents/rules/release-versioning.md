@@ -1,5 +1,9 @@
 ---
 description: Versionado SemVer del proyecto, bump de pubspec.yaml, creación de GitHub Releases y mantenimiento del CHANGELOG a partir de un PR aprobado y mergeado. Aplica cada vez que se vaya a lanzar una versión nueva de la app.
+paths:
+  - "pubspec.yaml"
+  - "CHANGELOG.md"
+  - "docs/release/**"
 ---
 
 # Versionado y Releases

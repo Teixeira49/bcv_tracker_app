@@ -1,5 +1,7 @@
 ---
 description: Al agregar o modificar una clase pública, un controlador, un datasource o una entidad, obliga a documentarlo igual que el resto (dartdoc con el porqué, no el qué) en el MISMO cambio. Aplica cada vez que se toque la capa de datos, un controlador de GetX o una API compartida.
+paths:
+  - "lib/**/*.dart"
 ---
 
 # Documentación Uniforme del Código

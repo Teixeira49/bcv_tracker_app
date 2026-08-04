@@ -1,0 +1,1 @@
+../../.agents/rules/environment-variables.md

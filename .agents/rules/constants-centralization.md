@@ -1,5 +1,10 @@
 ---
 description: Prohíbe los valores "mágicos" en el código y obliga a centralizar constantes en lib/core/constants/ y lib/config/theme/. Aplica cada vez que se introduzca o modifique un literal reutilizable (números, strings, duraciones, paddings, colores, rutas de endpoint, claves de preferencias).
+paths:
+  - "lib/core/constants/**"
+  - "lib/config/theme/**"
+  - "lib/**/{widget,widgets}/**"
+  - "lib/**/page/**"
 ---
 
 # Centralización de Constantes

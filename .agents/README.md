@@ -11,6 +11,7 @@ Es la contraparte del directorio `.agents/` del backend ([`bcv_tracker_backend`]
 
 .claude/
 ├── pr-config.json     # Config compartida que leen las reglas
+├── rules/             # 16 symlinks → ../../.agents/rules/<nombre>.md
 └── skills/            # 24 symlinks → ../../.agents/skills/<nombre>
 ```
 
@@ -29,7 +30,18 @@ Los enlaces son **relativos**, así que funcionan en cualquier clon. `.agents/sk
 
 > En Windows, crear symlinks exige Modo Desarrollador o permisos de administrador. Quien no los tenga verá los enlaces como archivos de texto con la ruta dentro; las skills seguirán siendo legibles desde `.agents/skills/`, solo no se autocargarán.
 
-**Las reglas no se enlazan a propósito.** Claude Code carga `.claude/rules/*.md` **en cada sesión**, y 16 reglas de 100–300 líneas inundarían el contexto — la propia documentación advierte que eso reduce la adherencia. Las reglas se consultan desde `CLAUDE.md` / `AGENTS.md`, que listan cuál aplica a cada tarea.
+## Las reglas también se enlazan, pero con `paths:`
+
+`.claude/rules/*.md` se carga **en cada sesión**, y las 16 reglas suman 1.743 líneas (~27 mil tokens): cargarlas todas siempre inundaría el contexto, y la propia documentación advierte que eso *reduce* la adherencia.
+
+La salida es el frontmatter `paths:`, que hace que una regla se cargue **solo al leer archivos que coincidan**. El reparto:
+
+- **4 sin `paths:` → siempre en contexto** (695 líneas, ~7 mil tokens): `issue-convention`, `branch-naming`, `commit-convention` y `pull-request`. Son procedimientos de git y GitHub: ningún archivo los dispara, así que no hay patrón que darles.
+- **12 con `paths:` → bajo demanda**: editar `lib/core/i18n/` trae la regla de i18n y nada más; tocar `pubspec.yaml` trae las tres de versionado.
+
+El `paths:` vive en el frontmatter de `.agents/rules/*.md` junto al `description:`. Otros agentes lo ignoran sin problema; Claude Code lo usa para no cargar lo que no toca.
+
+> Si algún día `pull-request.md` (333 líneas) molesta en contexto, la salida que sugiere la documentación es convertir los procedimientos en skills: una skill se carga por su descripción, no siempre.
 
 ---
 
