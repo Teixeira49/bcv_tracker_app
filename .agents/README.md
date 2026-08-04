@@ -32,14 +32,23 @@ Los enlaces son **relativos**, así que funcionan en cualquier clon. `.agents/sk
 
 ## Las reglas también se enlazan, pero con `paths:`
 
-`.claude/rules/*.md` se carga **en cada sesión**, y las 16 reglas suman 1.743 líneas (~27 mil tokens): cargarlas todas siempre inundaría el contexto, y la propia documentación advierte que eso *reduce* la adherencia.
+`.claude/rules/*.md` se carga **en cada sesión**, y las 16 reglas suman 1.841 líneas (~27 mil tokens): cargarlas todas siempre inundaría el contexto, y la propia documentación advierte que eso *reduce* la adherencia.
 
 La salida es el frontmatter `paths:`, que hace que una regla se cargue **solo al leer archivos que coincidan**. El reparto:
 
-- **4 sin `paths:` → siempre en contexto** (695 líneas, ~7 mil tokens): `issue-convention`, `branch-naming`, `commit-convention` y `pull-request`. Son procedimientos de git y GitHub: ningún archivo los dispara, así que no hay patrón que darles.
+- **4 sin `paths:` → siempre en contexto** (718 líneas, ~10 mil tokens): `issue-convention`, `branch-naming`, `commit-convention` y `pull-request`. Son procedimientos de git y GitHub: ningún archivo los dispara, así que no hay patrón que darles.
 - **12 con `paths:` → bajo demanda**: editar `lib/core/i18n/` trae la regla de i18n y nada más; tocar `pubspec.yaml` trae las tres de versionado.
 
 El `paths:` vive en el frontmatter de `.agents/rules/*.md` junto al `description:`. Otros agentes lo ignoran sin problema; Claude Code lo usa para no cargar lo que no toca.
+
+Las tres cifras de arriba son **derivadas**, así que envejecen en cuanto una regla crece — ya pasó dos veces, y la segunda fue al escribir esta misma sección. Recalcúlalas al editar cualquier regla:
+
+```bash
+cat .agents/rules/*.md | wc -l                                             # total
+for f in .agents/rules/*.md; do grep -q '^paths:' "$f" || cat "$f"; done | wc -l  # incondicional
+```
+
+Y para comprobar que ninguna regla quedó con un `paths:` que no empareja con nada —el fallo que dejó a `release-notes.md` inalcanzable— basta con listar los patrones y probarlos contra el árbol.
 
 > Si algún día `pull-request.md` (333 líneas) molesta en contexto, la salida que sugiere la documentación es convertir los procedimientos en skills: una skill se carga por su descripción, no siempre.
 
