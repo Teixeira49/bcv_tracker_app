@@ -115,6 +115,15 @@
       "skillPath": "skills/flutter-shared-preferences/SKILL.md",
       "sourceCommit": "01677fbf2e3797ac1fa743e569701f9d7915f664",
       "computedHash": "25f153a5a4cf5a6be4efd85d03b5cd302b24761171a7e47115e14f602068c9a0"
+    },
+    "flutter-testing": {
+      "source": "Poorgramer-Zack/dart-expert-skills",
+      "sourceType": "github",
+      "license": null,
+      "licenseNote": "el repositorio de origen no declara licencia; ver .agents/ATTRIBUTION.md",
+      "skillPath": "skills/flutter-testing/SKILL.md",
+      "sourceCommit": "01677fbf2e3797ac1fa743e569701f9d7915f664",
+      "computedHash": "6d5592acc95a07f2f37eb5df052d21eb715357700c4aa229d2ac2153ad786f5f"
     }
   }
 }
