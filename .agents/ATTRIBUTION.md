@@ -49,7 +49,8 @@ Este repositorio se distribuye bajo **Apache License 2.0** (ver [`LICENSE`](../L
 | Skill | Ruta de origen | Modificada |
 |---|---|---|
 | `skill-creator` | `skills/skill-creator/` | No |
-| `frontend-design` | `skills/frontend-design/` | Sí — nota de alcance web→móvil |
+
+> `frontend-design` **se retiró**: su contenido útil vive fusionado en `flutter-design` (ver abajo). Al no reusar el nombre, deja además de sobreescribir a la skill homónima incluida de serie en Claude Code.
 
 ### `Poorgramer-Zack/dart-expert-skills` — ⚠️ sin licencia declarada
 
@@ -67,6 +68,20 @@ Este repositorio se distribuye bajo **Apache License 2.0** (ver [`LICENSE`](../L
 |---|---|
 | `getx-architecture` | Escrita a partir del código de la app. El catálogo externo no tiene ninguna skill de GetX. |
 
+### Obra derivada — Apache-2.0 AND MIT
+
+**`flutter-design`** funde dos skills que por separado no servían: `frontend-design` (Anthropic, Apache-2.0) está escrita para páginas web, y `flutter-mobile-design` (majiayu000, MIT) mezcla diseño con arquitectura Riverpod/BLoC.
+
+Ambas licencias permiten obra derivada, con condiciones que **sí** hay que cumplir y están cumplidas:
+
+- Los dos avisos de copyright viajan íntegros dentro de la skill: [`LICENSE-Apache-2.0.txt`](skills/flutter-design/LICENSE-Apache-2.0.txt) y [`LICENSE-MIT.txt`](skills/flutter-design/LICENSE-MIT.txt).
+- Los **cambios están declarados** en la cabecera del `SKILL.md`, como exige Apache-2.0 §4(b): qué se eliminó (web, arquitectura), qué contradicciones se resolvieron y a qué tokens se reancló.
+- El lockfile registra `sourceType: derived` con el `sourceCommit` de cada origen.
+
+| Se conservó de `frontend-design` | Se conservó de `flutter-mobile-design` |
+|---|---|
+| Calibración anti-slop (los tres looks), proceso de dos pasadas, contención, y toda la sección de escritura en la interfaz | `ColorScheme` semántico, escala tipográfica de M3, moción, layout, convenciones de iOS/Android y checklists |
+
 ---
 
 ## Modificaciones locales
@@ -80,7 +95,6 @@ Las skills marcadas como modificadas **divergen de su origen**. Un `npx skills u
 | `design-polish` | Notas de alcance: solo Android, coste del flujo, y obligación de pasar textos por `AppMessages` y valores por `AppColors`/`WidthValues` |
 | `android-emulator` | Se excluyó el directorio `tests/` |
 | `find-skills` | Nota de que una instalación con `npx skills add` no basta en este repo: hay que comprobar la licencia, registrar la skill en `skills-lock.json` y en este archivo, y crear el symlink en `.claude/skills/` |
-| `frontend-design` | Nota de alcance: está escrita para landing pages web (hero, scroll reveals, especificidad de CSS); en una app móvil con barra inferior aplican los principios, no las recetas |
 | `flutter-expert` | `references/architecture.md` reescrito de BLoC/GoRouter a GetX + aviso de que la app no es Clean Architecture; aviso en `references/architecture-decision-matrix.md` sobre su calificación de GetX |
 | `firebase` | Se eliminó `references/serverpod-mini.md`, documento de Serverpod traspapelado upstream |
 

@@ -81,6 +81,28 @@
       "sourceCommit": "01677fbf2e3797ac1fa743e569701f9d7915f664",
       "computedHash": "2b8e7e0a15068e8897da7475cdc3306b045fb70b922ee43ab6fb65ecaf852816"
     },
+    "flutter-design": {
+      "source": "Teixeira49/bcv_tracker_app",
+      "sourceType": "derived",
+      "license": "Apache-2.0 AND MIT",
+      "licenseNote": "obra derivada; los dos avisos viajan en LICENSE-Apache-2.0.txt y LICENSE-MIT.txt dentro de la skill, y los cambios se declaran en su cabecera (lo exige Apache-2.0 §4)",
+      "derivedFrom": [
+        {
+          "source": "anthropics/skills",
+          "skillPath": "skills/frontend-design/SKILL.md",
+          "license": "Apache-2.0",
+          "sourceCommit": "b29e7cf65e5cb78a5ac33d582270551bc74a14eb"
+        },
+        {
+          "source": "majiayu000/claude-skill-registry",
+          "skillPath": "skills/data/flutter-mobile-design/SKILL.md",
+          "license": "MIT",
+          "sourceCommit": "e5a0ac6584dfd7e73d273c340f3d4048e8f456bf"
+        }
+      ],
+      "skillPath": ".agents/skills/flutter-design/SKILL.md",
+      "computedHash": "b8d3cd81cff551bfdd77a05eb0ccdceeea7dc0a0214b1c790a1542d3ccb0ca36"
+    },
     "flutter-expert": {
       "source": "Poorgramer-Zack/dart-expert-skills",
       "sourceType": "github",
@@ -141,16 +163,6 @@
       "skillPath": "skills/flutter/flutter-ui/SKILL.md",
       "computedHash": "3c9f4b728cc4bb4ae50126480b7412adcf6556db9d1ea4e8175328d0bbb1d8c6",
       "localModifications": "tabla de equivalencias de tokens a WidthValues/AppColors y aviso de Material 2 (DTA-001)"
-    },
-    "frontend-design": {
-      "source": "anthropics/skills",
-      "sourceType": "github",
-      "skillPath": "skills/frontend-design/SKILL.md",
-      "computedHash": "0947bbc92c42423f4d2c40c619b112c4f91af09ba46d84d0d1c58f353e7bd0b2",
-      "license": "Apache-2.0",
-      "sourceCommit": "b29e7cf65e5cb78a5ac33d582270551bc74a14eb",
-      "licenseNote": "el repositorio no declara licencia a nivel raíz; la skill incluye su propio LICENSE.txt (Apache-2.0), que es la concesión efectiva",
-      "localModifications": "nota de alcance web→móvil y de cómo se reparte con design-polish y flutter-ui (DTA-001)"
     },
     "getx-architecture": {
       "source": "Teixeira49/bcv_tracker_app",

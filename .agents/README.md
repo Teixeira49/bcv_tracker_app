@@ -88,7 +88,8 @@ Reglas que el asistente debe respetar. Cada archivo lleva un `description` en el
 | [`dhruvanbhalara/skills`](https://github.com/dhruvanbhalara/skills) | MIT | 2 |
 | [`ChunkyTofuStudios/flutter-skills`](https://github.com/ChunkyTofuStudios/flutter-skills) | MIT | 2 |
 | [`vercel-labs/skills`](https://github.com/vercel-labs/skills) | MIT | 1 |
-| [`anthropics/skills`](https://github.com/anthropics/skills) | Apache-2.0 (por skill) | 2 |
+| [`anthropics/skills`](https://github.com/anthropics/skills) | Apache-2.0 (por skill) | 1 |
+| Derivada de `anthropics/skills` + [`majiayu000/claude-skill-registry`](https://github.com/majiayu000/claude-skill-registry) | Apache-2.0 AND MIT | 1 |
 | Propia | Apache-2.0 | 1 |
 
 El catálogo de `dart-expert-skills` trae 37 skills. Se revisaron una por una contra el código de la app y se conservaron 15; las 22 restantes se descartaron por proponer stacks que este proyecto no usa (Riverpod, BLoC, Provider, GoRouter, AutoRoute, Supabase, Serverpod, Freezed…) o funcionalidades que no tiene (login, monetización, SQL local, web).
@@ -125,11 +126,13 @@ No hablan de Flutter: sirven para sostener el propio tooling y para asesorar en 
 |---|---|---|
 | `find-skills` | Descubrir e instalar skills del ecosistema con `npx skills` | **Adaptada**: instalar aquí no termina con `npx skills add` — hay que comprobar licencia, registrar y enlazar |
 | `skill-creator` | Crear y mejorar skills, con evals y optimización de descripciones | Sin adaptar. 248 KB de 868 KB del directorio: es la más pesada de las 24 |
-| `frontend-design` | Dirección estética: tipografía, jerarquía, decisiones que no se lean como plantilla | **Adaptada**: está escrita para landing pages web; aplican los principios, no las recetas |
+| `flutter-design` | Dirección estética **y** ejecución en Material 3: tipografía, color semántico, moción, y escritura de la copy | **Obra derivada**: funde el criterio de `frontend-design` (Apache-2.0) con la ejecución de `flutter-mobile-design` (MIT) |
 
-Las tres reparten el terreno del diseño con las que ya había: `frontend-design` decide **qué debería parecer** algo que no existe, `design-polish` comprueba **si una pantalla existente funciona**, y `flutter-ui` da **los tokens** con los que se ejecuta cualquiera de las dos.
+Las tres reparten el terreno del diseño: `flutter-design` decide **qué debería parecer** algo que no existe, `flutter-ui` da **los tokens** con los que se construye, y `design-polish` comprueba **si una pantalla existente funciona**.
 
-> ⚠️ `skill-creator` y `frontend-design` también vienen incluidas de serie en Claude Code, y **una skill de proyecto sobreescribe a la incluida con el mismo nombre**. Hoy son idénticas al upstream, así que no hay diferencia; pero la copia del repo se congela mientras la de serie se actualiza. Conviene revisarlas contra `anthropics/skills` cada cierto tiempo, o retirarlas si solo se va a usar Claude Code.
+`flutter-design` sustituye al `frontend-design` que estaba vendorizado. Se retiró por dos motivos que se resuelven de una vez: estaba escrita para páginas web, y al llamarse igual que la skill incluida de serie en Claude Code la sobreescribía y se habría ido quedando atrás. Al nombrarla distinto, la de serie sigue disponible para trabajo web genérico y la nuestra gobierna el diseño de esta app.
+
+> ⚠️ `skill-creator` también viene incluida de serie en Claude Code, y **una skill de proyecto sobreescribe a la incluida con el mismo nombre**. Hoy es idéntica al upstream, así que no hay diferencia; pero la copia del repo se congela mientras la de serie se actualiza. Conviene revisarla contra `anthropics/skills` cada cierto tiempo. `flutter-design` ya no tiene ese problema: al ser obra derivada con nombre propio, no sobreescribe nada.
 
 ### Alineadas con el stack actual
 
