@@ -44,6 +44,15 @@
       "sourceCommit": "01677fbf2e3797ac1fa743e569701f9d7915f664",
       "computedHash": "0e3c3ef536677a2d9a8b64baf8b5a9241ed890304c76de214a528923690612d8",
       "localModifications": "eliminado references/serverpod-mini.md (traspapelado upstream) y su enlace en SKILL.md (DTA-001)"
+    },
+    "fl-chart": {
+      "source": "Poorgramer-Zack/dart-expert-skills",
+      "sourceType": "github",
+      "license": null,
+      "licenseNote": "el repositorio de origen no declara licencia; ver .agents/ATTRIBUTION.md",
+      "skillPath": "skills/fl-chart/SKILL.md",
+      "sourceCommit": "01677fbf2e3797ac1fa743e569701f9d7915f664",
+      "computedHash": "02e925da64b706c1cb86c437324ce176c2778837f4cf3a393d4e7e33e895bef2"
     }
   }
 }
