@@ -324,10 +324,8 @@ Usa la herramienta disponible, priorizando **GitHub CLI**:
 
 Si la rama tiene issue vinculado, asegúrate de que el cuerpo de la PR incluya la keyword de cierre (`Closes #N`) para dejar el vínculo registrado; si no lo tiene (Paso 1b), no la incluyas.
 
-⚠️ Las keywords **solo cierran** el issue cuando la PR apunta a la rama por defecto (`master`). Como las PR normales van a `development`, tras mergear una PR que completa su issue, ciérralo a mano:
+⚠️ Las keywords **solo surten efecto** cuando la PR apunta a la rama por defecto (`master`), y eso es lo que se quiere: **un issue se cierra cuando el trabajo llega a `master`, no al mergear a `development`** — ver `branch-naming.md`.
 
-```bash
-gh issue close <N> --comment "Mergeado en development vía PR #<M>"
-```
+Así que incluye `Closes #N` igualmente: queda registrada y dispara sola en la promoción de release. Tras mergear a `development`, **no cierres el issue**: deja el comentario con rama, PR, commit de merge y el estado de los criterios de aceptación (plantilla en `branch-naming.md`).
 
 Tras subir, devuelve la URL de la PR creada.

@@ -102,11 +102,36 @@ Closes #23
 
 Keywords válidas: `close`/`closes`/`closed`, `fix`/`fixes`/`fixed`, `resolve`/`resolves`/`resolved`.
 
-> ⚠️ **Las keywords solo cierran el issue cuando la PR apunta a la rama por defecto del repositorio**, que aquí es `master`. Como el trabajo normal se mergea a `development`, una PR de feature/fix **no** cerrará su issue al mergearse: lo hará más adelante, cuando `development` llegue a `master`. Incluye la keyword igualmente —deja el vínculo registrado y la trazabilidad visible en el issue—, pero **cierra el issue a mano** al mergear a `development` si el trabajo ya está terminado:
+Las keywords solo surten efecto cuando la PR apunta a la **rama por defecto** del repositorio, que aquí es `master`. Eso encaja exactamente con la política de cierre del proyecto, y no hay que sortearlo:
+
+> ## Un issue se cierra cuando el trabajo llega a `master`
 >
-> ```bash
-> gh issue close <N> --comment "Mergeado en development vía PR #<M>"
-> ```
+> **No al mergear a `development`.** La lista de issues abiertos refleja lo que falta por *entregar*, no lo que falta por *integrar*.
+>
+> Consecuencia práctica: incluye la keyword `Closes #N` en toda PR aunque su base sea `development`. No dispara ahí, pero queda registrada — y **todas disparan a la vez** en la promoción de release `development → master`, que sí apunta a la rama por defecto. El cierre es automático y en el momento correcto.
+>
+> **Nunca cierres un issue a mano al mergear a `development`.** Deja un comentario en su lugar (plantilla abajo).
+
+### El comentario al mergear a `development`
+
+El issue sigue abierto, así que el comentario tiene que dejar claro que el trabajo ya existe y dónde. Cuatro cosas, mínimo:
+
+```markdown
+## ✅ Trabajado y mergeado en `development`
+
+- **Rama:** `<tipo>/DTA-<núm>`
+- **PR:** #<N> — mergeada el <AAAA-MM-DD> (`<commit de merge>`)
+- **Base:** `development`
+
+### Qué se entregó
+<tabla de los criterios de aceptación con su estado>
+
+### Por qué sigue abierto
+**Política del repositorio: un issue se cierra cuando el trabajo llega a `master`.**
+Este issue se cierra con la promoción de release.
+```
+
+Sin esa tabla el issue obliga a abrir la PR para saber qué quedó hecho. Con ella, se lee de un vistazo.
 
 ### Si `gh` no está disponible
 

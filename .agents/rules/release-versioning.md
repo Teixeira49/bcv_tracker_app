@@ -172,7 +172,8 @@ gh pr create --base master --head development \
 
 - El bump de `pubspec.yaml` (Paso 3) debe ir **dentro** de esa promoción, no después: el tag tiene que apuntar a un commit donde la versión del código ya sea la nueva.
 - Esta PR es la excepción a la regla de "nunca apuntes a `master`" de `pull-request.md`; la otra es un `hotfix/`.
-- Al mergear a `master`, las keywords de cierre (`Closes #N`) de todas las PR acumuladas **sí** surten efecto, porque `master` es la rama por defecto. Revisa que los issues ya cerrados a mano no queden duplicados.
+- **Este merge es el que cierra los issues.** Al llegar a `master`, las keywords `Closes #N` de todas las PR acumuladas surten efecto de golpe, porque `master` es la rama por defecto. Es el momento previsto por la política del repositorio: un issue se cierra cuando su trabajo está en producción (ver `branch-naming.md`).
+- Tras el merge, comprueba que se cerró lo que debía: `gh issue list --state closed --limit 20`. Si algún issue del release sigue abierto, es que su PR no llevaba la keyword — ciérralo a mano indicando la versión que lo entregó.
 - Un **hotfix** salta este paso: va directo a `master`, y después se propaga a `development` para que la corrección no se pierda.
 
 ## Paso 7 — Crear el GitHub Release (según `triggerMode`)
