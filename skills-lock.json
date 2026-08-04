@@ -174,6 +174,15 @@
       "skillPath": "skills/openapi-to-dart/SKILL.md",
       "sourceCommit": "01677fbf2e3797ac1fa743e569701f9d7915f664",
       "computedHash": "8f88a6de81a9291407bc41404fa5ccacc9156b258a2aa12435fd17f7d47dd310"
+    },
+    "sentry-flutter": {
+      "source": "Poorgramer-Zack/dart-expert-skills",
+      "sourceType": "github",
+      "license": null,
+      "licenseNote": "el repositorio de origen no declara licencia; ver .agents/ATTRIBUTION.md",
+      "skillPath": "skills/sentry-flutter/SKILL.md",
+      "sourceCommit": "01677fbf2e3797ac1fa743e569701f9d7915f664",
+      "computedHash": "a7e1abf2747f995f7a5fa601070a9dfed93db4fa1eeb16b223d0125c535eb94d"
     }
   }
 }
