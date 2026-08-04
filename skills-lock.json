@@ -165,6 +165,15 @@
       "skillPath": "skills/marionette/SKILL.md",
       "sourceCommit": "01677fbf2e3797ac1fa743e569701f9d7915f664",
       "computedHash": "5fc0a57b1b2f5d1fc8e5062bebc58b060d72dd6993f991de020e7229572b9c29"
+    },
+    "openapi-to-dart": {
+      "source": "Poorgramer-Zack/dart-expert-skills",
+      "sourceType": "github",
+      "license": null,
+      "licenseNote": "el repositorio de origen no declara licencia; ver .agents/ATTRIBUTION.md",
+      "skillPath": "skills/openapi-to-dart/SKILL.md",
+      "sourceCommit": "01677fbf2e3797ac1fa743e569701f9d7915f664",
+      "computedHash": "8f88a6de81a9291407bc41404fa5ccacc9156b258a2aa12435fd17f7d47dd310"
     }
   }
 }
