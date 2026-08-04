@@ -34,6 +34,23 @@ Este repositorio se distribuye bajo **Apache License 2.0** (ver [`LICENSE`](../L
 | `design-polish` | `skills/design-polish/` | Sí — ver abajo |
 | `android-emulator` | `skills/android-emulator/` | Sí — se excluyó `tests/` (suite bats del propio script, sin utilidad aguas abajo) |
 
+### `vercel-labs/skills` — MIT
+
+> Copyright (c) Vercel Labs. Licencia MIT — https://github.com/vercel-labs/skills/blob/main/LICENSE
+
+| Skill | Ruta de origen | Modificada |
+|---|---|---|
+| `find-skills` | `skills/find-skills/` | Sí — nota sobre el flujo de instalación de este repo |
+
+### `anthropics/skills` — Apache-2.0 (por skill)
+
+> Copyright (c) Anthropic. **El repositorio no declara licencia a nivel raíz**, pero cada skill incluye su propio `LICENSE.txt` con la Apache License 2.0, que es la concesión efectiva y viaja con el archivo — exactamente lo que Apache-2.0 exige. Es la situación más limpia de las cinco fuentes.
+
+| Skill | Ruta de origen | Modificada |
+|---|---|---|
+| `skill-creator` | `skills/skill-creator/` | No |
+| `frontend-design` | `skills/frontend-design/` | Sí — nota de alcance web→móvil |
+
 ### `Poorgramer-Zack/dart-expert-skills` — ⚠️ sin licencia declarada
 
 > El repositorio de origen **no publica ningún archivo de licencia** (ni `LICENSE`, ni mención en el README) a fecha de 2026-08-03, commit `01677fb`. Sin una licencia explícita, el default legal es *todos los derechos reservados*: no hay concesión formal de redistribución.
@@ -62,6 +79,8 @@ Las skills marcadas como modificadas **divergen de su origen**. Un `npx skills u
 | `flutter-ui` | Tabla de equivalencias de tokens (`AppSpacing`→`WidthValues.spacingMd`, etc.), estado real de `WidthValues` y aviso de que la app aún es Material 2 |
 | `design-polish` | Notas de alcance: solo Android, coste del flujo, y obligación de pasar textos por `AppMessages` y valores por `AppColors`/`WidthValues` |
 | `android-emulator` | Se excluyó el directorio `tests/` |
+| `find-skills` | Nota de que una instalación con `npx skills add` no basta en este repo: hay que comprobar la licencia, registrar la skill en `skills-lock.json` y en este archivo, y crear el symlink en `.claude/skills/` |
+| `frontend-design` | Nota de alcance: está escrita para landing pages web (hero, scroll reveals, especificidad de CSS); en una app móvil con barra inferior aplican los principios, no las recetas |
 | `flutter-expert` | `references/architecture.md` reescrito de BLoC/GoRouter a GetX + aviso de que la app no es Clean Architecture; aviso en `references/architecture-decision-matrix.md` sobre su calificación de GetX |
 | `firebase` | Se eliminó `references/serverpod-mini.md`, documento de Serverpod traspapelado upstream |
 
@@ -69,5 +88,7 @@ Las skills marcadas como modificadas **divergen de su origen**. Un `npx skills u
 
 1. Comprueba la licencia del origen **antes** de copiarla: `gh api repos/<owner>/<repo>/license --jq '.license.spdx_id'`. Si devuelve 404, no hay permiso de redistribución — decídelo explícitamente en vez de por omisión.
 2. Añádela a este archivo, bajo su origen.
-3. Regenera `skills-lock.json` con el hash SHA-256 de su `SKILL.md`.
-4. Si la adaptas, anota qué cambiaste aquí y en `localModifications` del lockfile.
+3. Colócala en `.agents/skills/<nombre>/` — nunca directamente en `.claude/skills/`.
+4. Regenera `skills-lock.json` con `source`, `license`, `sourceCommit` y el hash SHA-256 de su `SKILL.md`.
+5. Crea el symlink para que Claude Code la descubra: `ln -s ../../.agents/skills/<nombre> .claude/skills/<nombre>`.
+6. Si la adaptas, anota qué cambiaste aquí y en `localModifications` del lockfile.

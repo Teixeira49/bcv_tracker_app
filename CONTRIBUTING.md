@@ -158,10 +158,10 @@ Este repositorio versiona un conjunto de **convenciones y capacidades para asist
 
 .claude/
 ├── pr-config.json     # Config compartida que leen las reglas
-└── skills/            # 21 symlinks → ../../.agents/skills/<nombre>
+└── skills/            # 24 symlinks → ../../.agents/skills/<nombre>
 ```
 
-Las skills viven **solo** en `.agents/skills/`; `.claude/skills/` son symlinks relativos, uno por skill, porque Claude Code únicamente descubre skills de proyecto desde esa ruta. Así no hay copias que sincronizar: se edita en `.agents/` y basta. Al añadir una skill nueva, crea también su enlace:
+Las skills viven **solo** en `.agents/skills/`; `.claude/skills/` son 24 symlinks relativos, uno por skill, porque Claude Code únicamente descubre skills de proyecto desde esa ruta. Así no hay copias que sincronizar: se edita en `.agents/` y basta. Al añadir una skill nueva, crea también su enlace:
 
 ```bash
 ln -s ../../.agents/skills/<nombre> .claude/skills/<nombre>
@@ -170,7 +170,7 @@ ln -s ../../.agents/skills/<nombre> .claude/skills/<nombre>
 Las reglas **no** se enlazan: `.claude/rules/` se carga en cada sesión y 16 reglas saturarían el contexto. Se consultan desde `CLAUDE.md` / `AGENTS.md`.
 
 - **`rules/`** — las 16 convenciones listadas arriba, en el flujo `issue → rama → commits → PR → release` más las reglas técnicas de la app.
-- **`skills/`** — 21 skills de cuatro orígenes: 15 de [`dart-expert-skills`](https://github.com/Poorgramer-Zack/dart-expert-skills) (de 37, revisadas una por una contra el código), 5 traídas para cubrir navegación y UI ([`ngxtm/devkit`](https://github.com/ngxtm/devkit), [`dhruvanbhalara/skills`](https://github.com/dhruvanbhalara/skills), [`ChunkyTofuStudios/flutter-skills`](https://github.com/ChunkyTofuStudios/flutter-skills), todas MIT) y **`getx-architecture`, escrita en este repo** porque ningún catálogo externo cubre GetX. Procedencia y licencia en [`.agents/ATTRIBUTION.md`](.agents/ATTRIBUTION.md) y en `skills-lock.json`.
+- **`skills/`** — 24 skills de seis orígenes: 15 de [`dart-expert-skills`](https://github.com/Poorgramer-Zack/dart-expert-skills) (de 37, revisadas una por una contra el código), 5 traídas para cubrir navegación y UI ([`ngxtm/devkit`](https://github.com/ngxtm/devkit), [`dhruvanbhalara/skills`](https://github.com/dhruvanbhalara/skills), [`ChunkyTofuStudios/flutter-skills`](https://github.com/ChunkyTofuStudios/flutter-skills), todas MIT) y **`getx-architecture`, escrita en este repo** porque ningún catálogo externo cubre GetX. Procedencia y licencia en [`.agents/ATTRIBUTION.md`](.agents/ATTRIBUTION.md) y en `skills-lock.json`.
 - **`CLAUDE.md` y `AGENTS.md`** — instrucciones de agente, **byte-idénticas** (`diff CLAUDE.md AGENTS.md`). Claude Code lee `CLAUDE.md` e ignora `AGENTS.md`; otros agentes leen `AGENTS.md`. Al editar una, copia sobre la otra en el mismo commit.
 - **`.claude/pr-config.json`** — config compartida que leen las reglas: `branchProjectCode: "DTA"`, `baseBranch: "development"`, `productionBranch: "master"`, `triggerMode: "ask"`, `assignSelf` y el mapa `labelsByType`.
 

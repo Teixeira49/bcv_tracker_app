@@ -97,7 +97,7 @@ Este repositorio versiona convenciones y capacidades para desarrollo asistido po
 .agents/
 ├── rules/    # 16 convenciones obligatorias (issues, ramas, commits, PR, releases,
 │             #  versionado y las reglas técnicas de Flutter/Dart/GetX)
-└── skills/   # 21 skills de Flutter/Dart, de 4 orígenes (ver .agents/ATTRIBUTION.md)
+└── skills/   # 24 skills, de 6 orígenes (ver .agents/ATTRIBUTION.md)
 ```
 
 Las convenciones de flujo de trabajo son **idénticas a las del backend** (mismo mapeo `type → gitmoji → label`), y las técnicas están adaptadas a esta app. El índice completo está en [`.agents/README.md`](.agents/README.md), la procedencia y licencia de cada skill en [`.agents/ATTRIBUTION.md`](.agents/ATTRIBUTION.md), y el resumen en [CONTRIBUTING.md → Tooling Agéntico](CONTRIBUTING.md#-tooling-agéntico-agents-y-claude).

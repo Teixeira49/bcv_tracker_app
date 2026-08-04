@@ -11,12 +11,12 @@ Es la contraparte del directorio `.agents/` del backend ([`bcv_tracker_backend`]
 
 .claude/
 ├── pr-config.json     # Config compartida que leen las reglas
-└── skills/            # 21 symlinks → ../../.agents/skills/<nombre>
+└── skills/            # 24 symlinks → ../../.agents/skills/<nombre>
 ```
 
 ## Por qué `.claude/skills/` son symlinks
 
-Claude Code descubre las skills de proyecto **solo** desde `.claude/skills/<nombre>/SKILL.md`; `.agents/` no es una ruta que conozca. Sin los enlaces, las 21 skills serían documentos inertes que solo funcionan si alguien apunta al agente a la ruta a mano.
+Claude Code descubre las skills de proyecto **solo** desde `.claude/skills/<nombre>/SKILL.md`; `.agents/` no es una ruta que conozca. Sin los enlaces, las 24 skills serían documentos inertes que solo funcionan si alguien apunta al agente a la ruta a mano.
 
 La documentación de Claude Code contempla exactamente este caso: *"A `<skill-name>` entry in the enterprise, personal, or project locations can be a symlink to a directory elsewhere on disk."* Por eso el enlace es **por skill**, no del directorio completo.
 
@@ -67,7 +67,7 @@ Reglas que el asistente debe respetar. Cada archivo lleva un `description` en el
 
 ## `skills/` — Capacidades instalables
 
-21 skills de cuatro orígenes distintos. Cada una es un `SKILL.md` (objetivo, proceso, restricciones) con `references/` opcionales; su procedencia y licencia quedan registradas en **[`ATTRIBUTION.md`](ATTRIBUTION.md)** y, en formato máquina-legible, en **[`skills-lock.json`](../skills-lock.json)** (raíz del repo: `source`, `sourceType`, `license`, `skillPath` y hash SHA-256 por skill).
+24 skills de seis orígenes distintos. Cada una es un `SKILL.md` (objetivo, proceso, restricciones) con `references/` opcionales; su procedencia y licencia quedan registradas en **[`ATTRIBUTION.md`](ATTRIBUTION.md)** y, en formato máquina-legible, en **[`skills-lock.json`](../skills-lock.json)** (raíz del repo: `source`, `sourceType`, `license`, `skillPath` y hash SHA-256 por skill).
 
 | Origen | Licencia | Skills |
 |---|---|---|
@@ -75,6 +75,8 @@ Reglas que el asistente debe respetar. Cada archivo lleva un `description` en el
 | [`ngxtm/devkit`](https://github.com/ngxtm/devkit) | MIT | 1 |
 | [`dhruvanbhalara/skills`](https://github.com/dhruvanbhalara/skills) | MIT | 2 |
 | [`ChunkyTofuStudios/flutter-skills`](https://github.com/ChunkyTofuStudios/flutter-skills) | MIT | 2 |
+| [`vercel-labs/skills`](https://github.com/vercel-labs/skills) | MIT | 1 |
+| [`anthropics/skills`](https://github.com/anthropics/skills) | Apache-2.0 (por skill) | 2 |
 | Propia | Apache-2.0 | 1 |
 
 El catálogo de `dart-expert-skills` trae 37 skills. Se revisaron una por una contra el código de la app y se conservaron 15; las 22 restantes se descartaron por proponer stacks que este proyecto no usa (Riverpod, BLoC, Provider, GoRouter, AutoRoute, Supabase, Serverpod, Freezed…) o funcionalidades que no tiene (login, monetización, SQL local, web).
@@ -102,6 +104,20 @@ Este bloque cubre dos huecos que el catálogo original dejaba abiertos: no tení
 | `android-emulator` | Dependencia de `design-polish`: capturas, taps y volcado del árbol de accesibilidad vía `scripts/emu.sh` |
 
 > `design-polish` compila, arranca emulador y lanza un subagente evaluador por pantalla: es para una pasada de diseño deliberada, no para ajustar un padding. Y como la app también va a iOS, lo que salga de ahí hay que revisarlo en el simulador de Apple.
+
+### 🧰 Soporte — meta-skills
+
+No hablan de Flutter: sirven para sostener el propio tooling y para asesorar en diseño.
+
+| Skill | Para qué | Nota |
+|---|---|---|
+| `find-skills` | Descubrir e instalar skills del ecosistema con `npx skills` | **Adaptada**: instalar aquí no termina con `npx skills add` — hay que comprobar licencia, registrar y enlazar |
+| `skill-creator` | Crear y mejorar skills, con evals y optimización de descripciones | Sin adaptar. 248 KB de 868 KB del directorio: es la más pesada de las 24 |
+| `frontend-design` | Dirección estética: tipografía, jerarquía, decisiones que no se lean como plantilla | **Adaptada**: está escrita para landing pages web; aplican los principios, no las recetas |
+
+Las tres reparten el terreno del diseño con las que ya había: `frontend-design` decide **qué debería parecer** algo que no existe, `design-polish` comprueba **si una pantalla existente funciona**, y `flutter-ui` da **los tokens** con los que se ejecuta cualquiera de las dos.
+
+> ⚠️ `skill-creator` y `frontend-design` también vienen incluidas de serie en Claude Code, y **una skill de proyecto sobreescribe a la incluida con el mismo nombre**. Hoy son idénticas al upstream, así que no hay diferencia; pero la copia del repo se congela mientras la de serie se actualiza. Conviene revisarlas contra `anthropics/skills` cada cierto tiempo, o retirarlas si solo se va a usar Claude Code.
 
 ### Alineadas con el stack actual
 
