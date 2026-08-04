@@ -139,6 +139,14 @@
       "license": "Apache-2.0",
       "skillPath": ".agents/skills/getx-architecture/SKILL.md",
       "computedHash": "2277df7b1fd0c5c0c3b0174f8e469952d67450f554e3e0b2d4b622f68b2e276f"
+    },
+    "getx-navigation": {
+      "source": "ngxtm/devkit",
+      "sourceType": "github",
+      "license": "MIT",
+      "skillPath": "rules/flutter/getx-navigation/SKILL.md",
+      "computedHash": "05cad097b7bccc07fcbb228b7dff54e5d7594c89d876441402405602f8714595",
+      "localModifications": "corregido 'un Binding por ruta' al binding único de initial_bindings.dart; alineado a AppRoutes/AppPages; añadidos argumentos, tabs-vs-rutas y deuda del repo (DTA-001)"
     }
   }
 }
