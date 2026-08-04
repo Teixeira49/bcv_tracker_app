@@ -124,6 +124,14 @@
       "skillPath": "skills/flutter-testing/SKILL.md",
       "sourceCommit": "01677fbf2e3797ac1fa743e569701f9d7915f664",
       "computedHash": "6d5592acc95a07f2f37eb5df052d21eb715357700c4aa229d2ac2153ad786f5f"
+    },
+    "flutter-ui": {
+      "source": "dhruvanbhalara/skills",
+      "sourceType": "github",
+      "license": "MIT",
+      "skillPath": "skills/flutter/flutter-ui/SKILL.md",
+      "computedHash": "3c9f4b728cc4bb4ae50126480b7412adcf6556db9d1ea4e8175328d0bbb1d8c6",
+      "localModifications": "tabla de equivalencias de tokens a WidthValues/AppColors y aviso de Material 2 (DTA-001)"
     }
   }
 }
