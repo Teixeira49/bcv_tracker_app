@@ -132,6 +132,13 @@
       "skillPath": "skills/flutter/flutter-ui/SKILL.md",
       "computedHash": "3c9f4b728cc4bb4ae50126480b7412adcf6556db9d1ea4e8175328d0bbb1d8c6",
       "localModifications": "tabla de equivalencias de tokens a WidthValues/AppColors y aviso de Material 2 (DTA-001)"
+    },
+    "getx-architecture": {
+      "source": "Teixeira49/bcv_tracker_app",
+      "sourceType": "local",
+      "license": "Apache-2.0",
+      "skillPath": ".agents/skills/getx-architecture/SKILL.md",
+      "computedHash": "2277df7b1fd0c5c0c3b0174f8e469952d67450f554e3e0b2d4b622f68b2e276f"
     }
   }
 }
