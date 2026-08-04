@@ -147,6 +147,15 @@
       "skillPath": "rules/flutter/getx-navigation/SKILL.md",
       "computedHash": "05cad097b7bccc07fcbb228b7dff54e5d7594c89d876441402405602f8714595",
       "localModifications": "corregido 'un Binding por ruta' al binding único de initial_bindings.dart; alineado a AppRoutes/AppPages; añadidos argumentos, tabs-vs-rutas y deuda del repo (DTA-001)"
+    },
+    "github-actions": {
+      "source": "Poorgramer-Zack/dart-expert-skills",
+      "sourceType": "github",
+      "license": null,
+      "licenseNote": "el repositorio de origen no declara licencia; ver .agents/ATTRIBUTION.md",
+      "skillPath": "skills/github-actions/SKILL.md",
+      "sourceCommit": "01677fbf2e3797ac1fa743e569701f9d7915f664",
+      "computedHash": "9350ef436f00bdac02052920f409d4bbae7e42ae405a160a39f7a483dbb20cfb"
     }
   }
 }
