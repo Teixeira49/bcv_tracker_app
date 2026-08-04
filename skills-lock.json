@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "skills": {
+    "android-emulator": {
+      "source": "ChunkyTofuStudios/flutter-skills",
+      "sourceType": "github",
+      "license": "MIT",
+      "skillPath": "skills/android-emulator/SKILL.md",
+      "computedHash": "9f67a87ae5e3778f43f6f64fce72ddde0be3d8cefdaef6d621f10282828d925e",
+      "localModifications": "excluido el directorio tests/ (suite bats del propio script) (DTA-001)"
+    }
+  }
+}
