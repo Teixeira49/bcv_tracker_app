@@ -34,6 +34,16 @@
       "skillPath": "skills/effective-dart/SKILL.md",
       "sourceCommit": "01677fbf2e3797ac1fa743e569701f9d7915f664",
       "computedHash": "0102b0f9ca31a4c91d10f9488e92b403d13b516363f10fe5f90553e8815ff8dc"
+    },
+    "firebase": {
+      "source": "Poorgramer-Zack/dart-expert-skills",
+      "sourceType": "github",
+      "license": null,
+      "licenseNote": "el repositorio de origen no declara licencia; ver .agents/ATTRIBUTION.md",
+      "skillPath": "skills/firebase/SKILL.md",
+      "sourceCommit": "01677fbf2e3797ac1fa743e569701f9d7915f664",
+      "computedHash": "0e3c3ef536677a2d9a8b64baf8b5a9241ed890304c76de214a528923690612d8",
+      "localModifications": "eliminado references/serverpod-mini.md (traspapelado upstream) y su enlace en SKILL.md (DTA-001)"
     }
   }
 }
