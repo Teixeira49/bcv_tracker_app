@@ -57,7 +57,9 @@ app.*.map.json
 !.env.example
 
 # Tooling agéntico (rules / skills)
-# SÍ se versiona: .agents/, .claude/pr-config.json y skills-lock.json
+# SÍ se versiona: .agents/, .claude/pr-config.json, .claude/skills/ (symlinks
+# a .agents/skills/, para que Claude Code las descubra sin duplicar archivos)
+# y skills-lock.json
 # NO se versiona (config personal / local del asistente y posibles secretos):
 .claude/settings.local.json
 .claude/*.local.json

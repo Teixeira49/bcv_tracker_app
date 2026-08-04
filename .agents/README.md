@@ -8,7 +8,28 @@ Es la contraparte del directorio `.agents/` del backend ([`bcv_tracker_backend`]
 .agents/
 ├── rules/    # Convenciones obligatorias del repositorio
 └── skills/   # Capacidades instalables (guías de Flutter/Dart para el asistente)
+
+.claude/
+├── pr-config.json     # Config compartida que leen las reglas
+└── skills/            # 21 symlinks → ../../.agents/skills/<nombre>
 ```
+
+## Por qué `.claude/skills/` son symlinks
+
+Claude Code descubre las skills de proyecto **solo** desde `.claude/skills/<nombre>/SKILL.md`; `.agents/` no es una ruta que conozca. Sin los enlaces, las 21 skills serían documentos inertes que solo funcionan si alguien apunta al agente a la ruta a mano.
+
+La documentación de Claude Code contempla exactamente este caso: *"A `<skill-name>` entry in the enterprise, personal, or project locations can be a symlink to a directory elsewhere on disk."* Por eso el enlace es **por skill**, no del directorio completo.
+
+```bash
+# al añadir una skill nueva a .agents/skills/, enlázala también:
+ln -s ../../.agents/skills/<nombre> .claude/skills/<nombre>
+```
+
+Los enlaces son **relativos**, así que funcionan en cualquier clon. `.agents/skills/` sigue siendo la única fuente: se edita ahí y no hay copias que sincronizar.
+
+> En Windows, crear symlinks exige Modo Desarrollador o permisos de administrador. Quien no los tenga verá los enlaces como archivos de texto con la ruta dentro; las skills seguirán siendo legibles desde `.agents/skills/`, solo no se autocargarán.
+
+**Las reglas no se enlazan a propósito.** Claude Code carga `.claude/rules/*.md` **en cada sesión**, y 16 reglas de 100–300 líneas inundarían el contexto — la propia documentación advierte que eso reduce la adherencia. Las reglas se consultan desde `CLAUDE.md` / `AGENTS.md`, que listan cuál aplica a cada tarea.
 
 ---
 

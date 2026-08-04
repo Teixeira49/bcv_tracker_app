@@ -12,7 +12,7 @@ BCV Tracker is a Flutter mobile app that displays real-time Venezuelan Central B
 
 This file is the **map** of the codebase; `.agents/rules/` holds the **binding conventions**. When they disagree, the rules win — and the contradiction gets fixed in the same PR.
 
-Nothing under `.agents/` is auto-loaded by any agent. Open the rule that matches what you are about to do.
+**The rules are not auto-loaded.** Open the one that matches what you are about to do — the table below says which. The skills *are* loaded, through `.claude/skills/` (see below), but a skill is reference material and a rule is binding.
 
 Workflow rules (shared verbatim with the backend, same `type → gitmoji → label` mapping):
 
@@ -40,7 +40,7 @@ App rules — each section below points to the rule that governs it:
 | `.agents/rules/test-coverage.md` | Touching data, controllers or calculation helpers |
 | `.agents/rules/documentation-convention.md` | Adding or changing public API |
 
-`.agents/skills/` holds 21 Flutter/Dart skills from four sources. Start with **`getx-architecture`** (written for this repo) for anything reactive or structural, and **`getx-navigation`** for routing — no external catalogue covers GetX properly. For UI work: `flutter-ui` (design tokens), `flutter-fix-layout-issues` (constraints and overflow), `design-polish` (deliberate design passes, Android emulator only). The rest is reference material, not policy; four still carry examples in packages this app does not use, flagged as pending adaptation in `.agents/README.md`. Provenance and licences are in `.agents/ATTRIBUTION.md`. **Rules override skills.**
+`.agents/skills/` holds 21 Flutter/Dart skills from four sources, surfaced to Claude Code through per-skill symlinks in `.claude/skills/` — one source of truth, no copies. Start with **`getx-architecture`** (written for this repo) for anything reactive or structural, and **`getx-navigation`** for routing — no external catalogue covers GetX properly. For UI work: `flutter-ui` (design tokens), `flutter-fix-layout-issues` (constraints and overflow), `design-polish` (deliberate design passes, Android emulator only). The rest is reference material, not policy; four still carry examples in packages this app does not use, flagged as pending adaptation in `.agents/README.md`. Provenance and licences are in `.agents/ATTRIBUTION.md`. **Rules override skills.**
 
 ## Environment Setup
 
