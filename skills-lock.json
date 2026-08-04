@@ -17,6 +17,14 @@
       "skillPath": "skills/codemagic/SKILL.md",
       "sourceCommit": "01677fbf2e3797ac1fa743e569701f9d7915f664",
       "computedHash": "d77432f78707b1177ab731a90c4ef7e290ca70622539008091df53dbccc9dae3"
+    },
+    "design-polish": {
+      "source": "ChunkyTofuStudios/flutter-skills",
+      "sourceType": "github",
+      "license": "MIT",
+      "skillPath": "skills/design-polish/SKILL.md",
+      "computedHash": "384b9f8eacea72a1f115ac32d182f4a61a9bf6fc3a7de82411bdd3fd5958ceb3",
+      "localModifications": "notas de alcance: solo Android, coste, y obligación de AppMessages/AppColors/WidthValues (DTA-001)"
     }
   }
 }
