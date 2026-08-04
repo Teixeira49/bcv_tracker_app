@@ -7,7 +7,8 @@
       "license": "MIT",
       "skillPath": "skills/android-emulator/SKILL.md",
       "computedHash": "9f67a87ae5e3778f43f6f64fce72ddde0be3d8cefdaef6d621f10282828d925e",
-      "localModifications": "excluido el directorio tests/ (suite bats del propio script) (DTA-001)"
+      "localModifications": "excluido el directorio tests/ (suite bats del propio script) (DTA-001)",
+      "sourceCommit": "5db2b8ca817b0163deac5c5a09adda80dc62652c"
     },
     "codemagic": {
       "source": "Poorgramer-Zack/dart-expert-skills",
@@ -24,7 +25,8 @@
       "license": "MIT",
       "skillPath": "skills/design-polish/SKILL.md",
       "computedHash": "384b9f8eacea72a1f115ac32d182f4a61a9bf6fc3a7de82411bdd3fd5958ceb3",
-      "localModifications": "notas de alcance: solo Android, coste, y obligación de AppMessages/AppColors/WidthValues (DTA-001)"
+      "localModifications": "notas de alcance: solo Android, coste, y obligación de AppMessages/AppColors/WidthValues (DTA-001)",
+      "sourceCommit": "5db2b8ca817b0163deac5c5a09adda80dc62652c"
     },
     "effective-dart": {
       "source": "Poorgramer-Zack/dart-expert-skills",
@@ -118,7 +120,8 @@
       "sourceType": "github",
       "license": "MIT",
       "skillPath": "skills/flutter/flutter-fix-layout-issues/SKILL.md",
-      "computedHash": "bce2fbaaa366f3800ceac3480ae669e1716d2f2465dbbb5fa1a545231478ea3b"
+      "computedHash": "bce2fbaaa366f3800ceac3480ae669e1716d2f2465dbbb5fa1a545231478ea3b",
+      "sourceCommit": "28b936d5c2ee90afceb0ef0eb75d7612fe0ba3d0"
     },
     "flutter-isolate": {
       "source": "Poorgramer-Zack/dart-expert-skills",
@@ -162,7 +165,8 @@
       "license": "MIT",
       "skillPath": "skills/flutter/flutter-ui/SKILL.md",
       "computedHash": "3c9f4b728cc4bb4ae50126480b7412adcf6556db9d1ea4e8175328d0bbb1d8c6",
-      "localModifications": "tabla de equivalencias de tokens a WidthValues/AppColors y aviso de Material 2 (DTA-001)"
+      "localModifications": "tabla de equivalencias de tokens a WidthValues/AppColors y aviso de Material 2 (DTA-001)",
+      "sourceCommit": "28b936d5c2ee90afceb0ef0eb75d7612fe0ba3d0"
     },
     "getx-architecture": {
       "source": "Teixeira49/bcv_tracker_app",
@@ -177,7 +181,8 @@
       "license": "MIT",
       "skillPath": "rules/flutter/getx-navigation/SKILL.md",
       "computedHash": "05cad097b7bccc07fcbb228b7dff54e5d7594c89d876441402405602f8714595",
-      "localModifications": "corregido 'un Binding por ruta' al binding único de initial_bindings.dart; alineado a AppRoutes/AppPages; añadidos argumentos, tabs-vs-rutas y deuda del repo (DTA-001)"
+      "localModifications": "corregido 'un Binding por ruta' al binding único de initial_bindings.dart; alineado a AppRoutes/AppPages; añadidos argumentos, tabs-vs-rutas y deuda del repo (DTA-001)",
+      "sourceCommit": "9439f27ce3fa7fe53ff9278a1ee9a44bffa70eba"
     },
     "github-actions": {
       "source": "Poorgramer-Zack/dart-expert-skills",

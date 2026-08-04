@@ -5,6 +5,12 @@ paths:
   - "release_notes*.txt"
   - "CHANGELOG.md"
   - "docs/release/**"
+  # Los cuatro de arriba aún no existen en el repo, así que por sí solos dejaban
+  # esta regla inalcanzable — y del revés: hace falta ANTES de crear
+  # release_notes.json, para saber cómo escribirlo. Estos dos sí existen y se
+  # tocan al preparar una versión.
+  - "pubspec.yaml"
+  - "codemagic.yaml"
 ---
 
 # Notas de Versión
