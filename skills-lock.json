@@ -8,6 +8,15 @@
       "skillPath": "skills/android-emulator/SKILL.md",
       "computedHash": "9f67a87ae5e3778f43f6f64fce72ddde0be3d8cefdaef6d621f10282828d925e",
       "localModifications": "excluido el directorio tests/ (suite bats del propio script) (DTA-001)"
+    },
+    "codemagic": {
+      "source": "Poorgramer-Zack/dart-expert-skills",
+      "sourceType": "github",
+      "license": null,
+      "licenseNote": "el repositorio de origen no declara licencia; ver .agents/ATTRIBUTION.md",
+      "skillPath": "skills/codemagic/SKILL.md",
+      "sourceCommit": "01677fbf2e3797ac1fa743e569701f9d7915f664",
+      "computedHash": "d77432f78707b1177ab731a90c4ef7e290ca70622539008091df53dbccc9dae3"
     }
   }
 }
