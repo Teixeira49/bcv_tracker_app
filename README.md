@@ -69,5 +69,24 @@ Esta aplicación depende directamente de su servicio backend para obtener los da
 
 ---
 
+## 🤝 Contribuir
+
+Antes de abrir un PR, lee la [**Guía de Contribución**](CONTRIBUTING.md): arquitectura, reglas de implementación y el flujo `issue → rama → commits → PR → release`.
+
+### 🤖 Tooling agéntico
+
+Este repositorio versiona convenciones y capacidades para desarrollo asistido por IA en [`.agents/`](.agents/), más la config compartida en `.claude/pr-config.json` y el lockfile `skills-lock.json`. Al clonar, todo el equipo dispone de las mismas reglas sin configuración extra.
+
+```
+.agents/
+├── rules/    # 13 convenciones obligatorias (issues, ramas, commits, PR, releases
+│             #  y las reglas técnicas de Flutter/Dart/GetX de esta app)
+└── skills/   # 21 skills de Flutter/Dart, de 4 orígenes (ver .agents/ATTRIBUTION.md)
+```
+
+Las convenciones de flujo de trabajo son **idénticas a las del backend** (mismo mapeo `type → gitmoji → label`), y las técnicas están adaptadas a esta app. El índice completo está en [`.agents/README.md`](.agents/README.md), la procedencia y licencia de cada skill en [`.agents/ATTRIBUTION.md`](.agents/ATTRIBUTION.md), y el resumen en [CONTRIBUTING.md → Tooling Agéntico](CONTRIBUTING.md#-tooling-agéntico-agents-y-claude).
+
+---
+
 **Versión actual del proyecto:** 1.0.0+1
 **SDK de Dart compatible:** ^3.9.0
