@@ -81,6 +81,13 @@
       "sourceCommit": "01677fbf2e3797ac1fa743e569701f9d7915f664",
       "computedHash": "a7497472d08c270c65fe02f87e1ef6823b5ee51475a58f4e363070ba4aba5207",
       "localModifications": "references/architecture.md y architecture-decision-matrix.md adaptados a GetX (DTA-001)"
+    },
+    "flutter-fix-layout-issues": {
+      "source": "dhruvanbhalara/skills",
+      "sourceType": "github",
+      "license": "MIT",
+      "skillPath": "skills/flutter/flutter-fix-layout-issues/SKILL.md",
+      "computedHash": "bce2fbaaa366f3800ceac3480ae669e1716d2f2465dbbb5fa1a545231478ea3b"
     }
   }
 }
