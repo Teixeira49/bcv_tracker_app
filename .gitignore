@@ -1,8 +1,12 @@
-# Documentation (local only)
-docs/
+# Documentación interna (NO se versiona): planes de migración, listados de
+# trabajo y borradores de PR (el PR canónico vive en GitHub).
+# SÍ se versionan las notas de release, que acompañan a cada tag.
+docs/*
+!docs/release/
 
 # Miscellaneous
 *.env
+git_history.txt
 *.class
 *.log
 *.pyc
@@ -48,4 +52,15 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Variables de entorno: se ignoran todas salvo la plantilla pública
 .env
+!.env.example
+
+# Tooling agéntico (rules / skills)
+# SÍ se versiona: .agents/, .claude/pr-config.json, .claude/skills/ (symlinks
+# a .agents/skills/, para que Claude Code las descubra sin duplicar archivos)
+# y skills-lock.json
+# NO se versiona (config personal / local del asistente y posibles secretos):
+.claude/settings.local.json
+.claude/*.local.json
+.mcp.local.json

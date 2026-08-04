@@ -1,0 +1,1 @@
+../../.agents/rules/navigation-convention.md
