@@ -91,6 +91,8 @@ version: X.Y.Z+<build>
 - El build number **nunca baja**, ni siquiera si el SemVer sube: las tiendas rechazan un build number repetido o menor.
 - Este cambio va en un commit `🔧 chore: bump version to X.Y.Z` (o dentro del PR de release si el usuario trabaja así).
 
+> ⚠️ **`pubspec.yaml` es la única fuente que se edita.** Android, iOS y `codemagic.yaml` derivan la versión de ahí; tocarlos a mano es lo que produce un binario que dice una cosa en la tienda y otra en el tag. El mapa completo de los once sitios donde aparece la versión —cuáles son derivados, cuál es ruido del target de tests y cuáles hay que actualizar sí o sí, incluido el `README.md`— está en [`version-sources.md`](version-sources.md).
+
 ## Paso 4 — Escribir el release note en `docs/release/`
 
 Siempre generas un markdown con las notas del release y lo guardas en:

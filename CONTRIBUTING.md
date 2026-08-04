@@ -125,7 +125,7 @@ En una app instalada cuenta como **breaking** lo que rompe instalaciones existen
 El changelog **no se edita en cada commit**: se actualiza al **lanzar una versión**, a partir de un **PR ya aprobado y mergeado**. Por cada release:
 
 1. Se determina la versión nueva según la tabla SemVer.
-2. Se actualiza `version:` en **`pubspec.yaml`** (Codemagic saca de ahí el `--build-name`; el build number nunca baja).
+2. Se actualiza `version:` en **`pubspec.yaml`**, la única fuente que se edita — Android, iOS y `codemagic.yaml` la derivan (ver [`version-sources.md`](.agents/rules/version-sources.md)); el build number nunca baja.
 3. Se escribe la nota detallada en `docs/release/RELEASE_v<X.Y.Z>.md`.
 4. Se agrega una entrada concisa al tope de `CHANGELOG.md`.
 5. Se promueve `development → master` con una PR de release (la única, junto a los hotfix, que apunta a producción).
@@ -157,7 +157,7 @@ Este repositorio versiona un conjunto de **convenciones y capacidades para asist
 └── skills/   # Capacidades instalables (guías de Flutter/Dart)
 ```
 
-- **`rules/`** — las 15 convenciones listadas arriba, en el flujo `issue → rama → commits → PR → release` más las reglas técnicas de la app.
+- **`rules/`** — las 16 convenciones listadas arriba, en el flujo `issue → rama → commits → PR → release` más las reglas técnicas de la app.
 - **`skills/`** — 21 skills de cuatro orígenes: 15 de [`dart-expert-skills`](https://github.com/Poorgramer-Zack/dart-expert-skills) (de 37, revisadas una por una contra el código), 5 traídas para cubrir navegación y UI ([`ngxtm/devkit`](https://github.com/ngxtm/devkit), [`dhruvanbhalara/skills`](https://github.com/dhruvanbhalara/skills), [`ChunkyTofuStudios/flutter-skills`](https://github.com/ChunkyTofuStudios/flutter-skills), todas MIT) y **`getx-architecture`, escrita en este repo** porque ningún catálogo externo cubre GetX. Procedencia y licencia en [`.agents/ATTRIBUTION.md`](.agents/ATTRIBUTION.md) y en `skills-lock.json`.
 - **`.claude/pr-config.json`** — config compartida que leen las reglas: `branchProjectCode: "DTA"`, `baseBranch: "development"`, `productionBranch: "master"`, `triggerMode: "ask"`, `assignSelf` y el mapa `labelsByType`.
 

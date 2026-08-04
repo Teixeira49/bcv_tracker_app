@@ -27,6 +27,7 @@ Reglas que el asistente debe respetar. Cada archivo lleva un `description` en el
 | [`release-versioning.md`](rules/release-versioning.md) | SemVer, bump de `pubspec.yaml`, GitHub Releases y `CHANGELOG.md` |
 | [`version-value-proposal.md`](rules/version-value-proposal.md) | Contrasta el número mecánico de SemVer con el valor real entregado al usuario antes de proponerlo |
 | [`release-notes.md`](rules/release-notes.md) | `release_notes.json` para Codemagic: formato, locales, límites de las tiendas, y cómo se reparte la historia con el CHANGELOG |
+| [`version-sources.md`](rules/version-sources.md) | Los once sitios donde aparece la versión: cuál se edita, cuáles derivan y no se tocan |
 
 ### Reglas técnicas de la app (Flutter / Dart / GetX)
 
