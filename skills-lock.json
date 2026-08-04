@@ -62,6 +62,15 @@
       "skillPath": "skills/flutter-animate/SKILL.md",
       "sourceCommit": "01677fbf2e3797ac1fa743e569701f9d7915f664",
       "computedHash": "4deb1ca66a596ebeb2e90ca77c99fb390fe4060b3198a02b1131890ffe88ac67"
+    },
+    "flutter-deeplink": {
+      "source": "Poorgramer-Zack/dart-expert-skills",
+      "sourceType": "github",
+      "license": null,
+      "licenseNote": "el repositorio de origen no declara licencia; ver .agents/ATTRIBUTION.md",
+      "skillPath": "skills/flutter-deeplink/SKILL.md",
+      "sourceCommit": "01677fbf2e3797ac1fa743e569701f9d7915f664",
+      "computedHash": "2b8e7e0a15068e8897da7475cdc3306b045fb70b922ee43ab6fb65ecaf852816"
     }
   }
 }
