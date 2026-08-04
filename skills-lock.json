@@ -88,6 +88,15 @@
       "license": "MIT",
       "skillPath": "skills/flutter/flutter-fix-layout-issues/SKILL.md",
       "computedHash": "bce2fbaaa366f3800ceac3480ae669e1716d2f2465dbbb5fa1a545231478ea3b"
+    },
+    "flutter-isolate": {
+      "source": "Poorgramer-Zack/dart-expert-skills",
+      "sourceType": "github",
+      "license": null,
+      "licenseNote": "el repositorio de origen no declara licencia; ver .agents/ATTRIBUTION.md",
+      "skillPath": "skills/flutter-isolate/SKILL.md",
+      "sourceCommit": "01677fbf2e3797ac1fa743e569701f9d7915f664",
+      "computedHash": "1bc6a854ec333e68ba17acb91882b8e4efdd1221a7d8b920a70def6a4f799b70"
     }
   }
 }
