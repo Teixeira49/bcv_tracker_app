@@ -6,10 +6,7 @@ class _LanguageSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<SettingsController>(
     builder: (SettingsController controller) {
-      final selectedLanguage = controller.languageOptions.firstWhere(
-        (LanguageOption language) =>
-            language.code == controller.favLanguageCode.value,
-      );
+      final selectedLanguage = controller.selectedLanguage;
 
       return DropdownButtonFormField<LanguageOption>(
           value: selectedLanguage,
