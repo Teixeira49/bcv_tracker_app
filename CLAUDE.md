@@ -129,8 +129,7 @@ Tests live in `test/`, mirroring `lib/`. Any change to a data source, a market m
 Verified against the code. Fix on contact where the rule says so; do not treat as invisible:
 
 - **GetX workers are never disposed** — `HomeController` and `ConverterController` register `ever()` without `onClose()`. `get` 4.7.3 has no automatic disposal, and `CurrencyRepository` is `permanent`, so listeners accumulate on every `fenix` recreation. Tracked in [#45](https://github.com/Teixeira49/bcv_tracker_app/issues/45).
-- **`SettingsController` is registered twice** — `Get.put` in `main.dart:18` and `Get.lazyPut` in `initial_bindings.dart:30`.
-- **Navigation deviations** — `splash_page.dart:24` uses `Get.offAll(() => DashboardPage())`; `base_modal.dart:38` and `converter_modals.dart:69` close with `Navigator.pop`.
+- **`SettingsController` is registered twice** — `Get.put` in `main.dart` and `Get.lazyPut` in `initial_bindings.dart:30`.
 - **`WidthValues` is unused** — the 8pt grid is declared but the 21 `EdgeInsets` in the app carry bare numbers.
 - **Placeholder bundle identifiers** — `com.example.*` on both platforms blocks store publishing. Tracked in [#22](https://github.com/Teixeira49/bcv_tracker_app/issues/22).
 - **Invalid locale codes** — `SettingsController` offers `en_EN` and `ja_JA`; `AppTranslations` registers `en_US` and `ja_JP`. It works only because GetX falls back on the language code alone. Correcting them is now **safe**: the selector resolves an unknown stored code to `SettingsController.defaultLanguage` and `restoreLanguageCode` rewrites the preference, so an install carrying the old code no longer breaks the settings screen ([#54](https://github.com/Teixeira49/bcv_tracker_app/issues/54)).

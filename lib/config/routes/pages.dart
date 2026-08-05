@@ -9,6 +9,13 @@ class AppPages {
 
   static final List<GetPage<dynamic>> routes = [
     GetPage(name: AppRoutes.splash, page: () => const SplashPage()),
-    GetPage(name: AppRoutes.home, page: () => DashboardPage()),
+    // The splash → home transition lives here, on the route, not at the call
+    // site: `Get.offAllNamed(AppRoutes.home)` from the splash inherits it.
+    GetPage(
+      name: AppRoutes.home,
+      page: () => DashboardPage(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 500),
+    ),
   ];
 }

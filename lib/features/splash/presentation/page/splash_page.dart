@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
+import '../../../../config/routes/routes.dart';
 import '../../../../config/theme/colors/colors_values.dart';
 import '../../../../config/theme/icons/icons_constants.dart';
 import '../../../../core/constants/constants.dart';
-import '../../../dashboard/presentation/page/dashboard_page.dart';
 
 part '../widgets/splash_body.dart';
 
@@ -21,11 +21,9 @@ class _SplashPageState extends State<SplashPage> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: Constants.splashDuration), () {
-      Get.offAll<void>(
-        () => DashboardPage(),
-        transition: Transition.fadeIn,
-        duration: const Duration(milliseconds: 500),
-      );
+      // Clears the stack and lands on home. The fadeIn transition lives on the
+      // home `GetPage` (see `AppPages`), not here.
+      Get.offAllNamed<void>(AppRoutes.home);
     });
   }
 
