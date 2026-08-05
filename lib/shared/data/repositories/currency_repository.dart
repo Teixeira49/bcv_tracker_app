@@ -1,6 +1,5 @@
-import 'dart:developer';
-
 import 'package:get/get.dart';
+import '../../../core/logging/app_logger.dart';
 import '../../../core/network/api_exception.dart';
 import '../../domain/entities/entities.dart';
 import '../../domain/repositories/dollar_repositories.dart';
@@ -46,10 +45,13 @@ class CurrencyRepository extends GetxService {
       await Future.wait([getAveragedCurrencies(), getBCVCurrencies()]);
       errorMessage.value = null;
     } catch (e, s) {
+      // The cause is logged here, at the boundary where it becomes UI state:
+      // `errorMessage` gets the user-facing text, the log keeps the real
+      // exception and stack for diagnosis.
       errorMessage.value = _describe(e);
-      log(
+      AppLogger.error(
         'Error fetching data: $e',
-        name: 'CurrencyRepository.refreshData()',
+        name: 'CurrencyRepository.refreshData',
         error: e,
         stackTrace: s,
       );

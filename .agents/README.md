@@ -32,12 +32,12 @@ Los enlaces son **relativos**, así que funcionan en cualquier clon. `.agents/sk
 
 ## Las reglas también se enlazan, pero con `paths:`
 
-`.claude/rules/*.md` se carga **en cada sesión**, y las 16 reglas suman 1.841 líneas (~27 mil tokens): cargarlas todas siempre inundaría el contexto, y la propia documentación advierte que eso *reduce* la adherencia.
+`.claude/rules/*.md` se carga **en cada sesión**, y las 17 reglas suman 1.905 líneas (~28 mil tokens): cargarlas todas siempre inundaría el contexto, y la propia documentación advierte que eso *reduce* la adherencia.
 
 La salida es el frontmatter `paths:`, que hace que una regla se cargue **solo al leer archivos que coincidan**. El reparto:
 
 - **4 sin `paths:` → siempre en contexto** (718 líneas, ~10 mil tokens): `issue-convention`, `branch-naming`, `commit-convention` y `pull-request`. Son procedimientos de git y GitHub: ningún archivo los dispara, así que no hay patrón que darles.
-- **12 con `paths:` → bajo demanda**: editar `lib/core/i18n/` trae la regla de i18n y nada más; tocar `pubspec.yaml` trae las tres de versionado.
+- **13 con `paths:` → bajo demanda**: editar `lib/core/i18n/` trae la regla de i18n y nada más; tocar `pubspec.yaml` trae las tres de versionado.
 
 El `paths:` vive en el frontmatter de `.agents/rules/*.md` junto al `description:`. Otros agentes lo ignoran sin problema; Claude Code lo usa para no cargar lo que no toca.
 
@@ -83,6 +83,7 @@ Reglas que el asistente debe respetar. Cada archivo lleva un `description` en el
 | [`environment-variables.md`](rules/environment-variables.md) | Sincroniza `Environment`, `.env.example`, README y `codemagic.yaml` al tocar variables de entorno |
 | [`test-coverage.md`](rules/test-coverage.md) | Toda fuente, endpoint, controlador o helper de cálculo nace con sus tests en el mismo PR |
 | [`documentation-convention.md`](rules/documentation-convention.md) | Todo lo público nace documentado con dartdoc, explicando el porqué y no el qué |
+| [`logging-convention.md`](rules/logging-convention.md) | Todo pasa por `AppLogger` con niveles; cada `catch` de un límite registra su causa; en release nada sensible ni URLs en crudo |
 
 ---
 

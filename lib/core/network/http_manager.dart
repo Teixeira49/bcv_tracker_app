@@ -4,10 +4,10 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:dio/dio.dart';
 
+import '../logging/app_logger.dart';
 import 'http_operation.dart';
 
 // Project imports:
@@ -65,6 +65,13 @@ class HttpManager {
 
     final data = json.encode(body ?? {});
 
+    // Endpoint redacted: the request is logged for tracing, but a query string
+    // never reaches the log (see AppLogger.redactUri).
+    AppLogger.debug(
+      '→ ${method.name.toUpperCase()} ${AppLogger.redactUri(endpoint)}',
+      name: _source,
+    );
+
     try {
       switch (method) {
         case HttpOperation.get:
@@ -108,8 +115,8 @@ class HttpManager {
 
       return response;
     } catch (e, s) {
-      log(
-        '❌ HTTP request failed',
+      AppLogger.error(
+        '❌ HTTP request failed for ${AppLogger.redactUri(endpoint)}',
         name: '$_source.request',
         error: e,
         stackTrace: s,
