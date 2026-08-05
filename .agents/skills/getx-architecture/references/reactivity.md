@@ -37,6 +37,19 @@ Widget build(BuildContext context) => GetBuilder<HomeController>(
 - `custom_bottom_navigator_bar.dart` and `dashboard_page.dart` → `NavigationController.selectedIndex`, an `RxInt` owned by that controller.
 - `settings_widgets.dart` (×2) → `SettingsController` observables, inside a `GetBuilder` that supplies the controller.
 
+## Decision: `ever → update()` stays (#60)
+
+The 2026-08-03 audit (findings ARQ-07 / EFF-02) proposed replacing the
+`ever(...) => update()` bridge with granular `Obx` reading the repository's
+observables directly. It was **considered and declined** in [#60](https://github.com/Teixeira49/bcv_tracker_app/issues/60). The reasoning, so it is not relitigated on every screen:
+
+- **The bridge is a real boundary, not inertia.** With plain getters the view never names `CurrencyRepository`'s `Rx` types; a view doing `Obx(() => ...repository.x.value)` would weld the service's reactive shape into the widget's contract. Keeping that boundary was judged worth more than the granular-rebuild win — the same argument as `entities-vs-models.md`.
+- **`update()`'s coarseness is a known, bounded cost.** A whole-controller rebuild on a rate refresh is acceptable on the screens this app has; if a specific screen ever shows measurable jank, scope it with `update(['id'])` + `GetBuilder(id: 'id')` rather than switching the whole app to `Obx`.
+
+**The consequence you must honour:** keeping the pattern makes worker disposal a **permanent** requirement, not a one-time cleanup. Every `ever`/`debounce`/`interval` in a controller needs its `onClose()` — see `lifecycle-and-di.md` and [#45](https://github.com/Teixeira49/bcv_tracker_app/issues/45). That discipline is the price of this decision; it does not expire.
+
+Migrating to `Obx`-granular is not off the table forever, but it is its own issue with its own device-verification pass across every screen in light and dark — not a change to fold into unrelated work.
+
 ## Which one to use
 
 Use **`GetBuilder`** when the data comes from `CurrencyRepository` through a feature controller. It matches the surrounding code and keeps the service's `Rx` types out of the widget.
