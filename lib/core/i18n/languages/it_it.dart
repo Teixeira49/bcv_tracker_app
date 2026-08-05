@@ -51,4 +51,12 @@ const Map<String, String> itIt = {
   'configErrorTitle': 'Configurazione incompleta',
   'configErrorBody':
       'L\'app non è configurata correttamente e non può recuperare i tassi. Contatta chi la distribuisce.',
+  'errorNoConnection': 'Nessuna connessione a internet. Controlla la rete.',
+  'errorTimeout': 'Il server ha impiegato troppo tempo. Riprova.',
+  'errorServiceUnavailable': 'Il servizio non è disponibile al momento.',
+  'errorInvalidRequest': 'La richiesta non è valida.',
+  'errorServerInternal':
+      'Si è verificato un errore del server. Riprova più tardi.',
+  'errorUnexpectedResponse': 'Il servizio ha risposto in modo inaspettato.',
+  'errorGeneric': 'Impossibile caricare i dati. Riprova.',
 };

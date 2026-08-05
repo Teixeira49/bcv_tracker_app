@@ -51,4 +51,11 @@ const Map<String, String> ptPt = {
   'configErrorTitle': 'Configuração incompleta',
   'configErrorBody':
       'A aplicação não está configurada corretamente e não consegue obter as taxas. Contacte quem a distribui.',
+  'errorNoConnection': 'Sem ligação à internet. Verifica a tua rede.',
+  'errorTimeout': 'O servidor demorou demasiado a responder. Tenta de novo.',
+  'errorServiceUnavailable': 'O serviço não está disponível neste momento.',
+  'errorInvalidRequest': 'O pedido não é válido.',
+  'errorServerInternal': 'Ocorreu um erro no servidor. Tenta mais tarde.',
+  'errorUnexpectedResponse': 'O serviço respondeu de forma inesperada.',
+  'errorGeneric': 'Não foi possível carregar os dados. Tenta de novo.',
 };

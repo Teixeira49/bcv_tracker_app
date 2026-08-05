@@ -51,4 +51,11 @@ const Map<String, String> enUs = {
   'configErrorTitle': 'Incomplete configuration',
   'configErrorBody':
       'The app is not configured correctly and cannot fetch the rates. Contact whoever distributes it.',
+  'errorNoConnection': 'No internet connection. Check your network.',
+  'errorTimeout': 'The server took too long to respond. Try again.',
+  'errorServiceUnavailable': 'The service is unavailable right now.',
+  'errorInvalidRequest': 'The request is not valid.',
+  'errorServerInternal': 'A server error occurred. Try again later.',
+  'errorUnexpectedResponse': 'The service responded unexpectedly.',
+  'errorGeneric': 'Could not load the data. Try again.',
 };

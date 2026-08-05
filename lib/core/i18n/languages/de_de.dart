@@ -51,4 +51,12 @@ const Map<String, String> deDe = {
   'configErrorTitle': 'Unvollständige Konfiguration',
   'configErrorBody':
       'Die App ist nicht korrekt konfiguriert und kann die Kurse nicht abrufen. Wenden Sie sich an die Person, die sie bereitstellt.',
+  'errorNoConnection': 'Keine Internetverbindung. Prüfe dein Netzwerk.',
+  'errorTimeout': 'Der Server hat zu lange gebraucht. Versuche es erneut.',
+  'errorServiceUnavailable': 'Der Dienst ist derzeit nicht verfügbar.',
+  'errorInvalidRequest': 'Die Anfrage ist ungültig.',
+  'errorServerInternal':
+      'Ein Serverfehler ist aufgetreten. Versuche es später.',
+  'errorUnexpectedResponse': 'Der Dienst hat unerwartet geantwortet.',
+  'errorGeneric': 'Daten konnten nicht geladen werden. Versuche es erneut.',
 };

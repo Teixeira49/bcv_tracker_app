@@ -70,14 +70,17 @@ Future<void> _pumpHome(WidgetTester tester, {String? error}) async {
 void main() {
   tearDown(() => Get.reset());
 
-  testWidgets('renders the error card when the refresh failed', (tester) async {
-    await _pumpHome(tester, error: 'El portal del BCV no responde');
+  testWidgets('renders the error card with the mapped message', (tester) async {
+    // A network failure: the repository maps it to a user message (#18), not
+    // the backend's raw text. The card shows the "could not load" headline and
+    // the "no connection" detail. In the error state showCurrencies is false,
+    // so no rate cards (and no network images) are built.
+    await _pumpHome(tester, error: 'Connection refused');
 
-    // The backend detail is passed through verbatim, so it is the reliable
-    // signal that the error card rendered. In the error state showCurrencies is
-    // false, so no rate cards (and no network images) are built.
-    expect(find.textContaining('El portal del BCV no responde'), findsWidgets);
     expect(find.text(AppMessages.loadingError), findsWidgets);
+    expect(find.text(AppMessages.errorNoConnection), findsWidgets);
+    // The developer-oriented backend text never reaches the screen.
+    expect(find.textContaining('Connection refused'), findsNothing);
   });
 
   testWidgets('shows no error card on a successful refresh', (tester) async {

@@ -52,4 +52,11 @@ const Map<String, String> koKr = {
   'conversionUnavailable': '이 환전에 사용할 수 있는 환율이 없습니다',
   'configErrorTitle': '설정이 완료되지 않았습니다',
   'configErrorBody': '앱이 올바르게 설정되지 않아 환율을 가져올 수 없습니다. 배포자에게 문의하세요.',
+  'errorNoConnection': '인터넷 연결이 없습니다. 네트워크를 확인하세요.',
+  'errorTimeout': '서버 응답이 너무 오래 걸렸습니다. 다시 시도하세요.',
+  'errorServiceUnavailable': '현재 서비스를 사용할 수 없습니다.',
+  'errorInvalidRequest': '요청이 유효하지 않습니다.',
+  'errorServerInternal': '서버 오류가 발생했습니다. 나중에 다시 시도하세요.',
+  'errorUnexpectedResponse': '서비스가 예기치 않게 응답했습니다.',
+  'errorGeneric': '데이터를 불러올 수 없습니다. 다시 시도하세요.',
 };

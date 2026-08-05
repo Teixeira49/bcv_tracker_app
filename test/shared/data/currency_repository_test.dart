@@ -1,3 +1,4 @@
+import 'package:bcv_tracker_app/core/i18n/app_messages.dart';
 import 'package:bcv_tracker_app/core/network/api_exception.dart';
 import 'package:bcv_tracker_app/shared/data/repositories/currency_repository.dart';
 import 'package:bcv_tracker_app/shared/domain/entities/bcv_currencies.dart';
@@ -76,22 +77,25 @@ void main() {
   });
 
   group('refreshData() error paths', () {
-    test('an ApiException surfaces as errorMessage, loading resets', () async {
-      final repo = _repositoryWith(
-        _FakeDollarRepository(
-          bcvThrows: const ApiException.network(
-            'El portal del BCV no responde',
+    test(
+      'an ApiException surfaces as a mapped user message, loading resets',
+      () async {
+        final repo = _repositoryWith(
+          _FakeDollarRepository(
+            // The backend's own text is developer-oriented; the repo maps the
+            // exception kind/code to a user message (#18) instead of echoing it.
+            bcvThrows: const ApiException.network('Connection refused'),
+            saved: const [],
           ),
-          saved: const [],
-        ),
-      );
+        );
 
-      await repo.refreshData();
+        await repo.refreshData();
 
-      // ApiException carries the backend message; the repo hands that to the UI.
-      expect(repo.errorMessage.value, 'El portal del BCV no responde');
-      expect(repo.isLoading.value, isFalse);
-    });
+        expect(repo.errorMessage.value, AppMessages.errorNoConnection);
+        expect(repo.errorMessage.value, isNot('Connection refused'));
+        expect(repo.isLoading.value, isFalse);
+      },
+    );
 
     test('a partial failure still lands the side that succeeded', () async {
       // eagerError is off: the BCV fetch fails but the average fetch completes,
@@ -119,7 +123,9 @@ void main() {
 
       await repo.refreshData();
 
-      expect(repo.errorMessage.value, contains('unexpected'));
+      // Not an ApiException → the controlled generic message, never toString().
+      expect(repo.errorMessage.value, AppMessages.errorGeneric);
+      expect(repo.errorMessage.value, isNot(contains('unexpected')));
       expect(repo.isLoading.value, isFalse);
     });
   });

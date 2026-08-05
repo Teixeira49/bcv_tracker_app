@@ -51,4 +51,11 @@ const Map<String, String> esEs = {
   'configErrorTitle': 'Configuración incompleta',
   'configErrorBody':
       'La app no se ha configurado correctamente y no puede consultar las tasas. Contacta con quien la distribuye.',
+  'errorNoConnection': 'Sin conexión a internet. Revisa tu red.',
+  'errorTimeout': 'El servidor tardó demasiado en responder. Intenta de nuevo.',
+  'errorServiceUnavailable': 'El servicio no está disponible en este momento.',
+  'errorInvalidRequest': 'La solicitud no es válida.',
+  'errorServerInternal': 'Ocurrió un error en el servidor. Intenta más tarde.',
+  'errorUnexpectedResponse': 'El servicio respondió de forma inesperada.',
+  'errorGeneric': 'No se pudieron cargar los datos. Intenta de nuevo.',
 };

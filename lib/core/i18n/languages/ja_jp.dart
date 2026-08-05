@@ -52,4 +52,11 @@ const Map<String, String> jaJp = {
   'conversionUnavailable': 'この換算に利用できるレートがありません',
   'configErrorTitle': '設定が不完全です',
   'configErrorBody': 'アプリが正しく設定されておらず、レートを取得できません。配布元にお問い合わせください。',
+  'errorNoConnection': 'インターネット接続がありません。ネットワークを確認してください。',
+  'errorTimeout': 'サーバーの応答に時間がかかりすぎました。もう一度お試しください。',
+  'errorServiceUnavailable': '現在サービスを利用できません。',
+  'errorInvalidRequest': 'リクエストが無効です。',
+  'errorServerInternal': 'サーバーエラーが発生しました。後でもう一度お試しください。',
+  'errorUnexpectedResponse': 'サービスが予期しない応答を返しました。',
+  'errorGeneric': 'データを読み込めませんでした。もう一度お試しください。',
 };
