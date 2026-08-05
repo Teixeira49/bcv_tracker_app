@@ -47,4 +47,5 @@ const Map<String, String> esEs = {
   'loadingError': 'No se pudieron cargar las tasas',
   'retryAction': 'Reintentar',
   'marketAverage': 'Promedio',
+  'conversionUnavailable': 'Tasa no disponible para esta conversión',
 };

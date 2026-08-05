@@ -48,4 +48,5 @@ const Map<String, String> ptPt = {
   'loadingError': 'Não foi possível carregar as taxas',
   'retryAction': 'Tentar novamente',
   'marketAverage': 'Média',
+  'conversionUnavailable': 'Taxa indisponível para esta conversão',
 };

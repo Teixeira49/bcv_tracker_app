@@ -48,4 +48,5 @@ const Map<String, String> jaJp = {
   'loadingError': 'レートを読み込めませんでした',
   'retryAction': '再試行',
   'marketAverage': '平均',
+  'conversionUnavailable': 'この換算に利用できるレートがありません',
 };

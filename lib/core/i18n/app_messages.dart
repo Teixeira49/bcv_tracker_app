@@ -96,4 +96,6 @@ class AppMessages {
   static String get loadingError => 'loadingError'.tr;
 
   static String get retryAction => 'retryAction'.tr;
+
+  static String get conversionUnavailable => 'conversionUnavailable'.tr;
 }

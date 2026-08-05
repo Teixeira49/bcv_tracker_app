@@ -47,4 +47,5 @@ const Map<String, String> ruRu = {
   'loadingError': 'Не удалось загрузить курсы',
   'retryAction': 'Повторить',
   'marketAverage': 'Среднее',
+  'conversionUnavailable': 'Курс для этой конвертации недоступен',
 };

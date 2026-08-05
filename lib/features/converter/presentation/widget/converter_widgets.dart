@@ -41,6 +41,34 @@ class _CurrencyInputCard extends StatelessWidget {
               isInput: isInput,
               amount: currency.convertedValue.toString(),
             ),
+            // A market with no rate yields 0.0 instead of a conversion, and a
+            // bare 0 reads like a legitimate result. Only the output card says
+            // so: repeating it on both sides is noise.
+            if (!isInput && controller.isConversionUnavailable) ...[
+              const SizedBox(height: 8),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 16,
+                    color: ColorValues.textWarningPrimary(context),
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      AppMessages.conversionUnavailable,
+                      style: TextStyle(
+                        color: ColorValues.textWarningPrimary(context),
+                        fontSize: 12,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
       ),
