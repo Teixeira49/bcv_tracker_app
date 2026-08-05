@@ -47,4 +47,5 @@ const Map<String, String> deDe = {
   'loadingError': 'Die Kurse konnten nicht geladen werden',
   'retryAction': 'Wiederholen',
   'marketAverage': 'Durchschnitt',
+  'conversionUnavailable': 'Für diese Umrechnung ist kein Kurs verfügbar',
 };

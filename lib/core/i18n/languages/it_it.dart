@@ -47,4 +47,5 @@ const Map<String, String> itIt = {
   'loadingError': 'Impossibile caricare i tassi',
   'retryAction': 'Riprova',
   'marketAverage': 'Media',
+  'conversionUnavailable': 'Tasso non disponibile per questa conversione',
 };

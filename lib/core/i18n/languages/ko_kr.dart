@@ -47,4 +47,5 @@ const Map<String, String> koKr = {
   'loadingError': '환율을 불러올 수 없습니다',
   'retryAction': '다시 시도',
   'marketAverage': '평균',
+  'conversionUnavailable': '이 환전에 사용할 수 있는 환율이 없습니다',
 };

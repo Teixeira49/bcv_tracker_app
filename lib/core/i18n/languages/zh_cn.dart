@@ -47,4 +47,5 @@ const Map<String, String> zhCn = {
   'loadingError': '无法加载汇率',
   'retryAction': '重试',
   'marketAverage': '平均值',
+  'conversionUnavailable': '此换算暂无可用汇率',
 };

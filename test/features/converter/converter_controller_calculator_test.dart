@@ -33,6 +33,15 @@ void main() {
     value: 36.5,
   );
 
+  // A market the backend knows about but has no rate for yet. `Currency.empty`
+  // ships the same `value: 0.00`, so this is not a synthetic case.
+  const zeroRate = Currency(
+    name: 'No data',
+    keyName: 'ZRO',
+    platform: 'Test',
+    value: 0.0,
+  );
+
   setUp(() {
     Get.testMode = true;
     Get.put<IDollarRepository>(_FakeDollarRepository());
@@ -138,6 +147,81 @@ void main() {
       arrangeCurrencies(from: vesRate, to: usdRate);
       controller.calculator('50');
       expect(controller.toCurrency.currency.keyName, 'USD');
+    });
+  });
+
+  // Dividing doubles by zero does not throw in Dart: it evaluates to
+  // `Infinity`, or to `NaN` when the dividend is zero as well. Both used to
+  // reach `convertedValue` and get printed verbatim by the view.
+  group('calculator() with an unusable rate', () {
+    test('a zero destination rate does not produce Infinity', () {
+      arrangeCurrencies(from: vesRate, to: zeroRate);
+      controller.calculator('100');
+
+      expect(controller.toCurrency.convertedValue.isFinite, isTrue);
+      expect(controller.toCurrency.convertedValue, 0.0);
+    });
+
+    test('a zero source rate does not produce a meaningless result', () {
+      arrangeCurrencies(from: zeroRate, to: usdRate);
+      controller.calculator('100');
+
+      expect(controller.toCurrency.convertedValue.isFinite, isTrue);
+      expect(controller.toCurrency.convertedValue, 0.0);
+    });
+
+    test('both rates at zero do not produce NaN', () {
+      arrangeCurrencies(from: zeroRate, to: zeroRate);
+      controller.calculator('100');
+
+      expect(controller.toCurrency.convertedValue.isNaN, isFalse);
+      expect(controller.toCurrency.convertedValue, 0.0);
+    });
+
+    test('the typed amount is still echoed on the input side', () {
+      // The user's own number must not be swallowed by the guard: only the
+      // conversion is unavailable, not the input.
+      arrangeCurrencies(from: vesRate, to: zeroRate);
+      controller.calculator('100');
+
+      expect(controller.fromCurrency.convertedValue, 100.0);
+    });
+
+    test('an unusable rate raises isConversionUnavailable', () {
+      arrangeCurrencies(from: vesRate, to: zeroRate);
+      expect(controller.isConversionUnavailable, isTrue);
+
+      arrangeCurrencies(from: zeroRate, to: usdRate);
+      expect(controller.isConversionUnavailable, isTrue);
+    });
+
+    test('a normal pair leaves isConversionUnavailable down', () {
+      arrangeCurrencies(from: vesRate, to: usdRate);
+      controller.calculator('100');
+
+      expect(controller.isConversionUnavailable, isFalse);
+      expect(controller.toCurrency.convertedValue.isFinite, isTrue);
+    });
+
+    test('swapping into a zero rate does not produce Infinity', () {
+      // swapCurrencies() re-invokes calculator() with the converted value, so
+      // it walks the same division.
+      arrangeCurrencies(from: zeroRate, to: usdRate);
+      controller.swapCurrencies();
+
+      expect(controller.toCurrency.convertedValue.isFinite, isTrue);
+      expect(controller.toCurrency.currency.keyName, 'ZRO');
+    });
+
+    test('selecting an output against a zero source does not divide by it', () {
+      // The reverse calculation of selectCurrency() divides by the source rate.
+      // Picking VES as output keeps the zero-rate currency as the source, so
+      // the pivot rule does not replace it and the division is reached.
+      arrangeCurrencies(from: zeroRate, to: usdRate);
+      controller.selectCurrency(vesRate, isInput: false);
+
+      expect(controller.fromCurrency.convertedValue.isFinite, isTrue);
+      expect(controller.fromCurrency.convertedValue, 0.0);
     });
   });
 }
