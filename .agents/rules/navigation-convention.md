@@ -60,12 +60,9 @@ GetPage(
 ),
 ```
 
-## Deuda conocida
+## Estado
 
-A la fecha de escribir esta regla hay tres desviaciones en el código; corrígelas cuando toques esos archivos (regla del boy-scout), sin desviar el objetivo del PR:
-
-- `lib/features/splash/presentation/page/splash_page.dart` — usa `Get.offAll(() => DashboardPage())` teniendo `AppRoutes.home` ya registrado.
-- `lib/shared/presentation/widgets/base_modal.dart` y `lib/features/converter/presentation/widget/converter_modals.dart` — cierran con `Navigator.pop(context)` en lugar de `Get.back()`.
+Sin desviaciones. Las rutas nombradas están cableadas en `GetMaterialApp` (`getPages: AppPages.routes`, `initialRoute: AppPages.initPage`), el splash navega con `Get.offAllNamed(AppRoutes.home)` y los modales cierran con `Get.back()`. La regla describe lo que el código hace, no un objetivo (resuelto en [#58](https://github.com/Teixeira49/bcv_tracker_app/issues/58)).
 
 ## Al agregar una pantalla
 

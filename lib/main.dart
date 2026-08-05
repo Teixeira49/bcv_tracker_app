@@ -1,5 +1,4 @@
 import 'package:bcv_tracker_app/config/theme/theme.dart';
-import 'package:bcv_tracker_app/features/splash/presentation/page/splash_page.dart';
 import 'package:bcv_tracker_app/shared/presentation/controller/settings_controller.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +6,7 @@ import 'package:get/get.dart';
 
 import 'config/bindings/initial_bindings.dart';
 import 'config/enviroment/enviroment.dart';
+import 'config/routes/pages.dart';
 import 'core/constants/constants.dart';
 import 'core/i18n/app_translations.dart';
 import 'features/splash/presentation/page/configuration_error_page.dart';
@@ -68,7 +68,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: Constants.appTitle,
       initialBinding: InitialBinding(),
-      home: SplashPage(),
+      // Named routes: the splash is the entry point and every screen resolves
+      // through `AppPages.routes`. `initialBinding` still runs — adding
+      // `getPages`/`initialRoute` does not displace it.
+      initialRoute: AppPages.initPage,
+      getPages: AppPages.routes,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,

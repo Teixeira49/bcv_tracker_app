@@ -66,6 +66,6 @@ class _CurrencySelectorDialogBody extends StatelessWidget {
     required bool isInput,
   }) {
     bool? validator = controller.selectCurrency(currency, isInput: isInput);
-    if (validator != null && validator) Navigator.pop(context);
+    if (validator != null && validator) Get.back<void>();
   }
 }
