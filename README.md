@@ -89,6 +89,8 @@ Esta aplicación depende directamente de su servicio backend para obtener los da
 
 Antes de abrir un PR, lee la [**Guía de Contribución**](CONTRIBUTING.md): arquitectura, reglas de implementación y el flujo `issue → rama → commits → PR → release`.
 
+Cada PR hacia `development` o `master` corre `flutter analyze` y `flutter test` en GitHub Actions antes de poder fusionarse; la construcción y distribución siguen en Codemagic sobre `master`. Detalle en [CONTRIBUTING.md → Integración Continua](CONTRIBUTING.md#-integración-continua-ci).
+
 ### 🤖 Tooling agéntico
 
 Este repositorio versiona convenciones y capacidades para desarrollo asistido por IA en [`.agents/`](.agents/), más la config compartida en `.claude/pr-config.json` y el lockfile `skills-lock.json`. Al clonar, todo el equipo dispone de las mismas reglas sin configuración extra.

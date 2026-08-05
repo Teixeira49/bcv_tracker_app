@@ -106,6 +106,25 @@ fix/DTA-00Y  ─┼──▶ development ──(release)──▶ master ──�
 
 ---
 
+## ✅ Integración Continua (CI)
+
+Hay dos pipelines, con responsabilidades separadas:
+
+| Pipeline | Cuándo corre | Qué hace |
+|---|---|---|
+| **Validación de PR** — [`.github/workflows/pr-validation.yml`](.github/workflows/pr-validation.yml) (GitHub Actions) | En cada pull request hacia `development` o `master` | `flutter pub get` → `flutter analyze` → `flutter test`. **No** construye ni distribuye. |
+| **Distribución** — [`codemagic.yaml`](codemagic.yaml) (Codemagic) | En el push a `master` | Analiza, testea, **construye** el APK/IPA y lo **distribuye** a Firebase App Distribution. |
+
+**Por qué GitHub Actions para la validación y no Codemagic:** el check aparece de forma nativa en la PR de GitHub, no consume minutos de build de Codemagic para una tarea que no construye nada, y separa limpiamente "validar" (en cada PR) de "distribuir" (solo en `master`). Codemagic sigue siendo el único que construye y firma.
+
+**Por qué se validan los PR a `development` y no solo a `master`:** el trabajo diario se mergea a `development` y solo el release promociona a `master`. Validar solo los PR a `master` dejaría sin check todo el trabajo del día a día, que es justo lo que este pipeline existe para atrapar.
+
+Una PR **no se puede fusionar** si `flutter analyze` reporta **errores** o si `flutter test` falla. Hoy el análisis corre con `--no-fatal-infos --no-fatal-warnings` (igual que `codemagic.yaml`), así que los warnings todavía no bloquean; endurecer esa severidad es trabajo de [#29](https://github.com/Teixeira49/bcv_tracker_app/issues/29), que retira esos flags en ambos pipelines a la vez.
+
+> El workflow crea un `.env` ficticio (`CURRENCY_BACK=https://ci.example.com`) solo para que la app resuelva su configuración durante la validación. Nunca un backend real: quedaría en los logs públicos de la PR.
+
+---
+
 ## 🏷️ Versionado y Changelog
 
 El proyecto sigue **[Semantic Versioning](https://semver.org/lang/es/)** (`MAJOR.MINOR.PATCH`, con tags `vX.Y.Z`) y mantiene un historial formal en `CHANGELOG.md` con el formato **[Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/)**.
