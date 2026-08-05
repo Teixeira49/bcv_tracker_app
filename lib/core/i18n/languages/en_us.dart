@@ -48,4 +48,7 @@ const Map<String, String> enUs = {
   'retryAction': 'Retry',
   'marketAverage': 'Average',
   'conversionUnavailable': 'No rate available for this conversion',
+  'configErrorTitle': 'Incomplete configuration',
+  'configErrorBody':
+      'The app is not configured correctly and cannot fetch the rates. Contact whoever distributes it.',
 };

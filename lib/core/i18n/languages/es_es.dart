@@ -48,4 +48,7 @@ const Map<String, String> esEs = {
   'retryAction': 'Reintentar',
   'marketAverage': 'Promedio',
   'conversionUnavailable': 'Tasa no disponible para esta conversión',
+  'configErrorTitle': 'Configuración incompleta',
+  'configErrorBody':
+      'La app no se ha configurado correctamente y no puede consultar las tasas. Contacta con quien la distribuye.',
 };

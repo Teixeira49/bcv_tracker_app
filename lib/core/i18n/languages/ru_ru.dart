@@ -48,4 +48,7 @@ const Map<String, String> ruRu = {
   'retryAction': 'Повторить',
   'marketAverage': 'Среднее',
   'conversionUnavailable': 'Курс для этой конвертации недоступен',
+  'configErrorTitle': 'Неполная конфигурация',
+  'configErrorBody':
+      'Приложение настроено неверно и не может получить курсы. Свяжитесь с тем, кто его распространяет.',
 };

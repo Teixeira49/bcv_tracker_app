@@ -48,4 +48,7 @@ const Map<String, String> deDe = {
   'retryAction': 'Wiederholen',
   'marketAverage': 'Durchschnitt',
   'conversionUnavailable': 'Für diese Umrechnung ist kein Kurs verfügbar',
+  'configErrorTitle': 'Unvollständige Konfiguration',
+  'configErrorBody':
+      'Die App ist nicht korrekt konfiguriert und kann die Kurse nicht abrufen. Wenden Sie sich an die Person, die sie bereitstellt.',
 };

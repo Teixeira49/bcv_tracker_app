@@ -49,4 +49,7 @@ const Map<String, String> jaJp = {
   'retryAction': '再試行',
   'marketAverage': '平均',
   'conversionUnavailable': 'この換算に利用できるレートがありません',
+  'configErrorTitle': '設定が不完全です',
+  'configErrorBody':
+      'アプリが正しく設定されておらず、レートを取得できません。配布元にお問い合わせください。',
 };

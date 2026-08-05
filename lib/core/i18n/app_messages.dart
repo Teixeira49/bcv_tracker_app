@@ -98,4 +98,8 @@ class AppMessages {
   static String get retryAction => 'retryAction'.tr;
 
   static String get conversionUnavailable => 'conversionUnavailable'.tr;
+
+  static String get configErrorTitle => 'configErrorTitle'.tr;
+
+  static String get configErrorBody => 'configErrorBody'.tr;
 }

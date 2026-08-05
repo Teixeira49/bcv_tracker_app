@@ -48,4 +48,7 @@ const Map<String, String> itIt = {
   'retryAction': 'Riprova',
   'marketAverage': 'Media',
   'conversionUnavailable': 'Tasso non disponibile per questa conversione',
+  'configErrorTitle': 'Configurazione incompleta',
+  'configErrorBody':
+      'L\'app non è configurata correttamente e non può recuperare i tassi. Contatta chi la distribuisce.',
 };
