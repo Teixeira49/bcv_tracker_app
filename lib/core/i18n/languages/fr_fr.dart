@@ -51,4 +51,12 @@ const Map<String, String> frFr = {
   'configErrorTitle': 'Configuration incomplète',
   'configErrorBody':
       'L\'application n\'est pas correctement configurée et ne peut pas récupérer les taux. Contactez la personne qui la distribue.',
+  'errorNoConnection': 'Pas de connexion internet. Vérifiez votre réseau.',
+  'errorTimeout': 'Le serveur a mis trop de temps à répondre. Réessayez.',
+  'errorServiceUnavailable': 'Le service est indisponible pour le moment.',
+  'errorInvalidRequest': 'La requête n\'est pas valide.',
+  'errorServerInternal':
+      'Une erreur serveur s\'est produite. Réessayez plus tard.',
+  'errorUnexpectedResponse': 'Le service a répondu de façon inattendue.',
+  'errorGeneric': 'Impossible de charger les données. Réessayez.',
 };

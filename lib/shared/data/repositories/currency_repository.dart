@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
+import '../../../core/i18n/app_messages.dart';
 import '../../../core/logging/app_logger.dart';
+import '../../../core/network/api_error_messages.dart';
 import '../../../core/network/api_exception.dart';
 import '../../domain/entities/entities.dart';
 import '../../domain/repositories/dollar_repositories.dart';
@@ -78,8 +80,11 @@ class CurrencyRepository extends GetxService {
     hasBcvData.value = true;
   }
 
-  /// User-facing detail of a failure: [ApiException] already carries the
-  /// `message` of the backend error envelope.
+  /// User-facing message for a failure. An [ApiException] is mapped by its kind
+  /// and HTTP code to a translated app message (`apiErrorMessage`); the
+  /// backend's own developer-oriented text stays in the log (#19). Anything
+  /// unexpected degrades to a controlled generic message, never a raw
+  /// `toString()`.
   String _describe(Object error) =>
-      error is ApiException ? error.message : error.toString();
+      error is ApiException ? apiErrorMessage(error) : AppMessages.errorGeneric;
 }

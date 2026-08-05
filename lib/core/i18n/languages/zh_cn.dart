@@ -50,4 +50,11 @@ const Map<String, String> zhCn = {
   'conversionUnavailable': '此换算暂无可用汇率',
   'configErrorTitle': '配置不完整',
   'configErrorBody': '应用未正确配置，无法获取汇率。请联系分发方。',
+  'errorNoConnection': '无网络连接。请检查你的网络。',
+  'errorTimeout': '服务器响应超时。请重试。',
+  'errorServiceUnavailable': '服务当前不可用。',
+  'errorInvalidRequest': '请求无效。',
+  'errorServerInternal': '服务器发生错误。请稍后重试。',
+  'errorUnexpectedResponse': '服务返回了意外的响应。',
+  'errorGeneric': '无法加载数据。请重试。',
 };

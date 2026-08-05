@@ -51,4 +51,11 @@ const Map<String, String> ruRu = {
   'configErrorTitle': 'Неполная конфигурация',
   'configErrorBody':
       'Приложение настроено неверно и не может получить курсы. Свяжитесь с тем, кто его распространяет.',
+  'errorNoConnection': 'Нет подключения к интернету. Проверьте сеть.',
+  'errorTimeout': 'Сервер слишком долго отвечал. Повторите попытку.',
+  'errorServiceUnavailable': 'Сервис сейчас недоступен.',
+  'errorInvalidRequest': 'Запрос недействителен.',
+  'errorServerInternal': 'Произошла ошибка сервера. Повторите позже.',
+  'errorUnexpectedResponse': 'Сервис ответил неожиданно.',
+  'errorGeneric': 'Не удалось загрузить данные. Повторите попытку.',
 };

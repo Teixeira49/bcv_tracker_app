@@ -102,4 +102,18 @@ class AppMessages {
   static String get configErrorTitle => 'configErrorTitle'.tr;
 
   static String get configErrorBody => 'configErrorBody'.tr;
+
+  static String get errorNoConnection => 'errorNoConnection'.tr;
+
+  static String get errorTimeout => 'errorTimeout'.tr;
+
+  static String get errorServiceUnavailable => 'errorServiceUnavailable'.tr;
+
+  static String get errorInvalidRequest => 'errorInvalidRequest'.tr;
+
+  static String get errorServerInternal => 'errorServerInternal'.tr;
+
+  static String get errorUnexpectedResponse => 'errorUnexpectedResponse'.tr;
+
+  static String get errorGeneric => 'errorGeneric'.tr;
 }
