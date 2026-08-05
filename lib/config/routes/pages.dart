@@ -1,5 +1,5 @@
 import 'package:bcv_tracker_app/config/routes/routes.dart';
-import 'package:get/get_navigation/src/routes/get_route.dart';
+import 'package:get/get.dart';
 
 import '../../features/dashboard/presentation/page/dashboard_page.dart';
 import '../../features/splash/presentation/page/splash_page.dart';

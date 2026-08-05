@@ -2,7 +2,6 @@ import 'package:bcv_tracker_app/core/i18n/app_messages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'dart:ui';
 
 import '../../../../config/theme/colors/colors_values.dart';
