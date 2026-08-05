@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bcv_tracker_app/core/network/api_exception.dart';
 import 'package:bcv_tracker_app/core/network/http_manager.dart';
 import 'package:bcv_tracker_app/core/network/http_operation.dart';
@@ -148,6 +150,38 @@ void main() {
           isA<ApiException>()
               .having((e) => e.statusCode, 'statusCode', isNull)
               .having((e) => e.message, 'message', 'Connection refused'),
+        ),
+      );
+    });
+
+    test('translates a rejected certificate into a readable message', () async {
+      // What reaches Dio when the chain does not validate against the system
+      // trust store — an interception proxy without its CA installed. The raw
+      // OS error must never reach the user.
+      await expectLater(
+        _api(
+          failure: DioException(
+            requestOptions: RequestOptions(path: '/x'),
+            type: DioExceptionType.unknown,
+            message:
+                'HandshakeException: Handshake error in client '
+                '(OS Error: CERTIFICATE_VERIFY_FAILED: self signed certificate)',
+            error: const HandshakeException('CERTIFICATE_VERIFY_FAILED'),
+          ),
+        ).getCurrentDollar(),
+        throwsA(
+          isA<ApiException>()
+              .having((e) => e.statusCode, 'statusCode', isNull)
+              .having(
+                (e) => e.message,
+                'message',
+                contains('No se pudo verificar la identidad del servidor'),
+              )
+              .having(
+                (e) => e.message,
+                'message',
+                isNot(contains('CERTIFICATE_VERIFY_FAILED')),
+              ),
         ),
       );
     });

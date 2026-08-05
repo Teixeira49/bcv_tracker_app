@@ -5,10 +5,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
 
 import 'http_operation.dart';
 
@@ -53,14 +51,15 @@ class HttpManager {
   }) async {
     final setDioOptions = _dioOptions(endpoint, customHeader, clientCode);
 
+    // The adapter is left untouched on purpose. Dio validates the certificate
+    // chain against the system trust store by default, and the backend is
+    // served over HTTPS with a valid certificate, so it needs no help.
+    //
+    // ⚠️ Never override `httpClientAdapter` to accept every certificate
+    // (`badCertificateCallback => true`): it defeats iOS ATS and Android's
+    // network security config, and lets anyone on the same network serve
+    // forged exchange rates. See issue #50.
     final dio = Dio(setDioOptions);
-
-    (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate =
-        (client) {
-          client.badCertificateCallback =
-              (X509Certificate cert, String host, int port) => true;
-          return client;
-        };
 
     Response? response;
 
