@@ -71,7 +71,7 @@ flutter build ios --release          # iOS release build
 
 ## Architecture
 
-**State management**: GetX. Reactive `Rx` state lives in a **service**, not in feature controllers: `CurrencyRepository` (a `GetxService`, `permanent`) owns the observables; feature controllers expose plain unwrapped getters and bridge changes with `ever(...) => update()`; views use `GetBuilder` (17 uses) far more than `Obx` (4). If you add reactive state to a service and forget the `ever`, the screen silently stops refreshing. See `.agents/skills/getx-architecture`.
+**State management**: GetX. Reactive `Rx` state lives in a **service**, not in feature controllers: `CurrencyRepository` (a `GetxService`, `permanent`) owns the observables; feature controllers expose plain unwrapped getters and bridge changes with `ever(...) => update()`; views use `GetBuilder` (17 uses) far more than `Obx` (4). This `ever → update()` bridge is a **deliberate, retained decision** — the audit proposed migrating to granular `Obx` and it was declined in [#60](https://github.com/Teixeira49/bcv_tracker_app/issues/60), to keep the view↔service boundary (views never name the repository's `Rx` types). Its price is that disposing every worker is a permanent requirement (see below). If you add reactive state to a service and forget the `ever`, the screen silently stops refreshing. See `.agents/skills/getx-architecture`.
 
 **Dependency injection**: declared in `lib/config/bindings/initial_bindings.dart` with `Get.lazyPut` / `Get.put`. This is the single place to register controllers, repositories and services — resolve with `Get.find()`, never instantiate a controller inside a widget.
 
@@ -128,7 +128,7 @@ Tests live in `test/`, mirroring `lib/`. Any change to a data source, a market m
 
 Verified against the code. Fix on contact where the rule says so; do not treat as invisible:
 
-- **GetX workers are never disposed** — `HomeController` and `ConverterController` register `ever()` without `onClose()`. `get` 4.7.3 has no automatic disposal, and `CurrencyRepository` is `permanent`, so listeners accumulate on every `fenix` recreation. Tracked in [#45](https://github.com/Teixeira49/bcv_tracker_app/issues/45).
+- **GetX workers are never disposed** — `HomeController` and `ConverterController` register `ever()` without `onClose()`. `get` 4.7.3 has no automatic disposal, and `CurrencyRepository` is `permanent`, so listeners accumulate on every `fenix` recreation. Tracked in [#45](https://github.com/Teixeira49/bcv_tracker_app/issues/45). Because the `ever → update()` pattern was kept over `Obx`-granular ([#60](https://github.com/Teixeira49/bcv_tracker_app/issues/60)), this is a **permanent convention requirement**, not a one-time fix: every controller with a worker owns its `onClose()`, always.
 - **`SettingsController` is registered twice** — `Get.put` in `main.dart` and `Get.lazyPut` in `initial_bindings.dart:30`.
 - **`WidthValues` is unused** — the 8pt grid is declared but the 21 `EdgeInsets` in the app carry bare numbers.
 - **Placeholder bundle identifiers** — `com.example.*` on both platforms blocks store publishing. Tracked in [#22](https://github.com/Teixeira49/bcv_tracker_app/issues/22).

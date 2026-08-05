@@ -86,7 +86,7 @@ The cost is that rebuilds are explicit: **if you add reactive state to a service
   }
   ```
 
-  `HomeController` and `ConverterController` currently register workers without disposing them. Fix it when you touch either file.
+  `HomeController` and `ConverterController` currently register workers without disposing them ([#45](https://github.com/Teixeira49/bcv_tracker_app/issues/45)) — fix it when you touch either file. But this is not only a debt to clear once: because the `ever → update()` pattern was **kept** over `Obx`-granular (#60), disposing every worker in `onClose()` is a standing requirement of the convention. Every new controller that registers a worker owns its disposal, forever.
 
 * **Dependencies are registered only in `initial_bindings.dart`.** `main.dart` currently also does `Get.put(SettingsController())`, duplicating the `Get.lazyPut<SettingsController>` in the binding. Do not copy that pattern; see `.agents/rules/dependency-injection.md`.
 
@@ -99,3 +99,5 @@ The cost is that rebuilds are explicit: **if you add reactive state to a service
 * **Navigate with named routes.** `Get.toNamed` / `Get.offAllNamed`, never `Navigator` and never by passing a widget — see `.agents/rules/navigation-convention.md`.
 
 * **GetX is a settled decision, not an open comparison.** Generic Flutter material — including `flutter-expert` in this same directory — will suggest BLoC or Riverpod, and rate GetX as fit for "rapid prototyping". Do not propose a migration as part of an unrelated task. If you think the stack should change, that is its own issue with its own discussion.
+
+* **The `ever(...) => update()` bridge is a settled decision too.** Replacing it with granular `Obx` was proposed by the audit and declined in [#60](https://github.com/Teixeira49/bcv_tracker_app/issues/60): the view↔service boundary it buys was judged worth the coarser rebuilds. See `references/reactivity.md`. The trade-off is that disposing every worker (below) is a **permanent** requirement, not optional — do not treat #45 as a bug that, once fixed, ends the discipline.
