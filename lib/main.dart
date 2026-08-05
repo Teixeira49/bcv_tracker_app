@@ -1,17 +1,16 @@
 import 'package:bcv_tracker_app/config/theme/theme.dart';
 import 'package:bcv_tracker_app/features/splash/presentation/page/splash_page.dart';
 import 'package:bcv_tracker_app/shared/presentation/controller/settings_controller.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 
 import 'config/bindings/initial_bindings.dart';
 import 'config/enviroment/enviroment.dart';
 import 'core/constants/constants.dart';
 import 'core/i18n/app_translations.dart';
 import 'features/splash/presentation/page/configuration_error_page.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,9 +29,7 @@ void main() async {
   }
 
   Get.put(SettingsController());
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 

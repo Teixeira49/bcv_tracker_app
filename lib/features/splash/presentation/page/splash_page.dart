@@ -3,9 +3,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import '../../../../config/theme/colors/colors_values.dart';
-import '../../../dashboard/presentation/page/dashboard_page.dart';
 import '../../../../config/theme/icons/icons_constants.dart';
 import '../../../../core/constants/constants.dart';
+import '../../../dashboard/presentation/page/dashboard_page.dart';
 
 part '../widgets/splash_body.dart';
 
@@ -21,7 +21,7 @@ class _SplashPageState extends State<SplashPage> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: Constants.splashDuration), () {
-      Get.offAll(
+      Get.offAll<void>(
         () => DashboardPage(),
         transition: Transition.fadeIn,
         duration: const Duration(milliseconds: 500),
@@ -30,7 +30,5 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        body: _SplashBody(),
-      );
+  Widget build(BuildContext context) => Scaffold(body: _SplashBody());
 }

@@ -57,10 +57,14 @@ void main() {
     double fromConverted = 1.0,
     double toConverted = 36.5,
   }) {
-    controller.fromCurrency =
-        ConvertibleCurrency(currency: from, convertedValue: fromConverted);
-    controller.toCurrency =
-        ConvertibleCurrency(currency: to, convertedValue: toConverted);
+    controller.fromCurrency = ConvertibleCurrency(
+      currency: from,
+      convertedValue: fromConverted,
+    );
+    controller.toCurrency = ConvertibleCurrency(
+      currency: to,
+      convertedValue: toConverted,
+    );
   }
 
   group('calculator()', () {

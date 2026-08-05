@@ -9,11 +9,9 @@ import '../../../../core/network/http_manager.dart';
 import '../../model/model.dart';
 
 class DollarApiRest implements IDollarApi {
-  DollarApiRest({
-    required String apiUrl,
-    HttpManager? client,
-  }) : _apiUrl = apiUrl,
-       _client = client ?? HttpManager();
+  DollarApiRest({required String apiUrl, HttpManager? client})
+    : _apiUrl = apiUrl,
+      _client = client ?? HttpManager();
 
   final String _apiUrl;
   final HttpManager _client;
@@ -63,7 +61,7 @@ class DollarApiRest implements IDollarApi {
   /// (`{status, message, data}`), translating every failure into an
   /// [ApiException] that carries the backend message.
   Future<Object?> _getData(String endpoint) async {
-    final Response response;
+    final Response<dynamic> response;
     try {
       response = await _client.request(endpoint: _apiUrl + endpoint);
     } on DioException catch (e) {
@@ -94,14 +92,18 @@ class DollarApiRest implements IDollarApi {
     }
 
     if (body is! String || body.isEmpty) {
-      throw const ApiException.malformed('El backend respondió con un cuerpo vacío.');
+      throw const ApiException.malformed(
+        'El backend respondió con un cuerpo vacío.',
+      );
     }
 
     final Object? envelope;
     try {
       envelope = json.decode(body);
     } catch (e) {
-      throw ApiException.malformed('El backend respondió con un cuerpo no JSON: $e');
+      throw ApiException.malformed(
+        'El backend respondió con un cuerpo no JSON: $e',
+      );
     }
 
     if (envelope is! Map<String, dynamic> || !envelope.containsKey('data')) {

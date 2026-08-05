@@ -56,9 +56,7 @@ class _DollarCurrencyCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    CurrencyHelpers.castCurrency(
-                      value: currency.value,
-                    ),
+                    CurrencyHelpers.castCurrency(value: currency.value),
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
                   ),
                   Text(
@@ -77,9 +75,7 @@ class _DollarCurrencyCard extends StatelessWidget {
                   Text(AppMessages.lastUpdate),
                   Text(
                     currency.updateDate != null
-                        ? CurrencyHelpers.formatDate(
-                            date: currency.updateDate!,
-                          )
+                        ? CurrencyHelpers.formatDate(date: currency.updateDate!)
                         : CurrencyHelpers.emptyDatePlaceholder,
                   ),
                 ],
@@ -151,9 +147,7 @@ class _BCVDollarCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        CurrencyHelpers.castCurrency(
-                          value: currency.value,
-                        ),
+                        CurrencyHelpers.castCurrency(value: currency.value),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 28,

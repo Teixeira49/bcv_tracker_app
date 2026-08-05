@@ -44,7 +44,7 @@ class BaseLayout extends StatelessWidget {
             ),
             Spacer(),
             IconButton(
-              onPressed: () => showBlurredDialog(
+              onPressed: () => showBlurredDialog<void>(
                 context: context,
                 builder: (context) => SettingsModal(),
               ),
@@ -144,8 +144,7 @@ class _RoundedBaseBodyClipPath extends CustomClipper<Path> {
   }
 
   @override
-  bool shouldReclip(_RoundedBaseBodyClipPath oldClipper) =>
-      oldClipper != this;
+  bool shouldReclip(_RoundedBaseBodyClipPath oldClipper) => oldClipper != this;
 }
 
 class _RoundedBaseBodyWidget extends StatelessWidget {

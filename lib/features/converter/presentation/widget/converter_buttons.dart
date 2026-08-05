@@ -32,11 +32,11 @@ class _SelectCurrencyButton extends StatelessWidget {
     color: ColorValues.utilityBrand100(context),
     borderRadius: BorderRadius.circular(30),
     child: InkWell(
-      onTap: () => showBlurredDialog(
+      onTap: () => showBlurredDialog<void>(
         context: context,
         builder: (context) => _CurrencySelectorDialog(isInput: isInput),
       ),
-      hoverColor: ColorValues.utilityBrand800(context).withOpacity(0.8),
+      hoverColor: ColorValues.utilityBrand800(context).withValues(alpha: 0.8),
       borderRadius: BorderRadius.circular(30),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -90,8 +90,8 @@ class _CurrencyTileButton extends StatelessWidget {
           trailing: _getIcon(context, isActive),
           leading: _CircleCurrencyTypeWidget(currencyCode: currency.keyName),
           title: Text(
-            "${CurrencyHelpers.castCurrencyDisplayCode(currency.keyName)} "
-            "${CurrencyHelpers.castCurrencyDisplayName(currency)}",
+            '${CurrencyHelpers.castCurrencyDisplayCode(currency.keyName)} '
+            '${CurrencyHelpers.castCurrencyDisplayName(currency)}',
           ),
           subtitle: Text(currency.platform),
           shape: RoundedRectangleBorder(

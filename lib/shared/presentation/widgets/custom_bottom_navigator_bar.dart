@@ -14,7 +14,7 @@ class CustomBottomNavigatorBar extends StatelessWidget {
   });
 
   final NavigationController navigationController;
-  final List pageButtons;
+  final List<Map<String, dynamic>> pageButtons;
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -28,7 +28,7 @@ class CustomBottomNavigatorBar extends StatelessWidget {
             height: 64,
             width: double.infinity,
             decoration: BoxDecoration(
-              color: ColorValues.textPrimaryInv(context).withOpacity(0.5),
+              color: ColorValues.textPrimaryInv(context).withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: ColorValues.utilityInfo(context).withAlpha(120),
@@ -94,8 +94,9 @@ class _CustomBottomNavigatorItem extends StatelessWidget {
             opacity: isSelected ? 1 : 0.85,
             child: Icon(
               isSelected
-                  ? (content['active_icon'] ?? content['icon'])
-                  : content['icon'],
+                  ? (content['active_icon'] as IconData? ??
+                        content['icon'] as IconData?)
+                  : content['icon'] as IconData?,
               size: 24,
               color: isSelected
                   ? ColorValues.fgBrandSecondary(context)

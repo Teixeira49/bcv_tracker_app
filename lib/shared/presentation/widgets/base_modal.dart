@@ -47,15 +47,16 @@ class BaseModal extends StatelessWidget {
     content: SizedBox(
       width: maxWidth ?? double.infinity,
       height: maxHeight,
-      child: SingleChildScrollView(child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Divider(),
-          Padding(padding: internalMargin, child: child),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Divider(),
+            Padding(padding: internalMargin, child: child),
+          ],
+        ),
       ),
     ),
-        )
   );
 }

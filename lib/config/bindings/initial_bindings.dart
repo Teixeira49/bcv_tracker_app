@@ -1,12 +1,12 @@
 import 'package:bcv_tracker_app/features/splash/presentation/page/splash_page.dart';
 import 'package:get/get.dart';
 
-import '../../features/home/presentation/controller/home_controller.dart';
 import '../../features/converter/presentation/controller/converter_controller.dart';
+import '../../features/home/presentation/controller/home_controller.dart';
 import '../../navigation/navigation_controller.dart';
 import '../../shared/data/datasource/datasource.dart';
-import '../../shared/data/repositories/dollar_repositories.dart';
 import '../../shared/data/repositories/currency_repository.dart';
+import '../../shared/data/repositories/dollar_repositories.dart';
 import '../../shared/domain/repositories/dollar_repositories.dart';
 import '../../shared/presentation/controller/settings_controller.dart';
 import '../enviroment/enviroment.dart';

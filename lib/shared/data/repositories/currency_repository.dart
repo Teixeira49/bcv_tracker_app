@@ -48,8 +48,8 @@ class CurrencyRepository extends GetxService {
     } catch (e, s) {
       errorMessage.value = _describe(e);
       log(
-        "Error fetching data: $e",
-        name: "CurrencyRepository.refreshData()",
+        'Error fetching data: $e',
+        name: 'CurrencyRepository.refreshData()',
         error: e,
         stackTrace: s,
       );

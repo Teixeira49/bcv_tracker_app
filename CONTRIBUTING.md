@@ -119,9 +119,43 @@ Hay dos pipelines, con responsabilidades separadas:
 
 **Por qué se validan los PR a `development` y no solo a `master`:** el trabajo diario se mergea a `development` y solo el release promociona a `master`. Validar solo los PR a `master` dejaría sin check todo el trabajo del día a día, que es justo lo que este pipeline existe para atrapar.
 
-Una PR **no se puede fusionar** si `flutter analyze` reporta **errores** o si `flutter test` falla. Hoy el análisis corre con `--no-fatal-infos --no-fatal-warnings` (igual que `codemagic.yaml`), así que los warnings todavía no bloquean; endurecer esa severidad es trabajo de [#29](https://github.com/Teixeira49/bcv_tracker_app/issues/29), que retira esos flags en ambos pipelines a la vez.
+Ambos pipelines corren `flutter analyze` **sin** flags de leniencia: cualquier hallazgo —error, warning o info— rompe el build. Una PR no se puede fusionar con el análisis en rojo ni con tests fallando. La configuración estricta que hace esto sostenible vive en `analysis_options.yaml` (ver abajo).
 
 > El workflow crea un `.env` ficticio (`CURRENCY_BACK=https://ci.example.com`) solo para que la app resuelva su configuración durante la validación. Nunca un backend real: quedaría en los logs públicos de la PR.
+
+---
+
+## 🔍 Análisis Estático
+
+`analysis_options.yaml` parte de `flutter_lints` y lo endurece. El objetivo: que el análisis atrape un error **antes** de que corran los tests, sobre todo los `dynamic` implícitos que se cuelan al mapear el JSON del backend.
+
+**Modos estrictos del lenguaje** (`analyzer.language`):
+
+| Opción | Qué cierra |
+|---|---|
+| `strict-casts` | Un `dynamic` no se asigna a un tipo concreto sin un cast explícito. Es el que obliga a tipar `json['value']` al mapear una respuesta. |
+| `strict-inference` | El analizador no infiere `dynamic` en silencio: exige la anotación. |
+| `strict-raw-types` | Un genérico sin argumentos (`List`, `Response`) se reporta en vez de degradar a `dynamic`. |
+
+**Lints propios** (además de los de `flutter_lints`):
+
+| Lint | Por qué |
+|---|---|
+| `implementation_imports` | Prohíbe entrar a rutas `src/` internas de un paquete (API privada, cambia sin aviso). Guardrail de [#52](https://github.com/Teixeira49/bcv_tracker_app/issues/52). |
+| `avoid_print` | El logging pasa por `dart:developer log`, nunca `print`. |
+| `prefer_single_quotes` | Comillas simples en todo el proyecto: diffs limpios y el default de Dart. |
+| `always_declare_return_types` | Ninguna función declara `dynamic` por omisión en su firma. |
+| `directives_ordering` | Orden de imports estable: dos cambios en el mismo bloque no chocan por el orden. |
+
+El árbol está en **cero hallazgos** con esta configuración, y CI la mantiene así (`flutter analyze` sin `--no-fatal-*`). Antes de commitear:
+
+```bash
+dart format .
+flutter analyze     # debe decir "No issues found!"
+flutter test
+```
+
+`dart fix --apply` resuelve solo la mayoría de las violaciones de estilo (comillas, orden de imports).
 
 ---
 

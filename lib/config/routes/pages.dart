@@ -7,14 +7,8 @@ import '../../features/splash/presentation/page/splash_page.dart';
 class AppPages {
   static const initPage = AppRoutes.splash;
 
-  static final List<GetPage> routes = [
-    GetPage(
-      name: AppRoutes.splash,
-      page: () => const SplashPage(),
-    ),
-    GetPage(
-      name: AppRoutes.home,
-      page: () => DashboardPage(),
-    ),
+  static final List<GetPage<dynamic>> routes = [
+    GetPage(name: AppRoutes.splash, page: () => const SplashPage()),
+    GetPage(name: AppRoutes.home, page: () => DashboardPage()),
   ];
 }
