@@ -12,7 +12,7 @@ BCV Tracker is a Flutter mobile app that displays real-time Venezuelan Central B
 
 This file is the **map** of the codebase; `.agents/rules/` holds the **binding conventions**. When they disagree, the rules win — and the contradiction gets fixed in the same PR.
 
-`.agents/` is the single source. `.claude/rules/` and `.claude/skills/` are symlinks into it, so Claude Code discovers both natively and no file exists twice. **How each loads differs, and it matters:** four rules are always in context, thirteen load only when you touch the files they govern, and skills load on demand from their description. If you are about to do something a path-scoped rule covers and it has not loaded, open it.
+`.agents/` is the single source. `.claude/rules/` and `.claude/skills/` are symlinks into it, so Claude Code discovers both natively and no file exists twice. **How each loads differs, and it matters:** four rules are always in context, fourteen load only when you touch the files they govern, and skills load on demand from their description. If you are about to do something a path-scoped rule covers and it has not loaded, open it.
 
 ### Always in context — the git and GitHub procedures
 
@@ -35,6 +35,7 @@ No file edit can trigger these, so they are unconditional. Shared verbatim with 
 | `.agents/rules/navigation-convention.md` | `config/routes/`, any `page/` or `widget(s)/`, `navigation/` |
 | `.agents/rules/i18n-convention.md` | `core/i18n/`, any `page/` or `widget(s)/` |
 | `.agents/rules/constants-centralization.md` | `core/constants/`, `config/theme/`, any `page/` or `widget(s)/` |
+| `.agents/rules/design-system.md` | `DESIGN.md`, `config/theme/`, any `page/` or `widget(s)/` |
 | `.agents/rules/environment-variables.md` | `config/enviroment/`, `.env.example`, `codemagic.yaml`, `README.md` |
 | `.agents/rules/test-coverage.md` | `test/`, `shared/data/`, any `controller/`, `core/helpers/` |
 | `.agents/rules/documentation-convention.md` | any `.dart` under `lib/` |
@@ -114,6 +115,8 @@ Entities live in `shared/domain/entities/` and `features/*/domain/entities/`. JS
 Named routes in `lib/config/routes/` — constants in `routes.dart` (`AppRoutes`), `GetPage` entries in `pages.dart` (`AppPages`). Navigate with `Get.toNamed()` / `Get.offAllNamed()` — never Flutter's `Navigator`, and never by passing a widget. Close dialogs and modals with `Get.back()`. Transitions belong on the `GetPage`, not the call site. Tabs are not routes: switching tabs changes `NavigationController.selectedIndex`.
 
 ## Theming
+
+The **source of truth for visual decisions is [`DESIGN.md`](DESIGN.md)** (root): a design-system document with machine-readable tokens (color, typography, spacing, radii, components) in the front matter and the rationale in prose. `lib/config/theme/` is its **implementation** — it must match what `DESIGN.md` declares, and a new token is declared there **first**. Before building UI, read `DESIGN.md`; see `.agents/rules/design-system.md`.
 
 Light/dark/system themes in `lib/config/theme/`. Colors (`AppColors`), icons and the 8pt spacing grid (`WidthValues`) are centralized there — no `Color(0xFF...)` in widgets. `SettingsController.favBrightness` drives the active theme. The app is still **Material 2**; migration to Material 3 is decided and tracked in [#44](https://github.com/Teixeira49/bcv_tracker_app/issues/44).
 
