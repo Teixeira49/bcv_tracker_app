@@ -87,7 +87,7 @@ Esta aplicación depende directamente de su servicio backend para obtener los da
 
 ## 🤝 Contribuir
 
-Antes de abrir un PR, lee la [**Guía de Contribución**](CONTRIBUTING.md): arquitectura, reglas de implementación y el flujo `issue → rama → commits → PR → release`.
+Antes de abrir un PR, lee la [**Guía de Contribución**](CONTRIBUTING.md): arquitectura, reglas de implementación y el flujo `issue → rama → commits → PR → release`. El sistema de diseño de la app (tokens de color, tipografía, espaciado y su razonamiento) vive en [**`DESIGN.md`**](DESIGN.md), la fuente de verdad visual.
 
 Cada PR hacia `development` o `master` corre `flutter analyze` y `flutter test` en GitHub Actions antes de poder fusionarse; la construcción y distribución siguen en Codemagic sobre `master`. Detalle en [CONTRIBUTING.md → Integración Continua](CONTRIBUTING.md#-integración-continua-ci).
 
@@ -97,7 +97,7 @@ Este repositorio versiona convenciones y capacidades para desarrollo asistido po
 
 ```
 .agents/
-├── rules/    # 17 convenciones obligatorias (issues, ramas, commits, PR, releases,
+├── rules/    # 18 convenciones obligatorias (issues, ramas, commits, PR, releases,
 │             #  versionado y las reglas técnicas de Flutter/Dart/GetX)
 └── skills/   # 24 skills, de 6 orígenes (ver .agents/ATTRIBUTION.md)
 ```
