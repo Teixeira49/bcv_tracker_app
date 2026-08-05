@@ -2,13 +2,91 @@ import 'package:bcv_tracker_app/config/enviroment/enviroment.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// Replaces the contents of the `.env` for the duration of a test.
-void loadEnv(String contents) => dotenv.testLoad(fileInput: contents);
+/// Replaces the contents of the `.env` for the duration of a test, and marks
+/// the file as readable — the state `Environment.load()` leaves behind when the
+/// asset is there.
+void loadEnv(String contents) {
+  dotenv.testLoad(fileInput: contents);
+  Environment.debugSetEnvFileAvailable(true);
+}
 
 void main() {
-  // An empty file is what a missing `.env` looks like from `Environment`:
-  // `main()` folds the load failure into the same case.
   tearDown(() => loadEnv(''));
+
+  group('load()', () {
+    // Exercises the real dotenv path rather than the test seam, so the
+    // "never throws" contract is checked against an actual bundle failure.
+    test('reports a file that is not there instead of throwing', () async {
+      await expectLater(
+        Environment.load(fileName: 'assets/no-such-file.env'),
+        completes,
+      );
+
+      expect(Environment.isEnvFileAvailable, isFalse);
+      expect(
+        Environment.validate()?.issue,
+        EnvironmentIssue.envFileUnavailable,
+      );
+    });
+
+    test('leaves currency readable, not throwing NotInitializedError', () {
+      // A failed load can leave dotenv uninitialised, and `dotenv.env` throws
+      // in that state — which would turn the reported problem back into a
+      // crash on the way to the error screen.
+      Environment.debugSetEnvFileAvailable(false);
+
+      expect(() => Environment.currency, returnsNormally);
+    });
+  });
+
+  group('an unreadable .env', () {
+    test('is reported instead of crashing the app', () {
+      // `flutter_dotenv` raises `EmptyEnvFileError` for a file that exists but
+      // is empty, and that one is a plain `Error`, not a `FlutterError`, so
+      // `load(isOptional: true)` never swallowed it. It used to escape
+      // `main()` and take the app down before the first frame.
+      loadEnv('CURRENCY_BACK=https://backend.example.com');
+      Environment.debugSetEnvFileAvailable(false);
+
+      final error = Environment.validate();
+      expect(error, isNotNull);
+      expect(error!.issue, EnvironmentIssue.envFileUnavailable);
+    });
+
+    test('is told apart from a variable that is merely missing', () {
+      Environment.debugSetEnvFileAvailable(false);
+      final fileMessage = Environment.validate()!.developerMessage;
+
+      loadEnv('');
+      final variableMessage = Environment.validate()!.developerMessage;
+
+      // The two are fixed differently: you copy the template, or you edit it.
+      expect(fileMessage, isNot(variableMessage));
+      expect(fileMessage, contains('No se pudo leer el archivo .env'));
+      expect(variableMessage, contains('Falta la variable CURRENCY_BACK'));
+    });
+
+    test('still names the variable to define, and no value', () {
+      loadEnv('CURRENCY_BACK=https://private-deploy.internal');
+      Environment.debugSetEnvFileAvailable(false);
+
+      final message = Environment.validate()!.developerMessage;
+
+      expect(message, contains('CURRENCY_BACK'));
+      expect(message, contains('cp .env.example .env'));
+      expect(message, isNot(contains('private-deploy.internal')));
+    });
+
+    test('takes priority over the value left in memory', () {
+      // A previous load may have populated dotenv. If the file is gone now,
+      // that stale value must not make the app look configured.
+      loadEnv('CURRENCY_BACK=https://backend.example.com');
+      expect(Environment.validate(), isNull);
+
+      Environment.debugSetEnvFileAvailable(false);
+      expect(Environment.validate(), isNotNull);
+    });
+  });
 
   group('validate() rejects', () {
     test('a variable that is not defined at all', () {

@@ -3,7 +3,6 @@ import 'package:bcv_tracker_app/features/splash/presentation/page/splash_page.da
 import 'package:bcv_tracker_app/shared/presentation/controller/settings_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -17,10 +16,10 @@ import 'features/splash/presentation/page/configuration_error_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // `isOptional` keeps a missing `.env` from throwing: from the app's point of
-  // view an absent file is the same situation as an undefined variable, and the
-  // check below reports it as such instead of crashing with a stack trace.
-  await dotenv.load(fileName: ".env", isOptional: true);
+  // Loading is delegated to Environment, which never throws: an unreadable
+  // `.env` is a configuration problem to report, not a crash before the first
+  // frame. See Environment.load for why `isOptional` alone did not cover it.
+  await Environment.load();
 
   // Validated before anything can use it: without a backend URL every screen
   // would fail later as a generic network error that never names the variable.
