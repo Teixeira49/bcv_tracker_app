@@ -1,4 +1,4 @@
-import 'package:get/get_utils/src/extensions/internacionalization.dart';
+import 'package:get/get.dart';
 
 class AppMessages {
   static String get homeView => 'homeView'.tr;

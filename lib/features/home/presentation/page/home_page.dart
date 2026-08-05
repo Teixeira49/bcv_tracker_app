@@ -2,9 +2,7 @@ import 'package:bcv_tracker_app/config/theme/colors/colors_values.dart';
 import 'package:bcv_tracker_app/shared/presentation/widgets/performance_indicator_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_instance/src/extension_instance.dart';
-import 'package:get/get_state_manager/src/simple/get_state.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/helpers/currency_helpers.dart';
 import '../../../../core/i18n/app_messages.dart';
