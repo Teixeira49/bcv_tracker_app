@@ -54,7 +54,7 @@ No se exige un widget test por cada cambio de UI, pero **sí** cuando el widget 
 
 - **La suite debe quedar en verde**: `flutter test` sin fallos, localmente y en CI.
 - **El análisis estático también**: `flutter analyze` sin nuevos errores.
-- **CI obligatorio**: los workflows de `codemagic.yaml` corren `flutter analyze` y `flutter test` antes de compilar. Un build con tests en rojo no distribuye.
+- **CI obligatorio, en dos puntos**: el workflow de validación de PR (`.github/workflows/pr-validation.yml`, GitHub Actions, #27) corre `flutter analyze` y `flutter test` en **cada PR** hacia `development`/`master` — una PR con tests en rojo no se puede fusionar; y `codemagic.yaml` los vuelve a correr antes de construir, así que un build con tests en rojo tampoco distribuye. El inventario de lo cubierto vive en [`docs/lista_de_tests.md`](../../docs/lista_de_tests.md).
 - No reduzcas la cobertura existente: no borres ni marques con `skip` tests para que pase el build.
 
 ```bash
