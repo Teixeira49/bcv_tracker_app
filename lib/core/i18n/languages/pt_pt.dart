@@ -49,4 +49,7 @@ const Map<String, String> ptPt = {
   'retryAction': 'Tentar novamente',
   'marketAverage': 'Média',
   'conversionUnavailable': 'Taxa indisponível para esta conversão',
+  'configErrorTitle': 'Configuração incompleta',
+  'configErrorBody':
+      'A aplicação não está configurada corretamente e não consegue obter as taxas. Contacte quem a distribui.',
 };

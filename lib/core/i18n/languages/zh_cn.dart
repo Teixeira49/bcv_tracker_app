@@ -48,4 +48,6 @@ const Map<String, String> zhCn = {
   'retryAction': '重试',
   'marketAverage': '平均值',
   'conversionUnavailable': '此换算暂无可用汇率',
+  'configErrorTitle': '配置不完整',
+  'configErrorBody': '应用未正确配置，无法获取汇率。请联系分发方。',
 };

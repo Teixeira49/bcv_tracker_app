@@ -48,4 +48,7 @@ const Map<String, String> frFr = {
   'retryAction': 'Réessayer',
   'marketAverage': 'Moyenne',
   'conversionUnavailable': 'Taux indisponible pour cette conversion',
+  'configErrorTitle': 'Configuration incomplète',
+  'configErrorBody':
+      'L\'application n\'est pas correctement configurée et ne peut pas récupérer les taux. Contactez la personne qui la distribue.',
 };
