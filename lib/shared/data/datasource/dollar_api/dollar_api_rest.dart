@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:bcv_tracker_app/shared/data/datasource/datasource.dart';
 import 'package:dio/dio.dart';
@@ -67,7 +68,19 @@ class DollarApiRest implements IDollarApi {
       response = await _client.request(endpoint: _apiUrl + endpoint);
     } on DioException catch (e) {
       // HttpManager accepts every status code, so Dio only throws when there is
-      // no response at all (connectivity, DNS, timeout).
+      // no response at all (connectivity, DNS, timeout, TLS).
+      final cause = e.error;
+      if (cause is HandshakeException || cause is CertificateException) {
+        // Raised when the certificate does not validate against the system
+        // trust store: an interception proxy, a captive portal or a network
+        // serving a forged certificate. Dio's own message is the raw OS error
+        // (`CERTIFICATE_VERIFY_FAILED`), useless to the user.
+        throw const ApiException.network(
+          'No se pudo verificar la identidad del servidor. '
+          'La conexión podría estar siendo interceptada; '
+          'prueba con otra red.',
+        );
+      }
       throw ApiException.network(e.message ?? e.type.name);
     }
 
