@@ -7,6 +7,8 @@ const Map<String, String> koKr = {
   'averageValue': '평균값',
   'currencyValue': '통화 가치',
   'lastUpdate': '최종 업데이트',
+  // Reads "foreign-exchange dollar", not "official" — a meaning error, not a
+  // language one. Left for native review (#57); the key is currently unused.
   'officialDollar': '외국환율 달러',
   'parallelDollar': '병렬 달러',
   'moneyValue': '통화 가치',

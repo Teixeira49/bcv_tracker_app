@@ -8,7 +8,7 @@ const Map<String, String> deDe = {
   'currencyValue': 'Währungswert',
   'lastUpdate': 'Neuestes Update',
   'officialDollar': 'Offizieller Dollar',
-  'parallelDollar': 'Parallel Dollar',
+  'parallelDollar': 'Paralleler Dollar',
   'moneyValue': 'Währungswert',
   'currencyDate': 'Datum:',
   'eeuuDollar': 'Amerikaner Dollar',

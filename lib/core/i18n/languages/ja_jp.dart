@@ -7,6 +7,8 @@ const Map<String, String> jaJp = {
   'averageValue': '平均値',
   'currencyValue': '通貨価値',
   'lastUpdate': '最終更新',
+  // Reads "foreign-exchange dollar", not "official" — a meaning error, not a
+  // language one. Left for native review (#57); the key is currently unused.
   'officialDollar': '外国為替ドル',
   'parallelDollar': '並列ドル',
   'moneyValue': '通貨価値',
