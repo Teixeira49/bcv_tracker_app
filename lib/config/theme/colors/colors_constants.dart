@@ -112,7 +112,10 @@ class AppColors {
     900: Color(0xFF710D06),
   });
 
-  static const int _warningValue = 0xFFFF980;
+  // 8 digits, always: `0xAARRGGBB`. A 7-digit literal is still a valid int, so
+  // the compiler stays silent while Dart reads the missing digit as alpha —
+  // this one used to be `0xFFFF980`, which rendered at 6 % opacity.
+  static const int _warningValue = 0xFFFF9800;
   static const MaterialColor warning =
       MaterialColor(_warningValue, <int, Color>{
         50: Color(0xFFFFF3E0),
