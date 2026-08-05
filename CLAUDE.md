@@ -12,7 +12,7 @@ BCV Tracker is a Flutter mobile app that displays real-time Venezuelan Central B
 
 This file is the **map** of the codebase; `.agents/rules/` holds the **binding conventions**. When they disagree, the rules win — and the contradiction gets fixed in the same PR.
 
-`.agents/` is the single source. `.claude/rules/` and `.claude/skills/` are symlinks into it, so Claude Code discovers both natively and no file exists twice. **How each loads differs, and it matters:** four rules are always in context, twelve load only when you touch the files they govern, and skills load on demand from their description. If you are about to do something a path-scoped rule covers and it has not loaded, open it.
+`.agents/` is the single source. `.claude/rules/` and `.claude/skills/` are symlinks into it, so Claude Code discovers both natively and no file exists twice. **How each loads differs, and it matters:** four rules are always in context, thirteen load only when you touch the files they govern, and skills load on demand from their description. If you are about to do something a path-scoped rule covers and it has not loaded, open it.
 
 ### Always in context — the git and GitHub procedures
 
@@ -31,6 +31,7 @@ No file edit can trigger these, so they are unconditional. Shared verbatim with 
 |---|---|
 | `.agents/rules/entities-vs-models.md` | `shared/data/model/`, `shared/data/datasource/`, any `domain/entities/` |
 | `.agents/rules/dependency-injection.md` | `config/bindings/`, any `controller/`, `shared/data/repositories/`, `main.dart` |
+| `.agents/rules/logging-convention.md` | `core/logging/`, `core/network/`, `shared/data/`, any `controller/` |
 | `.agents/rules/navigation-convention.md` | `config/routes/`, any `page/` or `widget(s)/`, `navigation/` |
 | `.agents/rules/i18n-convention.md` | `core/i18n/`, any `page/` or `widget(s)/` |
 | `.agents/rules/constants-centralization.md` | `core/constants/`, `config/theme/`, any `page/` or `widget(s)/` |

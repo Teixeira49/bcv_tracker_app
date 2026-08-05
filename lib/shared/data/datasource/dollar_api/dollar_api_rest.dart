@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:bcv_tracker_app/shared/data/datasource/datasource.dart';
 import 'package:dio/dio.dart';
 
+import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/api_exception.dart';
 import '../../../../core/network/http_manager.dart';
 import '../../model/model.dart';
@@ -15,6 +16,8 @@ class DollarApiRest implements IDollarApi {
 
   final String _apiUrl;
   final HttpManager _client;
+
+  static const String _source = 'DollarApiRest';
 
   @override
   Future<BcvCurrenciesModel> getCurrentBCVDollar() async {
@@ -28,7 +31,13 @@ class DollarApiRest implements IDollarApi {
 
     try {
       return BcvCurrenciesModel.fromJson(data);
-    } catch (e) {
+    } catch (e, s) {
+      AppLogger.warning(
+        'Contract parse failed for bcv/with-memory',
+        name: _source,
+        error: e,
+        stackTrace: s,
+      );
       throw ApiException.malformed(
         'No se pudo interpretar la respuesta de bcv/with-memory: $e',
       );
@@ -50,7 +59,13 @@ class DollarApiRest implements IDollarApi {
           .whereType<Map<String, dynamic>>()
           .map(CurrencyModel.fromJson)
           .toList();
-    } catch (e) {
+    } catch (e, s) {
+      AppLogger.warning(
+        'Contract parse failed for saved-currencies',
+        name: _source,
+        error: e,
+        stackTrace: s,
+      );
       throw ApiException.malformed(
         'No se pudo interpretar la respuesta de saved-currencies: $e',
       );
@@ -64,9 +79,15 @@ class DollarApiRest implements IDollarApi {
     final Response<dynamic> response;
     try {
       response = await _client.request(endpoint: _apiUrl + endpoint);
-    } on DioException catch (e) {
+    } on DioException catch (e, s) {
       // HttpManager accepts every status code, so Dio only throws when there is
       // no response at all (connectivity, DNS, timeout, TLS).
+      AppLogger.warning(
+        'Transport failure calling ${AppLogger.redactUri(_apiUrl + endpoint)}',
+        name: _source,
+        error: e,
+        stackTrace: s,
+      );
       final cause = e.error;
       if (cause is HandshakeException || cause is CertificateException) {
         // Raised when the certificate does not validate against the system
@@ -100,7 +121,13 @@ class DollarApiRest implements IDollarApi {
     final Object? envelope;
     try {
       envelope = json.decode(body);
-    } catch (e) {
+    } catch (e, s) {
+      AppLogger.warning(
+        'Backend responded with a non-JSON body',
+        name: _source,
+        error: e,
+        stackTrace: s,
+      );
       throw ApiException.malformed(
         'El backend respondió con un cuerpo no JSON: $e',
       );

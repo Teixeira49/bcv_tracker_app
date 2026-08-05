@@ -97,7 +97,7 @@ Este repositorio versiona convenciones y capacidades para desarrollo asistido po
 
 ```
 .agents/
-├── rules/    # 16 convenciones obligatorias (issues, ramas, commits, PR, releases,
+├── rules/    # 17 convenciones obligatorias (issues, ramas, commits, PR, releases,
 │             #  versionado y las reglas técnicas de Flutter/Dart/GetX)
 └── skills/   # 24 skills, de 6 orígenes (ver .agents/ATTRIBUTION.md)
 ```
