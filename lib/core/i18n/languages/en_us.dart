@@ -58,4 +58,6 @@ const Map<String, String> enUs = {
   'errorServerInternal': 'A server error occurred. Try again later.',
   'errorUnexpectedResponse': 'The service responded unexpectedly.',
   'errorGeneric': 'Could not load the data. Try again.',
+  'emptyStateTitle': 'No data',
+  'emptyStateMessage': 'No rates to show yet. Pull to refresh.',
 };

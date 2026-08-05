@@ -59,4 +59,6 @@ const Map<String, String> jaJp = {
   'errorServerInternal': 'サーバーエラーが発生しました。後でもう一度お試しください。',
   'errorUnexpectedResponse': 'サービスが予期しない応答を返しました。',
   'errorGeneric': 'データを読み込めませんでした。もう一度お試しください。',
+  'emptyStateTitle': 'データがありません',
+  'emptyStateMessage': '表示できるレートはまだありません。引っ張って更新してください。',
 };

@@ -58,4 +58,7 @@ const Map<String, String> esEs = {
   'errorServerInternal': 'Ocurrió un error en el servidor. Intenta más tarde.',
   'errorUnexpectedResponse': 'El servicio respondió de forma inesperada.',
   'errorGeneric': 'No se pudieron cargar los datos. Intenta de nuevo.',
+  'emptyStateTitle': 'Sin datos',
+  'emptyStateMessage':
+      'Aún no hay tasas para mostrar. Desliza para actualizar.',
 };

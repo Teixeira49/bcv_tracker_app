@@ -58,4 +58,6 @@ const Map<String, String> ruRu = {
   'errorServerInternal': 'Произошла ошибка сервера. Повторите позже.',
   'errorUnexpectedResponse': 'Сервис ответил неожиданно.',
   'errorGeneric': 'Не удалось загрузить данные. Повторите попытку.',
+  'emptyStateTitle': 'Нет данных',
+  'emptyStateMessage': 'Пока нет курсов. Потяните, чтобы обновить.',
 };

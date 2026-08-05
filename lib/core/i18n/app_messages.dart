@@ -116,4 +116,8 @@ class AppMessages {
   static String get errorUnexpectedResponse => 'errorUnexpectedResponse'.tr;
 
   static String get errorGeneric => 'errorGeneric'.tr;
+
+  static String get emptyStateTitle => 'emptyStateTitle'.tr;
+
+  static String get emptyStateMessage => 'emptyStateMessage'.tr;
 }

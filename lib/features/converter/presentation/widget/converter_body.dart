@@ -6,31 +6,42 @@ class _ConverterBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<ConverterController>(
     builder: (controller) {
+      final String? error = controller.errorMessage;
+
       return CustomRefreshIndicator.adaptive(
         onRefresh: () async {
           await controller.refreshConverterData();
         },
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(height: 16),
-                  _CurrencyInputCard(currency: controller.fromCurrency),
-                  const SizedBox(height: 32),
-                  _CurrencyInputCard(
-                    currency: controller.toCurrency,
-                    isInput: false,
-                  ),
-                  SizedBox(height: 16),
-                ],
-              ),
-              _SwapCurrencyButton(),
-            ],
-          ),
+          // The same failure the Home shows: when the rates could not be loaded
+          // there is nothing to convert with, so the error state replaces the
+          // inputs (and offers a retry) instead of showing an empty converter.
+          child: error != null
+              ? AppStateView.error(
+                  message: error,
+                  onRetry: controller.refreshConverterData,
+                  isBusy: controller.isLoading,
+                )
+              : Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(height: 16),
+                        _CurrencyInputCard(currency: controller.fromCurrency),
+                        const SizedBox(height: 32),
+                        _CurrencyInputCard(
+                          currency: controller.toCurrency,
+                          isInput: false,
+                        ),
+                        SizedBox(height: 16),
+                      ],
+                    ),
+                    _SwapCurrencyButton(),
+                  ],
+                ),
         ),
       );
     },

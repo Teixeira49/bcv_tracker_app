@@ -59,4 +59,7 @@ const Map<String, String> frFr = {
       'Une erreur serveur s\'est produite. Réessayez plus tard.',
   'errorUnexpectedResponse': 'Le service a répondu de façon inattendue.',
   'errorGeneric': 'Impossible de charger les données. Réessayez.',
+  'emptyStateTitle': 'Aucune donnée',
+  'emptyStateMessage':
+      'Aucun taux à afficher pour l\'instant. Tire pour actualiser.',
 };
