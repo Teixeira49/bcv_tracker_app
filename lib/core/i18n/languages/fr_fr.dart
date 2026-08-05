@@ -14,7 +14,7 @@ const Map<String, String> frFr = {
   'eeuuDollar': 'Dollar américain',
   'europeanEuro': 'Euro européen',
   'turkishLira': 'Lira turque',
-  'chineseYuan': 'Yuan chino',
+  'chineseYuan': 'Yuan chinois',
   'russianRuble': 'Ruble russe',
   'selectCurrency': 'Sélectionner la devise',
   'originalCurrency': 'Devise originale',
