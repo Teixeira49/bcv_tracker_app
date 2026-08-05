@@ -1,18 +1,17 @@
 import 'package:bcv_tracker_app/config/theme/theme.dart';
 import 'package:bcv_tracker_app/features/splash/presentation/page/splash_page.dart';
 import 'package:bcv_tracker_app/shared/presentation/controller/settings_controller.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
 
 import 'config/bindings/initial_bindings.dart';
 import 'config/enviroment/enviroment.dart';
 import 'core/constants/constants.dart';
 import 'core/i18n/app_translations.dart';
 import 'features/splash/presentation/page/configuration_error_page.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +19,7 @@ void main() async {
   // `isOptional` keeps a missing `.env` from throwing: from the app's point of
   // view an absent file is the same situation as an undefined variable, and the
   // check below reports it as such instead of crashing with a stack trace.
-  await dotenv.load(fileName: ".env", isOptional: true);
+  await dotenv.load(fileName: '.env', isOptional: true);
 
   // Validated before anything can use it: without a backend URL every screen
   // would fail later as a generic network error that never names the variable.
@@ -31,9 +30,7 @@ void main() async {
   }
 
   Get.put(SettingsController());
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 

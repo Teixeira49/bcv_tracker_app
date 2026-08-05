@@ -50,11 +50,10 @@ jobs:
         run: flutter pub get
 
       - name: Analizar código
-        # Severidad alineada con codemagic.yaml por ahora: los errores SIEMPRE
-        # rompen el build (nunca dejan de ser fatales), así que una PR con
-        # errores de análisis no se puede fusionar. Los warnings/infos se
-        # endurecen en #29, que retira estos flags aquí y en codemagic a la vez.
-        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+        # Análisis estricto: sin `--no-fatal-*`, cualquier hallazgo (error,
+        # warning o info) rompe la PR. El árbol se dejó en cero hallazgos con la
+        # config estricta de `analysis_options.yaml` (#29), y CI la mantiene así.
+        run: flutter analyze
 
       - name: Ejecutar tests
         run: flutter test

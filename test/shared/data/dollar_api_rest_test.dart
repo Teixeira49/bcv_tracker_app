@@ -16,7 +16,7 @@ class _FakeHttpManager extends HttpManager {
   final DioException? failure;
 
   @override
-  Future<Response> request({
+  Future<Response<dynamic>> request({
     required String endpoint,
     HttpOperation method = HttpOperation.get,
     Map<String, dynamic>? body,
@@ -104,17 +104,20 @@ void main() {
       );
     });
 
-    test('falls back to the status code when the body is not the envelope', () async {
-      // What a wrong route actually returns through the edge: an HTML page.
-      await expectLater(
-        _api(statusCode: 404, body: '<html>404</html>').getCurrentDollar(),
-        throwsA(
-          isA<ApiException>()
-              .having((e) => e.statusCode, 'statusCode', 404)
-              .having((e) => e.message, 'message', 'HTTP 404'),
-        ),
-      );
-    });
+    test(
+      'falls back to the status code when the body is not the envelope',
+      () async {
+        // What a wrong route actually returns through the edge: an HTML page.
+        await expectLater(
+          _api(statusCode: 404, body: '<html>404</html>').getCurrentDollar(),
+          throwsA(
+            isA<ApiException>()
+                .having((e) => e.statusCode, 'statusCode', 404)
+                .having((e) => e.message, 'message', 'HTTP 404'),
+          ),
+        );
+      },
+    );
 
     test('reports a malformed body instead of crashing', () async {
       await expectLater(
@@ -131,8 +134,9 @@ void main() {
       );
       // `data` present but not a list.
       await expectLater(
-        _api(body: '{"status":"Success","message":"ok","data":{}}')
-            .getCurrentDollar(),
+        _api(
+          body: '{"status":"Success","message":"ok","data":{}}',
+        ).getCurrentDollar(),
         throwsA(isA<ApiException>()),
       );
     });

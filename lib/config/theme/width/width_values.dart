@@ -23,7 +23,7 @@ class WidthValues {
   /// Large radius (2.5)
   static final radiusLg = _WidthConstants.spacing.getSpacing(2.5);
 
-/// Extra large radius (3)
+  /// Extra large radius (3)
   static final radiusXl = _WidthConstants.spacing.getSpacing(3);
 
   /// Extra extra large radius (4)
@@ -48,7 +48,7 @@ class WidthValues {
   /// Extra extra small spacing (0.5)
   static final spacingXxs = _WidthConstants.spacing.getSpacing(0.5);
 
-/// Extra small spacing (1)
+  /// Extra small spacing (1)
   static final spacingXs = _WidthConstants.spacing.getSpacing(1);
 
   /// Small spacing (1.5)
@@ -77,7 +77,6 @@ class WidthValues {
 
   /// 5Extra large spacing (10)
   static final spacing5xl = _WidthConstants.spacing.getSpacing(10);
-
 
   /// 6Extra large spacing (12)
   static final spacing6xl = _WidthConstants.spacing.getSpacing(12);

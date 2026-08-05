@@ -71,11 +71,14 @@ class SettingsController extends GetxController {
     if (marketIndex != null) {
       favMarketIndex.value = marketIndex;
     }
-    
+
     // Cargar Tema
     final themeName = prefs.getString(_themeKey);
     if (themeName != null) {
-      favBrightness.value = ThemeMode.values.firstWhere((e) => e.name == themeName, orElse: () => ThemeMode.system);
+      favBrightness.value = ThemeMode.values.firstWhere(
+        (e) => e.name == themeName,
+        orElse: () => ThemeMode.system,
+      );
     }
     Get.changeThemeMode(favBrightness.value);
 
@@ -118,7 +121,6 @@ class SettingsController extends GetxController {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_favMarketKey, index);
   }
-
 
   void setFavLanguage(String code) async {
     if (favLanguageCode.value == code) return;

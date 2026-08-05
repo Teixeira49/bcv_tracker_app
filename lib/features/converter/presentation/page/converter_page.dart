@@ -2,7 +2,6 @@ import 'package:bcv_tracker_app/core/i18n/app_messages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'dart:ui';
 
 import '../../../../config/theme/colors/colors_values.dart';
 import '../../../../core/helpers/currency_helpers.dart';
@@ -17,11 +16,8 @@ import '../../domain/entities/convertible_currency.dart';
 import '../controller/converter_controller.dart';
 
 part '../widget/converter_body.dart';
-
 part '../widget/converter_buttons.dart';
-
 part '../widget/converter_modals.dart';
-
 part '../widget/converter_widgets.dart';
 
 class ConverterPage extends StatelessWidget {

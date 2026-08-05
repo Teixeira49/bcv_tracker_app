@@ -92,18 +92,20 @@ class _CurrencyInputSelectorCard extends StatelessWidget {
       spacing: 20,
       children: [
         _SelectCurrencyButton(currencyCode: currency.keyName, isInput: isInput),
-        Flexible(child: Text(
-          currency.keyName != 'VES'
-              ? "${CurrencyHelpers.castCurrencyDisplayName(currency)} - ${currency.platform}"
-              : controller.getRoundedCurrency(),
-          style: TextStyle(
-            color: ColorValues.textQuaternary(context),
-            fontSize: 14,
+        Flexible(
+          child: Text(
+            currency.keyName != 'VES'
+                ? '${CurrencyHelpers.castCurrencyDisplayName(currency)} - ${currency.platform}'
+                : controller.getRoundedCurrency(),
+            style: TextStyle(
+              color: ColorValues.textQuaternary(context),
+              fontSize: 14,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.end,
           ),
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          textAlign: TextAlign.end,
-        ),)
+        ),
       ],
     ),
   );
@@ -153,7 +155,7 @@ class _CurrencyInputFieldCardState extends State<_CurrencyInputFieldCard> {
           textToSet = widget.amount.substring(0, widget.amount.length - 2);
         }
 
-        _controller.text = textToSet == "0" ? "" : textToSet;
+        _controller.text = textToSet == '0' ? '' : textToSet;
       }
     }
   }
@@ -228,7 +230,7 @@ class _CircleCurrencyTypeWidget extends StatelessWidget {
     return CircleAvatar(
       radius: 12,
       backgroundColor: Colors.white, //ColorValues.borderTertiary(context),
-      child: currencyAsset != ""
+      child: currencyAsset != ''
           ? ClipOval(child: SvgPicture.asset(currencyAsset, fit: BoxFit.cover))
           : Text(
               currencyCode.substring(0, 2),

@@ -14,10 +14,7 @@ Future<T?> showBlurredDialog<T>({
     // Define cómo se construye la animación de transición
     transitionBuilder: (context, animation, secondaryAnimation, child) {
       // Usa un FadeTransition para que el diálogo aparezca y desaparezca suavemente
-      return FadeTransition(
-        opacity: animation,
-        child: child,
-      );
+      return FadeTransition(opacity: animation, child: child);
     },
     pageBuilder: (context, animation, secondaryAnimation) {
       return BackdropFilter(

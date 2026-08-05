@@ -57,7 +57,7 @@ class ConverterController extends GetxController {
     final List<Currency> mergedList = [];
 
     // Helper to create a unique composite key for each currency.
-    String compositeKey(Currency c) => "${c.keyName}-${c.platform}-${c.name}";
+    String compositeKey(Currency c) => '${c.keyName}-${c.platform}-${c.name}';
 
     // 1. Add Average Currencies
     for (var c in _repository.averageCurrencies) {
@@ -111,7 +111,7 @@ class ConverterController extends GetxController {
   }
 
   String getRoundedCurrency() =>
-      "${fromCurrency.originalValue} ≈ ${toCurrency.originalValue}";
+      '${fromCurrency.originalValue} ≈ ${toCurrency.originalValue}';
 
   /// Whether the pair currently selected cannot produce a conversion.
   ///

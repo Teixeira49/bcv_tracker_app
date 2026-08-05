@@ -21,4 +21,3 @@ class _SettingsBody extends StatelessWidget {
     );
   }
 }
-
