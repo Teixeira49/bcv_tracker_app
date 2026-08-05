@@ -1,0 +1,209 @@
+# Lista de Tests — BCV Tracker
+
+Este documento es el **inventario de la suite**: primero lo que ya está cubierto, después lo que queda por hacer (roadmap). Mantenlo al día al agregar tests — la regla [`test-coverage.md`](../.agents/rules/test-coverage.md) exige que toda fuente, endpoint, controlador o helper de cálculo nuevo nazca con sus tests, y el check de PR de #27 (`flutter test` en GitHub Actions) lo hace cumplir en cada PR.
+
+## Cobertura actual (19 archivos, 123 tests)
+
+| Área | Archivo | Qué cubre |
+|---|---|---|
+| **Helpers** | `test/core/helpers/backend_date_test.dart` | Parseo y formateo de fechas del backend |
+| | `test/core/helpers/currency_helpers_average_test.dart` | Cálculo de promedios y mapeo de códigos |
+| | `test/core/helpers/currency_helpers_parse_date_test.dart` | Formato de fechas para la UI |
+| **Datos / mapeo** | `test/shared/data/currency_normalizer_test.dart` | Normalización del promedio (dedup, merge buy/sell) |
+| | `test/shared/data/bcv_currencies_model_test.dart` | `toEntity()` convierte la lista, no filtra modelos |
+| | `test/shared/data/dollar_api_rest_test.dart` | Datasource: contrato saliente y `ApiException` (mock de `HttpManager`) |
+| **Repositorios** | `test/shared/data/dollar_repository_test.dart` | **(#28)** Devuelve entidades; propaga `ApiException` |
+| | `test/shared/data/currency_repository_test.dart` | **(#28)** `refreshData` éxito, error, fallo parcial, `isLoading` |
+| **Controllers** | `test/features/converter/converter_controller_calculator_test.dart` | Cálculo pivote, división por cero, swap, selectCurrency |
+| | `test/features/home/home_controller_test.dart` | **(#28)** Getters puente y `refreshHomeData` (éxito/error) |
+| | `test/navigation/navigation_controller_test.dart` | **(#28)** `changeIndex`, observabilidad del índice |
+| | `test/shared/presentation/settings_controller_language_test.dart` | Idioma: `orElse`, normalización de código guardado |
+| | `test/shared/presentation/settings_controller_test.dart` | **(#28)** Tema y mercado favorito: persistencia y no-op |
+| **Widgets** | `test/features/home/home_page_test.dart` | **(#28)** Home: estado de error, sin-error, frame |
+| | `test/features/converter/converter_page_test.dart` | **(#28)** Cuerpo del conversor: render e input |
+| **Config / i18n** | `test/config/enviroment/environment_test.dart` + `environment_empty_env_test.dart` | Validación de `CURRENCY_BACK`, `.env` ausente/vacío |
+| | `test/core/i18n/translation_parity_test.dart` | **(#36)** Paridad de claves en los 10 idiomas |
+| | `test/config/routes/app_pages_test.dart` | Registro de rutas nombradas |
+| | `test/config/theme/colors_constants_test.dart` | Opacidad de la paleta (alpha de 8 dígitos) |
+
+> Todos los tests **mockean la red**: ninguno llama al backend real (fakes de `HttpManager` / `IDollarApi` / `IDollarRepository`). Las imágenes de red en los widget tests se evitan vaciando los placeholders del skeleton.
+
+---
+
+## Roadmap — lo que queda por cubrir
+
+> Los tests de `ConverterController.calculator()` ya están implementados en
+> `test/features/converter/converter_controller_calculator_test.dart`.
+
+---
+
+## Unit Tests — `CurrencyHelpers`
+
+> Archivo sugerido: `test/core/helpers/currency_helpers_test.dart`
+
+| # | Test | Descripción |
+|---|------|-------------|
+| 1 | `castCurrencySymbolText` símbolo correcto por código | Verifica que `USD`→`$`, `EUR`→`€`, `VES`→`Bs.S`, `TRY`→`₺`, `CNY`→`¥`, `RUB`→`₽`, `BTC`→`₿`, `USDT`→`₮`, `USDC`→`¢` |
+| 2 | `castCurrencySymbolText` código desconocido | Retorna `''` para un código no reconocido |
+| 3 | `castCurrencySymbolIcon` path correcto por código | Cada código retorna el asset correcto (`flagVenezuelaIcon`, `cryptoBTCIcon`, etc.) |
+| 4 | `castCurrencySymbolIcon` código desconocido | Retorna `''` |
+| 5 | `castCurrencyCountry` mapeo completo | Verifica `countryName`, `currencyCode`, `currencySymbol` para `USD`, `EUR`, `TRY`, `CNY`, `RUB` |
+| 6 | `castCurrencyCountry` código desconocido | Retorna país con `countryName: 'Desconocido'` y `currencyCode: '-'` |
+| 7 | `getAverageValue` calcula promedio correctamente | Lista con múltiples currencies del mismo `keyName`, verifica `sum / count` |
+| 8 | `getAverageValue` lista vacía retorna `0.0` | Sin lanzar excepción |
+| 9 | `getAverageValue` sin coincidencias retorna `0.0` | Ningún elemento tiene el `currencyCode` buscado; división por 0 |
+| 10 | `completeCurrencyExchange` concatena el par | `'USD'` → `'USD/VES'` |
+| 11 | `parseDate` formatea fecha ISO válida | Fecha conocida produce el string esperado |
+| 12 | `parseDate` con `addDayName: false` omite el nombre del día | El resultado no contiene el prefijo del día |
+| 13 | `getDayName` retorna nombre correcto del 1 al 7 | Lunes=1 ... Domingo=7 |
+| 14 | `getDayName` fuera de rango retorna `''` | Valores `0`, `8`, `-1` |
+
+---
+
+## Unit Tests — Modelos
+
+> Archivo sugerido: `test/shared/data/model/currency_model_test.dart`
+
+| # | Test | Descripción |
+|---|------|-------------|
+| 15 | `CurrencyModel.fromJson` JSON completo | Todos los campos mapeados correctamente |
+| 16 | `CurrencyModel.fromJson` campo faltante lanza excepción | Omitir `'name'`, `'code'`, `'value'`, etc. |
+| 17 | `CurrencyModel.toEntity` retorna `Currency` con valores idénticos | Compara campo a campo |
+| 18 | `BcvCurrenciesModel.fromJson` deserializa lista anidada | `currencies` es lista de `CurrencyModel` |
+| 19 | `BcvCurrenciesModel.toEntity` retorna `BcvCurrencies` con fecha y lista correctas | |
+
+---
+
+## Unit Tests — `ConvertibleCurrency`
+
+> Archivo sugerido: `test/features/converter/domain/convertible_currency_test.dart`
+
+| # | Test | Descripción |
+|---|------|-------------|
+| 20 | `originalValue` delega a `currency.value` | Verifica que es la misma referencia |
+| 21 | `copyWith` conserva campos no modificados | Solo cambia `convertedValue`, `currency` queda igual |
+| 22 | Equatable: mismas props → iguales | Dos instancias con misma `currency` y `convertedValue` |
+| 23 | Equatable: distinta `convertedValue` → distintos | |
+
+---
+
+## Unit Tests — `ConverterController` (resto de métodos)
+
+> Archivo sugerido: `test/features/converter/converter_controller_test.dart`
+
+### `selectCurrency()`
+
+| # | Test | Descripción |
+|---|------|-------------|
+| 24 | Seleccionar la misma moneda retorna `null` | Sin cambios en estado |
+| 25 | Seleccionar la moneda del otro lado ejecuta swap y retorna `true` | `fromCurrency` y `toCurrency` se intercambian |
+| 26 | Dos no-VES con `isInput: true` fuerza VES como `toCurrency` | Pivot rule |
+| 27 | Dos no-VES con `isInput: false` fuerza VES como `fromCurrency` | Pivot rule |
+| 28 | `isInput: true` setea `fromCurrency` y recalcula | `toCurrency.convertedValue` cambia |
+| 29 | `isInput: false` setea `toCurrency` con cálculo inverso | `fromAmount = (1.0 * toRate) / fromRate` |
+
+### `swapCurrencies()`
+
+| # | Test | Descripción |
+|---|------|-------------|
+| 30 | Después del swap, `from` y `to` están intercambiados | |
+| 31 | Se recalcula automáticamente tras el swap | `toCurrency.convertedValue` refleja el nuevo cálculo |
+
+### `_updateCurrenciesAndInit()`
+
+| # | Test | Descripción |
+|---|------|-------------|
+| 32 | No añade duplicados si `averageCurrencies` y `bcvCurrencies` comparten composite key | Lista `currencies` no tiene entradas repetidas |
+| 33 | Selección inicial usa VES como `fromCurrency` | `pivotCurrency.keyName == 'VES'` |
+| 34 | Selección inicial usa la primera no-VES como `toCurrency` | |
+| 35 | No reinicializa si `fromCurrency.keyName` ya es válido | Estado previo se conserva |
+
+### `getRoundedCurrency()`
+
+| # | Test | Descripción |
+|---|------|-------------|
+| 36 | Formato correcto `"X ≈ Y"` | Verifica el separador `≈` y los valores de `originalValue` |
+
+---
+
+## Unit Tests — `SettingsController`
+
+> Archivo sugerido: `test/shared/presentation/controller/settings_controller_test.dart`
+> Requiere mock de `SharedPreferences` (`SharedPreferences.setMockInitialValues`).
+
+| # | Test | Descripción |
+|---|------|-------------|
+| 37 | `setFavMarket` no persiste si el índice ya es el activo | `SharedPreferences` no debe recibir `setInt` |
+| 38 | `setFavMarket` persiste el nuevo índice | Valor en prefs == índice nuevo |
+| 39 | `setFavLanguage` no cambia locale si ya es el código activo | |
+| 40 | `setFavLanguage` actualiza `favLanguageCode` y llama `Get.updateLocale` | |
+| 41 | `setFavTheme` no escribe en prefs si el tema no cambió | |
+| 42 | `setFavTheme` persiste el nombre del nuevo `ThemeMode` | |
+| 43 | `_loadPreferences` carga valores previos de prefs al inicio | Simular prefs pre-pobladas |
+| 44 | `_loadPreferences` usa `ThemeMode.system` si no hay valor guardado | |
+
+---
+
+## Integration Tests — `CurrencyRepository`
+
+> Archivo sugerido: `test/shared/data/repositories/currency_repository_test.dart`
+
+| # | Test | Descripción |
+|---|------|-------------|
+| 45 | `refreshData` pone `isLoading` en `true` antes de las llamadas | Observable cambia antes del `await` |
+| 46 | `refreshData` pone `isLoading` en `false` al finalizar (éxito) | |
+| 47 | `refreshData` pone `isLoading` en `false` al finalizar (error) | No queda en `true` si el datasource falla |
+| 48 | `getAveragedCurrencies` asigna correctamente la lista de `averageCurrencies` | |
+| 49 | `getAveragedCurrencies` no lanza excepción si el datasource falla | Silencia el error |
+| 50 | `getBCVCurrencies` asigna `bcvCurrencies` y `bcvCurrentDate` | |
+| 51 | `getBCVCurrencies` no lanza excepción si el datasource falla | |
+
+---
+
+## Widget Tests
+
+> Archivo sugerido: `test/features/home/home_page_test.dart`
+
+| # | Test | Descripción |
+|---|------|-------------|
+| 52 | Muestra skeleton cuando `isLoading == true` | `CustomSkeletonizer` visible |
+| 53 | Muestra datos reales cuando `isLoading == false` y datos disponibles | |
+| 54 | `GetBuilder` se reconstruye cuando `averageCurrencies` cambia | |
+
+> Archivo sugerido: `test/features/converter/converter_page_test.dart`
+
+| # | Test | Descripción |
+|---|------|-------------|
+| 55 | El campo de texto dispara `calculator` con el valor ingresado | |
+| 56 | El botón de swap intercambia los labels de las monedas | |
+| 57 | El modal de selección llama a `selectCurrency` con el parámetro correcto | |
+
+---
+
+## Golden Tests (snapshot)
+
+> Archivo sugerido: `test/shared/presentation/widgets/golden_test.dart`
+
+| # | Test | Widget | Descripción |
+|---|------|---------|-------------|
+| 58 | `PerformanceIndicatorWidget` tendencia positiva | `tendency > 0` | Flecha e color verde |
+| 59 | `PerformanceIndicatorWidget` tendencia negativa | `tendency < 0` | Flecha e color rojo |
+| 60 | `PerformanceIndicatorWidget` tendencia neutral | `tendency == 0` | Sin flecha o color neutro |
+| 61 | `CustomSkeletonizer` activo | `enabled: true` | Efecto shimmer visible |
+| 62 | `CustomSkeletonizer` inactivo | `enabled: false` | Contenido real visible |
+
+---
+
+## Notas de Setup
+
+```dart
+// Para tests de controllers con GetX:
+setUp(() => Get.testMode = true);
+tearDown(() => Get.reset());
+
+// Para tests de SettingsController:
+SharedPreferences.setMockInitialValues({});
+
+// Para tests que requieren mocktail (agregar a dev_dependencies):
+// mocktail: ^0.3.0
+```

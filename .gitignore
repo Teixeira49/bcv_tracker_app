@@ -1,8 +1,10 @@
-# Documentación interna (NO se versiona): planes de migración, listados de
-# trabajo y borradores de PR (el PR canónico vive en GitHub).
-# SÍ se versionan las notas de release, que acompañan a cada tag.
+# Documentación interna (NO se versiona): planes de migración y borradores de
+# PR (el PR canónico vive en GitHub).
+# SÍ se versionan: las notas de release (acompañan a cada tag) y el inventario
+# de tests (`docs/lista_de_tests.md`, mantenido por la suite — ver #28).
 docs/*
 !docs/release/
+!docs/lista_de_tests.md
 
 # Miscellaneous
 *.env
