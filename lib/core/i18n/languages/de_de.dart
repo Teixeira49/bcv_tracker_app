@@ -59,4 +59,6 @@ const Map<String, String> deDe = {
       'Ein Serverfehler ist aufgetreten. Versuche es später.',
   'errorUnexpectedResponse': 'Der Dienst hat unerwartet geantwortet.',
   'errorGeneric': 'Daten konnten nicht geladen werden. Versuche es erneut.',
+  'emptyStateTitle': 'Keine Daten',
+  'emptyStateMessage': 'Noch keine Kurse vorhanden. Zum Aktualisieren ziehen.',
 };

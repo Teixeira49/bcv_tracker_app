@@ -59,4 +59,7 @@ const Map<String, String> itIt = {
       'Si è verificato un errore del server. Riprova più tardi.',
   'errorUnexpectedResponse': 'Il servizio ha risposto in modo inaspettato.',
   'errorGeneric': 'Impossibile caricare i dati. Riprova.',
+  'emptyStateTitle': 'Nessun dato',
+  'emptyStateMessage':
+      'Ancora nessun tasso da mostrare. Trascina per aggiornare.',
 };

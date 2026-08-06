@@ -57,4 +57,6 @@ const Map<String, String> zhCn = {
   'errorServerInternal': '服务器发生错误。请稍后重试。',
   'errorUnexpectedResponse': '服务返回了意外的响应。',
   'errorGeneric': '无法加载数据。请重试。',
+  'emptyStateTitle': '暂无数据',
+  'emptyStateMessage': '暂无可显示的汇率。下拉刷新。',
 };

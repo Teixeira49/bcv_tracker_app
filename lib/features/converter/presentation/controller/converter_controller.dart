@@ -8,6 +8,10 @@ class ConverterController extends GetxController {
 
   bool get isLoading => _repository.isLoading.value;
 
+  /// Detail of the last failed refresh, or `null` when the last one succeeded —
+  /// the same failure the Home shows, so the converter states stay consistent.
+  String? get errorMessage => _repository.errorMessage.value;
+
   // Single consolidated list of currencies
   final RxList<Currency> currencies = List.generate(
     5,
@@ -49,6 +53,7 @@ class ConverterController extends GetxController {
     _updateCurrenciesAndInit();
 
     ever(_repository.isLoading, (_) => update());
+    ever(_repository.errorMessage, (_) => update());
   }
 
   void _updateCurrenciesAndInit() {

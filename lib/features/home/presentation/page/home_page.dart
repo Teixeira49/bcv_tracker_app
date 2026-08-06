@@ -8,6 +8,7 @@ import '../../../../core/helpers/currency_helpers.dart';
 import '../../../../core/i18n/app_messages.dart';
 import '../../../../shared/domain/entities/currency.dart';
 import '../../../../shared/presentation/controller/settings_controller.dart';
+import '../../../../shared/presentation/widgets/app_state_view.dart';
 import '../../../../shared/presentation/widgets/base_layout.dart';
 import '../../../../shared/presentation/widgets/custom_badged.dart';
 import '../../../../shared/presentation/widgets/custom_refresh_indicator.dart';

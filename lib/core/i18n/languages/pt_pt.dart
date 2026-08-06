@@ -58,4 +58,6 @@ const Map<String, String> ptPt = {
   'errorServerInternal': 'Ocorreu um erro no servidor. Tenta mais tarde.',
   'errorUnexpectedResponse': 'O serviço respondeu de forma inesperada.',
   'errorGeneric': 'Não foi possível carregar os dados. Tenta de novo.',
+  'emptyStateTitle': 'Sem dados',
+  'emptyStateMessage': 'Ainda não há taxas para mostrar. Puxa para atualizar.',
 };

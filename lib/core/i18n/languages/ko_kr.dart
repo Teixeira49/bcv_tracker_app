@@ -59,4 +59,6 @@ const Map<String, String> koKr = {
   'errorServerInternal': '서버 오류가 발생했습니다. 나중에 다시 시도하세요.',
   'errorUnexpectedResponse': '서비스가 예기치 않게 응답했습니다.',
   'errorGeneric': '데이터를 불러올 수 없습니다. 다시 시도하세요.',
+  'emptyStateTitle': '데이터 없음',
+  'emptyStateMessage': '아직 표시할 환율이 없습니다. 당겨서 새로고침하세요.',
 };
