@@ -124,6 +124,8 @@ Light/dark/system themes in `lib/config/theme/`. Colors (`AppColors`), icons and
 
 Tests live in `test/`, mirroring `lib/`. Any change to a data source, a market mapping, a GetX controller or a calculation helper ships with its tests in the same PR. Controllers are tested with `Get.testMode = true`, fakes registered in dependency order, and `Get.reset()` in `tearDown`. `codemagic.yaml` runs `flutter analyze` and `flutter test` before building.
 
+**Golden tests** guard the UI against visual regressions ([#35](https://github.com/Teixeira49/bcv_tracker_app/issues/35)): `AppStateView` (error/empty), the variation indicator, the Home cards and the converter body, each in light and dark. They use **Alchemist** (`*_golden_test.dart`), configured in `test/flutter_test_config.dart` to emit **only CI goldens** — text is obscured as blocks so the references render identically on the Linux CI and on a local Mac (icons, SVGs, palette and layout still render for real). Regenerate with `flutter test --update-goldens` **only** on an intended UI change, and review the `*.png` diff. Full procedure in [`docs/golden-tests.md`](docs/golden-tests.md).
+
 ## Versioning
 
 `pubspec.yaml` is the **only** file where the version is edited; Android, iOS and `codemagic.yaml` derive it. Never set the version in Xcode or Gradle. See `.agents/rules/version-sources.md`.
