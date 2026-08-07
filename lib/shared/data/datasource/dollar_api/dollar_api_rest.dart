@@ -7,6 +7,7 @@ import 'package:dio/dio.dart';
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/api_exception.dart';
 import '../../../../core/network/http_manager.dart';
+import '../../../../core/network/http_operation.dart';
 import '../../model/model.dart';
 
 class DollarApiRest implements IDollarApi {
@@ -46,7 +47,13 @@ class DollarApiRest implements IDollarApi {
 
   @override
   Future<List<CurrencyModel>> getCurrentDollar() async {
-    final data = await _getData(DollarEndpoints.currentDollar);
+    // saved-currencies is a POST carrying the per-market Body (see
+    // DollarEndpoints.currentDollarBody); the response envelope is unchanged.
+    final data = await _getData(
+      DollarEndpoints.currentDollar,
+      method: HttpOperation.post,
+      body: DollarEndpoints.currentDollarBody,
+    );
 
     if (data is! List) {
       throw const ApiException.malformed(
@@ -75,10 +82,21 @@ class DollarApiRest implements IDollarApi {
   /// Performs the request and returns the `data` field of the backend envelope
   /// (`{status, message, data}`), translating every failure into an
   /// [ApiException] that carries the backend message.
-  Future<Object?> _getData(String endpoint) async {
+  ///
+  /// [method] and [body] let a caller POST a structured Body (as
+  /// `saved-currencies` needs); they default to a plain GET.
+  Future<Object?> _getData(
+    String endpoint, {
+    HttpOperation method = HttpOperation.get,
+    Map<String, dynamic>? body,
+  }) async {
     final Response<dynamic> response;
     try {
-      response = await _client.request(endpoint: _apiUrl + endpoint);
+      response = await _client.request(
+        endpoint: _apiUrl + endpoint,
+        method: method,
+        body: body,
+      );
     } on DioException catch (e, s) {
       // HttpManager accepts every status code, so Dio only throws when there is
       // no response at all (connectivity, DNS, timeout, TLS).
@@ -103,16 +121,16 @@ class DollarApiRest implements IDollarApi {
       throw ApiException.network(e.message ?? e.type.name);
     }
 
-    final body = response.data;
+    final rawBody = response.data;
 
     if (response.statusCode != 200 && response.statusCode != 201) {
       throw ApiException.fromResponse(
         statusCode: response.statusCode,
-        body: body,
+        body: rawBody,
       );
     }
 
-    if (body is! String || body.isEmpty) {
+    if (rawBody is! String || rawBody.isEmpty) {
       throw const ApiException.malformed(
         'El backend respondió con un cuerpo vacío.',
       );
@@ -120,7 +138,7 @@ class DollarApiRest implements IDollarApi {
 
     final Object? envelope;
     try {
-      envelope = json.decode(body);
+      envelope = json.decode(rawBody);
     } catch (e, s) {
       AppLogger.warning(
         'Backend responded with a non-JSON body',

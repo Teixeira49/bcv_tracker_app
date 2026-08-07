@@ -7,13 +7,18 @@ import 'package:bcv_tracker_app/shared/data/datasource/dollar_api/dollar_api_res
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// Returns a canned response (or failure) instead of hitting the network.
+/// Returns a canned response (or failure) instead of hitting the network, and
+/// records the outgoing request so a test can assert the method, path and body.
 class _FakeHttpManager extends HttpManager {
   _FakeHttpManager({this.statusCode = 200, this.responseBody, this.failure});
 
   final int statusCode;
   final Object? responseBody;
   final DioException? failure;
+
+  HttpOperation? sentMethod;
+  String? sentEndpoint;
+  Map<String, dynamic>? sentBody;
 
   @override
   Future<Response<dynamic>> request({
@@ -23,6 +28,9 @@ class _FakeHttpManager extends HttpManager {
     Map<String, dynamic>? customHeader,
     String? clientCode,
   }) async {
+    sentMethod = method;
+    sentEndpoint = endpoint;
+    sentBody = body;
     if (failure != null) throw failure!;
     return Response(
       requestOptions: RequestOptions(path: endpoint),
@@ -47,6 +55,38 @@ DollarApiRest _api({
 
 void main() {
   group('getCurrentDollar()', () {
+    test('POSTs the per-market Body to saved-currencies', () async {
+      // The backend replaced the GET query-param flags with a POST Body
+      // (MarketSelection, backend #71); the app must send exactly that.
+      final fake = _FakeHttpManager(
+        responseBody: '{"status":"Success","message":"ok","data":[]}',
+      );
+      await DollarApiRest(
+        apiUrl: 'https://backend.test',
+        client: fake,
+      ).getCurrentDollar();
+
+      expect(fake.sentMethod, HttpOperation.post);
+      expect(
+        fake.sentEndpoint,
+        'https://backend.test/api/v1/venezuela/saved-currencies',
+      );
+      // No leftover query params on the path.
+      expect(fake.sentEndpoint, isNot(contains('?')));
+      expect(fake.sentEndpoint, isNot(contains('fill_missing')));
+      // The Body is the MarketSelection: only the average-tab markets, each
+      // with the mode that reproduces the old flags.
+      expect(fake.sentBody, {
+        'markets': {
+          'bcv': 'bd-solo-dolar',
+          'yadio': 'solo-dolar',
+          'binance': 'average',
+          'bybit': 'average',
+          'exchange_monitor': 'own+monitor',
+        },
+      });
+    });
+
     test('maps the data list of the envelope', () async {
       final result = await _api(
         body:

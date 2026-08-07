@@ -17,9 +17,10 @@ class Markets {
 
   /// Markets rendered in the average tab, in display order.
   ///
-  /// `saved-currencies` answers with every market it knows once `fill_missing`
-  /// is on (nine of them today), so this list is what decides which ones reach
-  /// the UI — and in which order, since the backend orders by database id.
+  /// These are exactly the markets requested in the `saved-currencies` POST Body
+  /// (`DollarEndpoints.currentDollarBody`); a market absent from that Body is
+  /// `off` on the backend and never arrives. The order here is the display
+  /// order, since the backend orders its rows by database id.
   static const List<String> averageTab = <String>[
     bcv,
     exchangeMonitor,
