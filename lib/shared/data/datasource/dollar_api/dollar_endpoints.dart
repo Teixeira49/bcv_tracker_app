@@ -12,48 +12,43 @@ class DollarEndpoints {
 
   static const String _apiEndpoints = '/api/$_apiVersion/$_country';
 
-  /// Sources and filters for `saved-currencies`.
-  ///
-  /// `fill_missing` fetches live every market left at `false`, and there is no
-  /// way to leave a market out: one at `true` is read from the database and one
-  /// at `false` is scraped live, but both come back. So this map does not pick
-  /// *which* markets arrive — [Markets.averageTab] does that on the client —
-  /// it picks **where each one comes from**:
-  ///
-  /// - live (`false`) only the three the app shows as fresh rates. Each live
-  ///   source adds latency and is a failure point: the backend gathers them
-  ///   without `return_exceptions`, so one source answering 502 fails the whole
-  ///   request.
-  /// - from the database (`true`) the rest, which is cheap, plus BCV and
-  ///   Exchange Monitor, refreshed by the backend cron six times a day.
-  ///
-  /// Once the per-market Body (#71) is deployed this whole dance is replaced by
-  /// `off` for the markets we do not want and `average` for the crypto ones.
-  static const Map<String, String> _currentDollarParams = {
-    // Live.
-    'yadio': 'false',
-    'binance': 'false',
-    'bybit': 'false',
-    // From the database.
-    'bcv': 'true',
-    'exchange_monitor': 'true',
-    'okx': 'true',
-    'bitget': 'true',
-    'airtm': 'true',
-    'dolarapi': 'true',
-    'fill_missing': 'true',
-    // Only the official dollar out of the BCV, only the dollar out of Yadio
-    // (it also publishes euro and bitcoin) and only the estimated average of
-    // Exchange Monitor ("Monitor Dólar").
-    'enforce_bcv_dollar': 'true',
-    'enforce_yadio_dollar': 'true',
-    'enforce_em_average': 'true',
-  };
+  /// `saved-currencies` is a **POST** since the backend replaced its query-param
+  /// flags (`fill_missing`, `enforce_*`, one boolean per market) with a
+  /// structured Body — a state machine per market (`MarketSelection`, backend
+  /// issue #71). GET-with-body is not reliable across clients, hence POST.
+  static const String currentDollar = '$_apiEndpoints/saved-currencies';
 
-  static final String currentDollar = Uri(
-    path: '$_apiEndpoints/saved-currencies',
-    queryParameters: _currentDollarParams,
-  ).toString();
+  /// Body sent to `saved-currencies`: the state (`mode`) requested per market.
+  ///
+  /// A market **absent** from the map is treated as `off` by the backend, so
+  /// this map alone decides which markets arrive — it lists exactly the ones the
+  /// average tab shows ([Markets.averageTab]); `okx`, `bitget`, `airtm` and
+  /// `dolarapi` are left out on purpose.
+  ///
+  /// The modes reproduce what the old flags produced:
+  /// - `bcv: bd-solo-dolar` — from the database (cheap, cron-refreshed), only
+  ///   the official dollar (was `bcv=true` + `enforce_bcv_dollar`).
+  /// - `yadio: solo-dolar` — live, only the dollar; Yadio also quotes euro and
+  ///   bitcoin (was `yadio=false` + `enforce_yadio_dollar`).
+  /// - `binance`/`bybit: average` — the crypto average per asset, `(buy+sell)/2`
+  ///   computed by the backend (was live, both sides merged on the client).
+  /// - `exchange_monitor: own+monitor` — its own value plus the estimated
+  ///   average ("Monitor Dólar"). The old `enforce_em_average` returned only the
+  ///   average; the new contract has no "average-only" mode, so this is the
+  ///   closest (backend issue #89 flags it for review).
+  ///
+  /// Every live source is a failure point — the backend gathers them without
+  /// `return_exceptions`, so one answering 502 fails the whole request — which
+  /// is why only the markets shown are requested and BCV stays on the database.
+  static const Map<String, dynamic> currentDollarBody = {
+    'markets': {
+      'bcv': 'bd-solo-dolar',
+      'yadio': 'solo-dolar',
+      'binance': 'average',
+      'bybit': 'average',
+      'exchange_monitor': 'own+monitor',
+    },
+  };
 
   static const String currentBCVDollar = '$_apiEndpoints/bcv/with-memory';
 }
