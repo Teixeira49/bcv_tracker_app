@@ -1,0 +1,14 @@
+# Test runner configuration.
+#
+# Declares the `golden` tag that Alchemist attaches to every golden test (issue
+# #35). Declaring it here silences the "tag was used that wasn't specified"
+# warning and lets the suite be filtered:
+#
+#   flutter test --exclude-tags golden   # skip goldens (logic tests only)
+#   flutter test --tags golden           # run only the goldens
+#
+# CI (`.github/workflows/pr-validation.yml`) runs the whole suite, goldens
+# included — they are platform-independent CI goldens, so they pass on the Linux
+# runner as they do locally. See docs/golden-tests.md.
+tags:
+  golden:

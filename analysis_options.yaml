@@ -1,28 +1,44 @@
-# This file configures the analyzer, which statically analyzes Dart code to
-# check for errors, warnings, and lints.
+# Configuración del analizador estático del proyecto.
 #
-# The issues identified by the analyzer are surfaced in the UI of Dart-enabled
-# IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be
-# invoked from the command line by running `flutter analyze`.
+# Parte de `flutter_lints` (el conjunto recomendado para apps Flutter) y lo
+# endurece con las opciones estrictas del lenguaje y un conjunto de reglas
+# propias. La razón: el análisis es la primera red que atrapa un error antes
+# de que corran los tests, y en una app que mapea JSON de un backend frágil
+# los `dynamic` implícitos son justo donde se cuela un fallo silencioso.
+#
+# CI ejecuta `flutter analyze` SIN `--no-fatal-warnings`, así que cualquier
+# cosa que reporte este archivo rompe el build de la PR. Ver #29 y #27.
 
-# The following line activates a set of recommended lints for Flutter apps,
-# packages, and plugins designed to encourage good coding practices.
 include: package:flutter_lints/flutter.yaml
 
-linter:
-  # The lint rules applied to this project can be customized in the
-  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
-  # included above or to enable additional rules. A list of all available lints
-  # and their documentation is published at https://dart.dev/lints.
-  #
-  # Instead of disabling a lint rule for the entire project in the
-  # section below, it can also be suppressed for a single line of code
-  # or a specific dart file by using the `// ignore: name_of_lint` and
-  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
-  # producing the lint.
-  rules:
-    # avoid_print: false  # Uncomment to disable the `avoid_print` rule
-    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+analyzer:
+  # Modos estrictos del lenguaje. Cierran los agujeros por donde `dynamic`
+  # entra sin que nadie lo pida.
+  language:
+    # Un `dynamic` no se asigna a un tipo concreto sin un cast explícito. Es el
+    # que atrapa los mapeos de JSON: `json['value']` es `dynamic` y ya no se
+    # puede pasar como `double` sin decirlo.
+    strict-casts: true
+    # El analizador no infiere `dynamic` en silencio cuando no puede deducir un
+    # tipo: obliga a anotarlo.
+    strict-inference: true
+    # Un tipo genérico usado sin sus argumentos (`List` en vez de `List<T>`) se
+    # reporta en vez de degradar a `List<dynamic>`.
+    strict-raw-types: true
 
-# Additional information about this file can be found at
-# https://dart.dev/guides/language/analysis-options
+linter:
+  rules:
+    # Prohíbe entrar a las rutas `src/` internas de un paquete: es API privada
+    # y puede cambiar en una versión patch. Guardrail de #52.
+    implementation_imports: true
+    # `print` no va en producción: el logging pasa por `dart:developer log`.
+    # Apoya el guardrail de logging de #19.
+    avoid_print: true
+    # El repo mezcla comillas simples y dobles; unificar en simples deja los
+    # diffs limpios y es el default de Dart.
+    prefer_single_quotes: true
+    # Toda función declara su tipo de retorno: nada de `dynamic` por omisión.
+    always_declare_return_types: true
+    # Ordena las directivas de import de forma estable, para que dos cambios en
+    # el mismo bloque no choquen por el orden.
+    directives_ordering: true

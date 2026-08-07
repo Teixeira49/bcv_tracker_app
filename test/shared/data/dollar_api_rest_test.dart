@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bcv_tracker_app/core/network/api_exception.dart';
 import 'package:bcv_tracker_app/core/network/http_manager.dart';
 import 'package:bcv_tracker_app/core/network/http_operation.dart';
@@ -5,7 +7,8 @@ import 'package:bcv_tracker_app/shared/data/datasource/dollar_api/dollar_api_res
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// Returns a canned response (or failure) instead of hitting the network.
+/// Returns a canned response (or failure) instead of hitting the network, and
+/// records the outgoing request so a test can assert the method, path and body.
 class _FakeHttpManager extends HttpManager {
   _FakeHttpManager({this.statusCode = 200, this.responseBody, this.failure});
 
@@ -13,14 +16,21 @@ class _FakeHttpManager extends HttpManager {
   final Object? responseBody;
   final DioException? failure;
 
+  HttpOperation? sentMethod;
+  String? sentEndpoint;
+  Map<String, dynamic>? sentBody;
+
   @override
-  Future<Response> request({
+  Future<Response<dynamic>> request({
     required String endpoint,
     HttpOperation method = HttpOperation.get,
     Map<String, dynamic>? body,
     Map<String, dynamic>? customHeader,
     String? clientCode,
   }) async {
+    sentMethod = method;
+    sentEndpoint = endpoint;
+    sentBody = body;
     if (failure != null) throw failure!;
     return Response(
       requestOptions: RequestOptions(path: endpoint),
@@ -45,6 +55,38 @@ DollarApiRest _api({
 
 void main() {
   group('getCurrentDollar()', () {
+    test('POSTs the per-market Body to saved-currencies', () async {
+      // The backend replaced the GET query-param flags with a POST Body
+      // (MarketSelection, backend #71); the app must send exactly that.
+      final fake = _FakeHttpManager(
+        responseBody: '{"status":"Success","message":"ok","data":[]}',
+      );
+      await DollarApiRest(
+        apiUrl: 'https://backend.test',
+        client: fake,
+      ).getCurrentDollar();
+
+      expect(fake.sentMethod, HttpOperation.post);
+      expect(
+        fake.sentEndpoint,
+        'https://backend.test/api/v1/venezuela/saved-currencies',
+      );
+      // No leftover query params on the path.
+      expect(fake.sentEndpoint, isNot(contains('?')));
+      expect(fake.sentEndpoint, isNot(contains('fill_missing')));
+      // The Body is the MarketSelection: only the average-tab markets, each
+      // with the mode that reproduces the old flags.
+      expect(fake.sentBody, {
+        'markets': {
+          'bcv': 'bd-solo-dolar',
+          'yadio': 'solo-dolar',
+          'binance': 'average',
+          'bybit': 'average',
+          'exchange_monitor': 'own+monitor',
+        },
+      });
+    });
+
     test('maps the data list of the envelope', () async {
       final result = await _api(
         body:
@@ -102,17 +144,20 @@ void main() {
       );
     });
 
-    test('falls back to the status code when the body is not the envelope', () async {
-      // What a wrong route actually returns through the edge: an HTML page.
-      await expectLater(
-        _api(statusCode: 404, body: '<html>404</html>').getCurrentDollar(),
-        throwsA(
-          isA<ApiException>()
-              .having((e) => e.statusCode, 'statusCode', 404)
-              .having((e) => e.message, 'message', 'HTTP 404'),
-        ),
-      );
-    });
+    test(
+      'falls back to the status code when the body is not the envelope',
+      () async {
+        // What a wrong route actually returns through the edge: an HTML page.
+        await expectLater(
+          _api(statusCode: 404, body: '<html>404</html>').getCurrentDollar(),
+          throwsA(
+            isA<ApiException>()
+                .having((e) => e.statusCode, 'statusCode', 404)
+                .having((e) => e.message, 'message', 'HTTP 404'),
+          ),
+        );
+      },
+    );
 
     test('reports a malformed body instead of crashing', () async {
       await expectLater(
@@ -129,8 +174,9 @@ void main() {
       );
       // `data` present but not a list.
       await expectLater(
-        _api(body: '{"status":"Success","message":"ok","data":{}}')
-            .getCurrentDollar(),
+        _api(
+          body: '{"status":"Success","message":"ok","data":{}}',
+        ).getCurrentDollar(),
         throwsA(isA<ApiException>()),
       );
     });
@@ -148,6 +194,38 @@ void main() {
           isA<ApiException>()
               .having((e) => e.statusCode, 'statusCode', isNull)
               .having((e) => e.message, 'message', 'Connection refused'),
+        ),
+      );
+    });
+
+    test('translates a rejected certificate into a readable message', () async {
+      // What reaches Dio when the chain does not validate against the system
+      // trust store — an interception proxy without its CA installed. The raw
+      // OS error must never reach the user.
+      await expectLater(
+        _api(
+          failure: DioException(
+            requestOptions: RequestOptions(path: '/x'),
+            type: DioExceptionType.unknown,
+            message:
+                'HandshakeException: Handshake error in client '
+                '(OS Error: CERTIFICATE_VERIFY_FAILED: self signed certificate)',
+            error: const HandshakeException('CERTIFICATE_VERIFY_FAILED'),
+          ),
+        ).getCurrentDollar(),
+        throwsA(
+          isA<ApiException>()
+              .having((e) => e.statusCode, 'statusCode', isNull)
+              .having(
+                (e) => e.message,
+                'message',
+                contains('No se pudo verificar la identidad del servidor'),
+              )
+              .having(
+                (e) => e.message,
+                'message',
+                isNot(contains('CERTIFICATE_VERIFY_FAILED')),
+              ),
         ),
       );
     });

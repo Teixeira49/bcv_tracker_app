@@ -26,8 +26,6 @@ class CustomSkeletonizer extends StatelessWidget {
       highlightColor: highlightColor ?? ColorValues.utilityBrand100(context),
       duration: Duration(seconds: 2),
     ),
-    child: Skeleton.leaf(
-      child: child,
-    )
+    child: Skeleton.leaf(child: child),
   );
 }

@@ -1,0 +1,23 @@
+{
+  "branchProjectCode": "DTA",
+  "baseBranch": "development",
+  "productionBranch": "master",
+  "triggerMode": "ask",
+  "draftsDir": "docs/pull-requests/",
+  "reviewers": [],
+  "assignSelf": true,
+  "selfAssignee": "Teixeira49",
+  "labelsByType": {
+    "feat": "enhancement",
+    "fix": "bug",
+    "hotfix": "bug",
+    "refactor": "refactor",
+    "docs": "documentation",
+    "chore": "chore",
+    "build": "build",
+    "test": "test",
+    "ci": "ci",
+    "style": "style",
+    "perf": "performance"
+  }
+}

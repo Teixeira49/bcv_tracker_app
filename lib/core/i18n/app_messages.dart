@@ -1,4 +1,4 @@
-import 'package:get/get_utils/src/extensions/internacionalization.dart';
+import 'package:get/get.dart';
 
 class AppMessages {
   static String get homeView => 'homeView'.tr;
@@ -96,4 +96,28 @@ class AppMessages {
   static String get loadingError => 'loadingError'.tr;
 
   static String get retryAction => 'retryAction'.tr;
+
+  static String get conversionUnavailable => 'conversionUnavailable'.tr;
+
+  static String get configErrorTitle => 'configErrorTitle'.tr;
+
+  static String get configErrorBody => 'configErrorBody'.tr;
+
+  static String get errorNoConnection => 'errorNoConnection'.tr;
+
+  static String get errorTimeout => 'errorTimeout'.tr;
+
+  static String get errorServiceUnavailable => 'errorServiceUnavailable'.tr;
+
+  static String get errorInvalidRequest => 'errorInvalidRequest'.tr;
+
+  static String get errorServerInternal => 'errorServerInternal'.tr;
+
+  static String get errorUnexpectedResponse => 'errorUnexpectedResponse'.tr;
+
+  static String get errorGeneric => 'errorGeneric'.tr;
+
+  static String get emptyStateTitle => 'emptyStateTitle'.tr;
+
+  static String get emptyStateMessage => 'emptyStateMessage'.tr;
 }

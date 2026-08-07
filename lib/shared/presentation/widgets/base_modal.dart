@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../config/theme/colors/colors_values.dart';
 
@@ -35,7 +36,7 @@ class BaseModal extends StatelessWidget {
           style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 22),
         ),
         IconButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Get.back<void>(),
           icon: const Icon(Icons.close),
         ),
       ],
@@ -47,15 +48,16 @@ class BaseModal extends StatelessWidget {
     content: SizedBox(
       width: maxWidth ?? double.infinity,
       height: maxHeight,
-      child: SingleChildScrollView(child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Divider(),
-          Padding(padding: internalMargin, child: child),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Divider(),
+            Padding(padding: internalMargin, child: child),
+          ],
+        ),
       ),
     ),
-        )
   );
 }

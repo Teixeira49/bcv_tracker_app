@@ -45,10 +45,6 @@ class _HomeBodyAverageCurrency extends StatelessWidget {
   Widget build(BuildContext context) => GetBuilder<HomeController>(
     builder: (controller) {
       final String? error = controller.errorMessage;
-      // While the first refresh has not succeeded the list still holds the
-      // skeleton placeholders, so showing them once loading stopped would pass
-      // fake rates off as real ones.
-      final bool showCurrencies = controller.hasAverageData || error == null;
 
       return CustomRefreshIndicator.adaptive(
         onRefresh: () async {
@@ -59,11 +55,16 @@ class _HomeBodyAverageCurrency extends StatelessWidget {
           // which is exactly the case in the error state.
           physics: const AlwaysScrollableScrollPhysics(),
           children: [
-            if (error != null) ...[
-              _ErrorAdvisorCard(message: error),
-              SizedBox(height: 8),
-            ],
-            if (showCurrencies) ...[
+            if (error != null)
+              AppStateView.error(
+                message: error,
+                onRetry: controller.refreshHomeData,
+                isBusy: controller.isLoading,
+              )
+            else if (controller.hasAverageData &&
+                controller.averageCurrencies.isEmpty)
+              AppStateView.empty(onRetry: controller.refreshHomeData)
+            else ...[
               _CurrencyDollarAverageCard(),
               for (var e in controller.averageCurrencies) ...[
                 SizedBox(height: 8),
@@ -83,7 +84,6 @@ class _HomeBodyBCVCurrency extends StatelessWidget {
   Widget build(BuildContext context) => GetBuilder<HomeController>(
     builder: (controller) {
       final String? error = controller.errorMessage;
-      final bool showCurrencies = controller.hasBcvData || error == null;
 
       return CustomRefreshIndicator.adaptive(
         onRefresh: () async {
@@ -94,11 +94,15 @@ class _HomeBodyBCVCurrency extends StatelessWidget {
           // which is exactly the case in the error state.
           physics: const AlwaysScrollableScrollPhysics(),
           children: [
-            if (error != null) ...[
-              _ErrorAdvisorCard(message: error),
-              SizedBox(height: 8),
-            ],
-            if (showCurrencies) ...[
+            if (error != null)
+              AppStateView.error(
+                message: error,
+                onRetry: controller.refreshHomeData,
+                isBusy: controller.isLoading,
+              )
+            else if (controller.hasBcvData && controller.bcvCurrencies.isEmpty)
+              AppStateView.empty(onRetry: controller.refreshHomeData)
+            else ...[
               _BCVAdvisorCard(),
               SizedBox(height: 16),
               ...controller.bcvCurrencies.map(

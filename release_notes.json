@@ -1,0 +1,10 @@
+[
+  {
+    "language": "en-US",
+    "text": "The average-market rates load again, and the app now shows a clear message with a retry button when something fails or you're offline, instead of a blank screen.\n\n• Redesigned error and empty states\n• The converter no longer shows wrong results\n• Stability, security and translation fixes"
+  },
+  {
+    "language": "es-ES",
+    "text": "Vuelven a cargar las tasas del mercado promedio, y ahora la app te muestra un mensaje claro con un botón para reintentar cuando algo falla o no hay conexión, en vez de quedarse en blanco.\n\n• Estados de error y vacío rediseñados\n• El conversor ya no muestra resultados erróneos\n• Correcciones de estabilidad, seguridad y traducciones"
+  }
+]

@@ -56,9 +56,7 @@ class _DollarCurrencyCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    CurrencyHelpers.castCurrency(
-                      value: currency.value,
-                    ),
+                    CurrencyHelpers.castCurrency(value: currency.value),
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
                   ),
                   Text(
@@ -77,9 +75,7 @@ class _DollarCurrencyCard extends StatelessWidget {
                   Text(AppMessages.lastUpdate),
                   Text(
                     currency.updateDate != null
-                        ? CurrencyHelpers.formatDate(
-                            date: currency.updateDate!,
-                          )
+                        ? CurrencyHelpers.formatDate(date: currency.updateDate!)
                         : CurrencyHelpers.emptyDatePlaceholder,
                   ),
                 ],
@@ -151,9 +147,7 @@ class _BCVDollarCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        CurrencyHelpers.castCurrency(
-                          value: currency.value,
-                        ),
+                        CurrencyHelpers.castCurrency(value: currency.value),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 28,
@@ -175,62 +169,6 @@ class _BCVDollarCard extends StatelessWidget {
       ),
     );
   }
-}
-
-/// Shown when the last refresh failed, with the detail reported by the backend
-/// error envelope and a way to retry.
-class _ErrorAdvisorCard extends StatelessWidget {
-  const _ErrorAdvisorCard({required this.message});
-
-  final String message;
-
-  @override
-  Widget build(BuildContext context) => GetBuilder<HomeController>(
-    builder: (controller) => CustomBadged(
-      borderRadius: 12,
-      color: ColorValues.textErrorPrimary(context),
-      hMargin: 3,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    AppMessages.loadingError,
-                    style: TextStyle(
-                      color: ColorValues.textErrorPrimary(context),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    message,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: ColorValues.textSecondary(context),
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            TextButton(
-              onPressed: controller.isLoading
-                  ? null
-                  : controller.refreshHomeData,
-              child: Text(
-                AppMessages.retryAction,
-                style: TextStyle(color: ColorValues.textErrorPrimary(context)),
-              ),
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
 }
 
 class _BCVAdvisorCard extends StatelessWidget {

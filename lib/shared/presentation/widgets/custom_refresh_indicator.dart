@@ -1,11 +1,7 @@
 import 'package:bcv_tracker_app/config/theme/colors/colors_values.dart';
 import 'package:flutter/material.dart';
 
-enum CustomRefreshIndicatorType {
-  classic,
-  adaptive,
-  noSpinner;
-}
+enum CustomRefreshIndicatorType { classic, adaptive, noSpinner }
 
 class CustomRefreshIndicator extends StatelessWidget {
   const CustomRefreshIndicator({
@@ -44,10 +40,7 @@ class CustomRefreshIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (indicatorType == CustomRefreshIndicatorType.noSpinner) {
-      return RefreshIndicator.noSpinner(
-        onRefresh: onRefresh,
-        child: child,
-      );
+      return RefreshIndicator.noSpinner(onRefresh: onRefresh, child: child);
     }
     if (indicatorType == CustomRefreshIndicatorType.adaptive) {
       return RefreshIndicator.adaptive(

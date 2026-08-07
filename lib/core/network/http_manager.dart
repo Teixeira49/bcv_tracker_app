@@ -4,12 +4,10 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
 
+import '../logging/app_logger.dart';
 import 'http_operation.dart';
 
 // Project imports:
@@ -53,18 +51,26 @@ class HttpManager {
   }) async {
     final setDioOptions = _dioOptions(endpoint, customHeader, clientCode);
 
+    // The adapter is left untouched on purpose. Dio validates the certificate
+    // chain against the system trust store by default, and the backend is
+    // served over HTTPS with a valid certificate, so it needs no help.
+    //
+    // ⚠️ Never override `httpClientAdapter` to accept every certificate
+    // (`badCertificateCallback => true`): it defeats iOS ATS and Android's
+    // network security config, and lets anyone on the same network serve
+    // forged exchange rates. See issue #50.
     final dio = Dio(setDioOptions);
-
-    (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate =
-        (client) {
-          client.badCertificateCallback =
-              (X509Certificate cert, String host, int port) => true;
-          return client;
-        };
 
     Response? response;
 
     final data = json.encode(body ?? {});
+
+    // Endpoint redacted: the request is logged for tracing, but a query string
+    // never reaches the log (see AppLogger.redactUri).
+    AppLogger.debug(
+      '→ ${method.name.toUpperCase()} ${AppLogger.redactUri(endpoint)}',
+      name: _source,
+    );
 
     try {
       switch (method) {
@@ -109,8 +115,8 @@ class HttpManager {
 
       return response;
     } catch (e, s) {
-      log(
-        '❌ HTTP request failed',
+      AppLogger.error(
+        '❌ HTTP request failed for ${AppLogger.redactUri(endpoint)}',
         name: '$_source.request',
         error: e,
         stackTrace: s,

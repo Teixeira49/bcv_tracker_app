@@ -5,35 +5,37 @@ class AppColors {
 
   // --- PRIMARY (Azul Profundo) ---
   static const int _primaryValue = 0xFF02466D;
-  static const MaterialColor primary =
-      MaterialColor(_primaryValue, <int, Color>{
-        50: Color(0xFFEFF5FF), // original 0xFFEFF9FE
-        100: Color(0xFFD6EFFE),
-        200: Color(0xFFA4DDFD),
-        300: Color(0xFF72CAFC),
-        400: Color(0xFF40B7FB),
-        500: Color(_primaryValue),
-        600: Color(0xFF013B5C),
-        700: Color(0xFF01314C),
-        800: Color(0xFF01263B),
-        900: Color(0xFF001C2B),
-      });
+  static const MaterialColor primary = MaterialColor(
+    _primaryValue,
+    <int, Color>{
+      50: Color(0xFFEFF5FF), // original 0xFFEFF9FE
+      100: Color(0xFFD6EFFE),
+      200: Color(0xFFA4DDFD),
+      300: Color(0xFF72CAFC),
+      400: Color(0xFF40B7FB),
+      500: Color(_primaryValue),
+      600: Color(0xFF013B5C),
+      700: Color(0xFF01314C),
+      800: Color(0xFF01263B),
+      900: Color(0xFF001C2B),
+    },
+  );
 
   // --- SECONDARY (Azul Complementario) ---
   static const int _secondaryValue = 0xFF064469;
   static const MaterialColor secondary =
-  MaterialColor(_secondaryValue, <int, Color>{
-    50: Color(0xFFE1E9ED),
-    100: Color(0xFFB4C9D8),
-    200: Color(0xFF83A6BE),
-    300: Color(0xFF5283A4),
-    400: Color(0xFF2C6B90),
-    500: Color(_secondaryValue),
-    600: Color(0xFF053E61),
-    700: Color(0xFF043657),
-    800: Color(0xFF032D4D),
-    900: Color(0xFF02203B),
-  });
+      MaterialColor(_secondaryValue, <int, Color>{
+        50: Color(0xFFE1E9ED),
+        100: Color(0xFFB4C9D8),
+        200: Color(0xFF83A6BE),
+        300: Color(0xFF5283A4),
+        400: Color(0xFF2C6B90),
+        500: Color(_secondaryValue),
+        600: Color(0xFF053E61),
+        700: Color(0xFF043657),
+        800: Color(0xFF032D4D),
+        900: Color(0xFF02203B),
+      });
 
   // --- MIDNIGHT (Fondo Oscuro Premium) ---
   static const int _midnightValue = 0xFF070E15;
@@ -112,7 +114,10 @@ class AppColors {
     900: Color(0xFF710D06),
   });
 
-  static const int _warningValue = 0xFFFF980;
+  // 8 digits, always: `0xAARRGGBB`. A 7-digit literal is still a valid int, so
+  // the compiler stays silent while Dart reads the missing digit as alpha —
+  // this one used to be `0xFFFF980`, which rendered at 6 % opacity.
+  static const int _warningValue = 0xFFFF9800;
   static const MaterialColor warning =
       MaterialColor(_warningValue, <int, Color>{
         50: Color(0xFFFFF3E0),

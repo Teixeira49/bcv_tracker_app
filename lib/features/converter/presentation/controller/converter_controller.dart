@@ -8,6 +8,10 @@ class ConverterController extends GetxController {
 
   bool get isLoading => _repository.isLoading.value;
 
+  /// Detail of the last failed refresh, or `null` when the last one succeeded —
+  /// the same failure the Home shows, so the converter states stay consistent.
+  String? get errorMessage => _repository.errorMessage.value;
+
   // Single consolidated list of currencies
   final RxList<Currency> currencies = List.generate(
     5,
@@ -49,6 +53,7 @@ class ConverterController extends GetxController {
     _updateCurrenciesAndInit();
 
     ever(_repository.isLoading, (_) => update());
+    ever(_repository.errorMessage, (_) => update());
   }
 
   void _updateCurrenciesAndInit() {
@@ -57,7 +62,7 @@ class ConverterController extends GetxController {
     final List<Currency> mergedList = [];
 
     // Helper to create a unique composite key for each currency.
-    String compositeKey(Currency c) => "${c.keyName}-${c.platform}-${c.name}";
+    String compositeKey(Currency c) => '${c.keyName}-${c.platform}-${c.name}';
 
     // 1. Add Average Currencies
     for (var c in _repository.averageCurrencies) {
@@ -111,7 +116,27 @@ class ConverterController extends GetxController {
   }
 
   String getRoundedCurrency() =>
-      "${fromCurrency.originalValue} ≈ ${toCurrency.originalValue}";
+      '${fromCurrency.originalValue} ≈ ${toCurrency.originalValue}';
+
+  /// Whether the pair currently selected cannot produce a conversion.
+  ///
+  /// A rate of `0.0` reaches the app through ordinary paths — [Currency.empty]
+  /// declares `value: 0.00`, and the backend answers with a market that has no
+  /// data yet — and dividing doubles by zero does not throw in Dart: it yields
+  /// `Infinity`, or `NaN` when the dividend is zero too. The views read this
+  /// getter to say so instead of painting a meaningless number.
+  bool get isConversionUnavailable =>
+      !_isUsableRate(fromCurrency.currency.value) ||
+      !_isUsableRate(toCurrency.currency.value);
+
+  /// A rate can only take part in the conversion when it is finite and not
+  /// zero: zero cannot divide, and a non-finite rate poisons every result it
+  /// touches.
+  static bool _isUsableRate(double rate) => rate.isFinite && rate != 0.0;
+
+  /// Last line of defence before a value reaches the UI: `Infinity` and `NaN`
+  /// are formatted verbatim by `toString()`, so they never leave this class.
+  static double _sanitize(double value) => value.isFinite ? value : 0.0;
 
   bool? selectCurrency(Currency selected, {required bool isInput}) {
     final Currency current = isInput
@@ -158,7 +183,11 @@ class ConverterController extends GetxController {
       final double toRate = newTo.value;
       final double fromRate = newFrom.value;
 
-      final double fromAmount = (toAmount * toRate) / fromRate;
+      // Same guard as [calculator]: this branch divides too, so a market with
+      // no rate would put `Infinity` in the input field.
+      final double fromAmount = _isUsableRate(fromRate) && _isUsableRate(toRate)
+          ? _sanitize((toAmount * toRate) / fromRate)
+          : 0.0;
       fromCurrency = fromCurrency.copyWith(convertedValue: fromAmount);
     } else {
       // Logic: Reset "From" to 1 (standard behavior), calculate "To"
@@ -200,7 +229,16 @@ class ConverterController extends GetxController {
     final double fromRate = fromCurrency.currency.value;
     final double toRate = toCurrency.currency.value;
 
-    final double result = (amount * fromRate) / toRate;
+    if (!_isUsableRate(fromRate) || !_isUsableRate(toRate)) {
+      // Dividing here would hand `Infinity` (or `NaN`) straight to the view.
+      // Zero is the honest placeholder; [isConversionUnavailable] is what tells
+      // the user the pair has no rate to convert with.
+      toCurrency = toCurrency.copyWith(convertedValue: 0.0);
+      update();
+      return;
+    }
+
+    final double result = _sanitize((amount * fromRate) / toRate);
 
     toCurrency = toCurrency.copyWith(convertedValue: result);
     update();

@@ -41,6 +41,34 @@ class _CurrencyInputCard extends StatelessWidget {
               isInput: isInput,
               amount: currency.convertedValue.toString(),
             ),
+            // A market with no rate yields 0.0 instead of a conversion, and a
+            // bare 0 reads like a legitimate result. Only the output card says
+            // so: repeating it on both sides is noise.
+            if (!isInput && controller.isConversionUnavailable) ...[
+              const SizedBox(height: 8),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 16,
+                    color: ColorValues.textWarningPrimary(context),
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      AppMessages.conversionUnavailable,
+                      style: TextStyle(
+                        color: ColorValues.textWarningPrimary(context),
+                        fontSize: 12,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
       ),
@@ -64,18 +92,20 @@ class _CurrencyInputSelectorCard extends StatelessWidget {
       spacing: 20,
       children: [
         _SelectCurrencyButton(currencyCode: currency.keyName, isInput: isInput),
-        Flexible(child: Text(
-          currency.keyName != 'VES'
-              ? "${CurrencyHelpers.castCurrencyDisplayName(currency)} - ${currency.platform}"
-              : controller.getRoundedCurrency(),
-          style: TextStyle(
-            color: ColorValues.textQuaternary(context),
-            fontSize: 14,
+        Flexible(
+          child: Text(
+            currency.keyName != 'VES'
+                ? '${CurrencyHelpers.castCurrencyDisplayName(currency)} - ${currency.platform}'
+                : controller.getRoundedCurrency(),
+            style: TextStyle(
+              color: ColorValues.textQuaternary(context),
+              fontSize: 14,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.end,
           ),
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          textAlign: TextAlign.end,
-        ),)
+        ),
       ],
     ),
   );
@@ -125,7 +155,7 @@ class _CurrencyInputFieldCardState extends State<_CurrencyInputFieldCard> {
           textToSet = widget.amount.substring(0, widget.amount.length - 2);
         }
 
-        _controller.text = textToSet == "0" ? "" : textToSet;
+        _controller.text = textToSet == '0' ? '' : textToSet;
       }
     }
   }
@@ -200,7 +230,7 @@ class _CircleCurrencyTypeWidget extends StatelessWidget {
     return CircleAvatar(
       radius: 12,
       backgroundColor: Colors.white, //ColorValues.borderTertiary(context),
-      child: currencyAsset != ""
+      child: currencyAsset != ''
           ? ClipOval(child: SvgPicture.asset(currencyAsset, fit: BoxFit.cover))
           : Text(
               currencyCode.substring(0, 2),

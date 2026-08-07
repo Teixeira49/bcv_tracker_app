@@ -1,21 +1,24 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:bcv_tracker_app/shared/data/datasource/datasource.dart';
 import 'package:dio/dio.dart';
 
+import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/api_exception.dart';
 import '../../../../core/network/http_manager.dart';
+import '../../../../core/network/http_operation.dart';
 import '../../model/model.dart';
 
 class DollarApiRest implements IDollarApi {
-  DollarApiRest({
-    required String apiUrl,
-    HttpManager? client,
-  }) : _apiUrl = apiUrl,
-       _client = client ?? HttpManager();
+  DollarApiRest({required String apiUrl, HttpManager? client})
+    : _apiUrl = apiUrl,
+      _client = client ?? HttpManager();
 
   final String _apiUrl;
   final HttpManager _client;
+
+  static const String _source = 'DollarApiRest';
 
   @override
   Future<BcvCurrenciesModel> getCurrentBCVDollar() async {
@@ -29,7 +32,13 @@ class DollarApiRest implements IDollarApi {
 
     try {
       return BcvCurrenciesModel.fromJson(data);
-    } catch (e) {
+    } catch (e, s) {
+      AppLogger.warning(
+        'Contract parse failed for bcv/with-memory',
+        name: _source,
+        error: e,
+        stackTrace: s,
+      );
       throw ApiException.malformed(
         'No se pudo interpretar la respuesta de bcv/with-memory: $e',
       );
@@ -38,7 +47,13 @@ class DollarApiRest implements IDollarApi {
 
   @override
   Future<List<CurrencyModel>> getCurrentDollar() async {
-    final data = await _getData(DollarEndpoints.currentDollar);
+    // saved-currencies is a POST carrying the per-market Body (see
+    // DollarEndpoints.currentDollarBody); the response envelope is unchanged.
+    final data = await _getData(
+      DollarEndpoints.currentDollar,
+      method: HttpOperation.post,
+      body: DollarEndpoints.currentDollarBody,
+    );
 
     if (data is! List) {
       throw const ApiException.malformed(
@@ -51,7 +66,13 @@ class DollarApiRest implements IDollarApi {
           .whereType<Map<String, dynamic>>()
           .map(CurrencyModel.fromJson)
           .toList();
-    } catch (e) {
+    } catch (e, s) {
+      AppLogger.warning(
+        'Contract parse failed for saved-currencies',
+        name: _source,
+        error: e,
+        stackTrace: s,
+      );
       throw ApiException.malformed(
         'No se pudo interpretar la respuesta de saved-currencies: $e',
       );
@@ -61,34 +82,73 @@ class DollarApiRest implements IDollarApi {
   /// Performs the request and returns the `data` field of the backend envelope
   /// (`{status, message, data}`), translating every failure into an
   /// [ApiException] that carries the backend message.
-  Future<Object?> _getData(String endpoint) async {
-    final Response response;
+  ///
+  /// [method] and [body] let a caller POST a structured Body (as
+  /// `saved-currencies` needs); they default to a plain GET.
+  Future<Object?> _getData(
+    String endpoint, {
+    HttpOperation method = HttpOperation.get,
+    Map<String, dynamic>? body,
+  }) async {
+    final Response<dynamic> response;
     try {
-      response = await _client.request(endpoint: _apiUrl + endpoint);
-    } on DioException catch (e) {
+      response = await _client.request(
+        endpoint: _apiUrl + endpoint,
+        method: method,
+        body: body,
+      );
+    } on DioException catch (e, s) {
       // HttpManager accepts every status code, so Dio only throws when there is
-      // no response at all (connectivity, DNS, timeout).
+      // no response at all (connectivity, DNS, timeout, TLS).
+      AppLogger.warning(
+        'Transport failure calling ${AppLogger.redactUri(_apiUrl + endpoint)}',
+        name: _source,
+        error: e,
+        stackTrace: s,
+      );
+      final cause = e.error;
+      if (cause is HandshakeException || cause is CertificateException) {
+        // Raised when the certificate does not validate against the system
+        // trust store: an interception proxy, a captive portal or a network
+        // serving a forged certificate. Dio's own message is the raw OS error
+        // (`CERTIFICATE_VERIFY_FAILED`), useless to the user.
+        throw const ApiException.network(
+          'No se pudo verificar la identidad del servidor. '
+          'La conexión podría estar siendo interceptada; '
+          'prueba con otra red.',
+        );
+      }
       throw ApiException.network(e.message ?? e.type.name);
     }
 
-    final body = response.data;
+    final rawBody = response.data;
 
     if (response.statusCode != 200 && response.statusCode != 201) {
       throw ApiException.fromResponse(
         statusCode: response.statusCode,
-        body: body,
+        body: rawBody,
       );
     }
 
-    if (body is! String || body.isEmpty) {
-      throw const ApiException.malformed('El backend respondió con un cuerpo vacío.');
+    if (rawBody is! String || rawBody.isEmpty) {
+      throw const ApiException.malformed(
+        'El backend respondió con un cuerpo vacío.',
+      );
     }
 
     final Object? envelope;
     try {
-      envelope = json.decode(body);
-    } catch (e) {
-      throw ApiException.malformed('El backend respondió con un cuerpo no JSON: $e');
+      envelope = json.decode(rawBody);
+    } catch (e, s) {
+      AppLogger.warning(
+        'Backend responded with a non-JSON body',
+        name: _source,
+        error: e,
+        stackTrace: s,
+      );
+      throw ApiException.malformed(
+        'El backend respondió con un cuerpo no JSON: $e',
+      );
     }
 
     if (envelope is! Map<String, dynamic> || !envelope.containsKey('data')) {

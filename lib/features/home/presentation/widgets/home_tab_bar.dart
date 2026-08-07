@@ -18,7 +18,10 @@ class _HomeTabBar extends StatelessWidget {
         decoration: BoxDecoration(
           color: ColorValues.utilityInfo(context).withAlpha(51),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: ColorValues.utilityInfo(context).withAlpha(170), width: 1),
+          border: Border.all(
+            color: ColorValues.utilityInfo(context).withAlpha(170),
+            width: 1,
+          ),
         ),
         child: TabBar(
           indicatorSize: TabBarIndicatorSize.tab,
@@ -50,7 +53,12 @@ class _HomeTab extends StatelessWidget {
     return Tab(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))],
+        children: [
+          Text(
+            title,
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ],
       ),
     );
   }

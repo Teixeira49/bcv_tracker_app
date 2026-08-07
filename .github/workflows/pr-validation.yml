@@ -1,0 +1,59 @@
+# Validación de Pull Requests
+#
+# Corre el análisis estático y los tests en cada PR, ANTES de fusionar, para no
+# descubrir en `master` que algo se rompió (issue #27).
+#
+# Este pipeline NO construye ni distribuye: eso sigue en `codemagic.yaml`, que
+# se dispara con el push a `master`. Aquí solo se valida.
+name: PR Validation
+
+# El workflow de trabajo de este repo mergea a `development` y solo promociona
+# `development → master` en el release. Validar solo los PR a `master` dejaría
+# sin check todo el trabajo diario, así que se cubren ambas ramas destino.
+on:
+  pull_request:
+    branches:
+      - master
+      - development
+
+# Un push nuevo a la misma PR cancela la validación en curso: no tiene sentido
+# gastar minutos en un commit que ya quedó atrás.
+concurrency:
+  group: pr-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze-and-test:
+    name: flutter analyze + flutter test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          # Mismo canal que el pipeline de distribución (codemagic.yaml), para
+          # que lo que valida la PR sea lo mismo que luego construye el release.
+          channel: stable
+          cache: true
+
+      - name: Crear .env de validación
+        # La app solo necesita que la variable exista y tenga forma de URL para
+        # arrancar; en validación no se distribuye nada, así que un valor
+        # ficticio basta. Nunca un backend real: esto queda en los logs de la PR.
+        run: echo "CURRENCY_BACK=https://ci.example.com" > .env
+
+      - name: Instalar dependencias
+        run: flutter pub get
+
+      - name: Analizar código
+        # Análisis estricto: sin `--no-fatal-*`, cualquier hallazgo (error,
+        # warning o info) rompe la PR. El árbol se dejó en cero hallazgos con la
+        # config estricta de `analysis_options.yaml` (#29), y CI la mantiene así.
+        run: flutter analyze
+
+      - name: Ejecutar tests
+        run: flutter test
