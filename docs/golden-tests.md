@@ -38,6 +38,20 @@ A side effect: obscured text is **wider** than real glyphs, so the page goldens
 use a canvas wider than a real phone to avoid overflowing the dense rate rows.
 Proportions differ from the device; the visual regression signal does not.
 
+### The 1% tolerance
+
+Obscuring the text removes the biggest cross-platform difference, but icons and
+SVGs (the variation arrows, the flags, the currency symbols) still rasterize for
+real, and their anti-aliasing differs slightly between the macOS Skia used
+locally and the Linux Skia on CI. Measured in a Linux container (Flutter 3.44,
+newer than the reference-generating Mac) the deltas are tiny — the converter and
+Home goldens differ by ≤0.01%, and the worst, the variation indicator, by
+0.16%. `CiGoldensConfig(diffThreshold: 0.01)` in `flutter_test_config.dart`
+tolerates up to 1% — a ~6× margin over the worst case, while any real regression
+(a colour change, a moved widget, a missing element) moves whole percent points.
+The references in this repo were generated on macOS and confirmed to pass on
+Linux within that tolerance.
+
 ## Running them
 
 ```bash

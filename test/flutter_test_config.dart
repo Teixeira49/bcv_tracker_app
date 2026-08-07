@@ -24,6 +24,14 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
     config: const AlchemistConfig(
       // Only the platform-independent CI goldens are versioned; see above.
       platformGoldensConfig: PlatformGoldensConfig(enabled: false),
+      // Obscuring the text removes the biggest cross-platform difference, but
+      // icons and SVGs (the variation arrows, the flags) still rasterize for
+      // real, and their anti-aliasing differs slightly between the macOS Skia
+      // used locally and the Linux Skia on CI (~0.2% of pixels). A small
+      // tolerance absorbs that edge noise while staying far below any real
+      // regression — a colour change, a moved widget or a missing element move
+      // whole percent points. See docs/golden-tests.md.
+      ciGoldensConfig: CiGoldensConfig(diffThreshold: 0.01),
     ),
     run: testMain,
   );
