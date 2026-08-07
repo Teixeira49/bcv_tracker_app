@@ -5,6 +5,7 @@
 docs/*
 !docs/release/
 !docs/lista_de_tests.md
+!docs/golden-tests.md
 
 # Miscellaneous
 *.env
@@ -66,3 +67,5 @@ app.*.map.json
 .claude/settings.local.json
 .claude/*.local.json
 .mcp.local.json
+# Alchemist writes the actual/diff images here when a golden fails; never commit them.
+test/**/failures/
