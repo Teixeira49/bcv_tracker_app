@@ -67,7 +67,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - jtexeira@estei.app
+          - javiertxr@gmail.com
         notify:
           success: true
           failure: true
@@ -157,7 +157,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - jtexeira@estei.app
+          - javiertxr@gmail.com
         notify:
           success: true
           failure: true
@@ -258,7 +258,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - jtexeira@estei.app
+          - javiertxr@gmail.com
         notify:
           success: true
           failure: true
