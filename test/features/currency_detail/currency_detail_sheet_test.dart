@@ -7,6 +7,7 @@ import 'package:bcv_tracker_app/features/currency_detail/presentation/widgets/cu
 import 'package:bcv_tracker_app/shared/domain/entities/currency.dart';
 import 'package:bcv_tracker_app/shared/presentation/widgets/performance_indicator_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 
@@ -112,6 +113,57 @@ void main() {
       expect(find.text(AppMessages.registeredSince), findsNothing);
     },
   );
+
+  testWidgets('an official rate leads with the flag, not the platform seal', (
+    tester,
+  ) async {
+    // The BCV sends the same seal as `platform_img` for its dollar, its euro
+    // and its rouble, so the logo identifies nothing here — the flag does, and
+    // it is what the BCV card already shows.
+    await _pumpSheet(
+      tester,
+      Currency(
+        name: 'Rublo',
+        keyName: 'RUB',
+        platform: Markets.bcv,
+        value: 9.25,
+        imgUrl: 'https://example.invalid/bcv.png',
+      ),
+    );
+
+    expect(find.byType(SvgPicture), findsWidgets);
+    expect(find.byType(Image), findsNothing);
+    // And the name is translated rather than the backend's Spanish "Rublo".
+    expect(find.text('Rublo'), findsNothing);
+    expect(find.text(AppMessages.russianRuble), findsOneWidget);
+  });
+
+  testWidgets('a parallel rate leads with the platform logo', (tester) async {
+    // On the average tab every row quotes the same dollar, so the market is
+    // what tells them apart — the same reading as the card that opened it.
+    await _pumpSheet(
+      tester,
+      Currency(
+        name: 'Dólar estadounidense',
+        keyName: 'USD',
+        platform: Markets.binance,
+        value: 152.30,
+        imgUrl: 'https://example.invalid/binance.png',
+      ),
+    );
+
+    final CircleAvatar avatar = tester.widget<CircleAvatar>(
+      find.byType(CircleAvatar),
+    );
+    expect(avatar.backgroundImage, isA<NetworkImage>());
+    expect(find.byType(SvgPicture), findsNothing);
+
+    // The test binding answers 400 to every request by design, so the logo
+    // never decodes. Consuming the failure keeps the test about which provider
+    // the avatar picked, which is all this asserts.
+    await tester.pump(const Duration(milliseconds: 10));
+    tester.takeException();
+  });
 
   testWidgets('the three reserved sections are wired in and render nothing', (
     tester,

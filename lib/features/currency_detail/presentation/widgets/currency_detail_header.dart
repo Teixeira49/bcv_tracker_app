@@ -182,13 +182,23 @@ class _CurrencyDetailHeader extends StatelessWidget {
   );
 }
 
-/// Avatar of the rate, resolved in the order the data allows.
+/// Avatar of the rate, showing whichever of the two identities carries
+/// information.
 ///
-/// The two Home cards each solved this differently — the average card shows the
-/// platform logo the backend sends, the BCV card shows the country flag bundled
-/// with the app — and the detail view has to serve both, so it falls back in
-/// sequence: platform logo → country flag → the currency initials. The initials
-/// are the last resort because they always work: no network, no asset.
+/// The two Home cards resolve this differently and both are right: the average
+/// card shows the **platform logo** the backend sends, because every row there
+/// quotes the same dollar and the market is what tells them apart; the BCV card
+/// shows the **country flag** bundled with the app, because every row there
+/// comes from the same institution and the currency is what tells them apart.
+///
+/// The sheet serves both, so it mirrors the card that opened it: an official
+/// rate leads with the flag (the BCV seal is identical on its dollar, its euro
+/// and its rouble, so it would say nothing), a parallel one leads with the
+/// platform logo. Either way the other identity is written in text right
+/// beside it.
+///
+/// The currency initials close the chain because they always work: no network,
+/// no asset.
 class _CurrencyDetailAvatar extends StatelessWidget {
   const _CurrencyDetailAvatar({required this.currency});
 
@@ -201,14 +211,15 @@ class _CurrencyDetailAvatar extends StatelessWidget {
     final String flagAsset = CurrencyHelpers.castCurrencySymbolIcon(
       currencyCode: currency.keyName,
     );
+    final bool preferFlag =
+        CurrencyHelpers.isOfficialRate(currency) && flagAsset.isNotEmpty;
+    final String? logoUrl = preferFlag ? null : currency.imgUrl;
 
     return CircleAvatar(
       radius: _radius,
       backgroundColor: ColorValues.borderTertiary(context),
-      backgroundImage: currency.imgUrl == null
-          ? null
-          : NetworkImage(currency.imgUrl!),
-      child: currency.imgUrl != null
+      backgroundImage: logoUrl == null ? null : NetworkImage(logoUrl),
+      child: logoUrl != null
           ? null
           : flagAsset.isEmpty
           ? Text(

@@ -79,14 +79,26 @@ class CurrencyHelpers {
 
   /// Translated name of a rate, falling back to the name given by the backend.
   ///
-  /// The backend names rates in Spanish ("Dolar", "Promedio"), so rendering
-  /// them raw left the average tab untranslated in the other nine languages.
+  /// The backend names rates in Spanish ("Dolar", "Promedio", "Rublo"), so
+  /// rendering them raw left the average tab untranslated in the other nine
+  /// languages.
+  ///
+  /// The lira, the yuan and the rouble were added with the detail sheet (#38):
+  /// the BCV card never called this — it reads the country name from
+  /// [castCurrencyCountry], which was already translated — so the gap only
+  /// surfaced when the sheet started naming those same rates.
   static String castCurrencyDisplayName(Currency currency) {
     switch (currency.keyName) {
       case 'USD':
         return AppMessages.eeuuDollar;
       case 'EUR':
         return AppMessages.europeanEuro;
+      case 'TRY':
+        return AppMessages.turkishLira;
+      case 'CNY':
+        return AppMessages.chineseYuan;
+      case 'RUB':
+        return AppMessages.russianRuble;
       case 'USDT':
         return 'Tether';
       case 'USDC':

@@ -85,12 +85,13 @@ void _detailGolden(
             GoldenTestScenario(
               name: name,
               // The sheet sizes itself as a fraction of the available height,
-              // so the scenario has to bound it. Wider than a phone for the
-              // same reason as the Home goldens: obscured text is wider than
-              // the glyphs it replaces.
+              // so the scenario has to bound it. Wider and taller than a phone
+              // for the same reason as the Home goldens: obscured text is wider
+              // than the glyphs it replaces, so the rows wrap and the sheet
+              // needs the extra room to be captured whole.
               child: SizedBox(
                 width: 420,
-                height: 700,
+                height: 1000,
                 child: Container(
                   color: theme.scaffoldBackgroundColor,
                   child: CurrencyDetailSheet(currency: currency),

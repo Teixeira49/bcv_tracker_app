@@ -2,6 +2,7 @@ import 'package:bcv_tracker_app/features/splash/presentation/page/splash_page.da
 import 'package:get/get.dart';
 
 import '../../features/converter/presentation/controller/converter_controller.dart';
+import '../../features/currency_detail/presentation/controller/currency_detail_controller.dart';
 import '../../features/home/presentation/controller/home_controller.dart';
 import '../../navigation/navigation_controller.dart';
 import '../../shared/data/datasource/datasource.dart';
@@ -33,5 +34,12 @@ class InitialBinding extends Bindings {
     Get.put<CurrencyRepository>(CurrencyRepository(), permanent: true);
     Get.lazyPut<HomeController>(() => HomeController(), fenix: true);
     Get.lazyPut<ConverterController>(() => ConverterController(), fenix: true);
+    // Holds the rate the detail sheet has open (#38). `fenix` because the sheet
+    // is a modal: the controller is discarded between openings and rebuilt on
+    // the next tap.
+    Get.lazyPut<CurrencyDetailController>(
+      () => CurrencyDetailController(),
+      fenix: true,
+    );
   }
 }

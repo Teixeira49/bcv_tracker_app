@@ -20,13 +20,17 @@ class _CurrencyDetailBody extends StatelessWidget {
 
   final Currency currency;
 
-  /// Fraction of the screen the sheet opens at. Chosen so the header and the
-  /// first section are visible without a drag, while the list underneath stays
-  /// recognisable — the sheet is a detail *of* that list, not a new screen.
-  static const double _initialExtent = 0.66;
+  /// Fraction of the screen the sheet opens at.
+  ///
+  /// Measured against the content #38 ships — header plus the seven detail
+  /// rows — so the sheet opens showing all of it and no more: a third of empty
+  /// panel under the last row reads as something failing to load. The sections
+  /// still to come expand into [_maxExtent] instead, and anyone who enlarges
+  /// the system font simply scrolls.
+  static const double _initialExtent = 0.58;
 
   /// Dragging below this closes the sheet (`shouldCloseOnMinExtent`).
-  static const double _minExtent = 0.40;
+  static const double _minExtent = 0.35;
 
   /// Leaves the status bar and a sliver of the list uncovered when fully
   /// expanded, so it never reads as a page that replaced the Home.
