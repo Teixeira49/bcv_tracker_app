@@ -62,4 +62,15 @@ const Map<String, String> itIt = {
   'emptyStateTitle': 'Nessun dato',
   'emptyStateMessage':
       'Ancora nessun tasso da mostrare. Trascina per aggiornare.',
+  'currencyDetailTitle': 'Dettaglio della valuta',
+  'currencyDetailsSection': 'Dettagli',
+  'marketLabel': 'Mercato',
+  'currencyPairLabel': 'Coppia',
+  'rateTypeLabel': 'Tipo di tasso',
+  'currencyCodeLabel': 'Codice',
+  'registeredSince': 'Registrato dal',
+  'variationLabel': 'Variazione',
+  'officialRate': 'Ufficiale',
+  'parallelRate': 'Parallelo',
+  'closeAction': 'Chiudi',
 };

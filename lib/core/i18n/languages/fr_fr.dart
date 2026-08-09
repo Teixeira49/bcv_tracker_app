@@ -62,4 +62,15 @@ const Map<String, String> frFr = {
   'emptyStateTitle': 'Aucune donnée',
   'emptyStateMessage':
       'Aucun taux à afficher pour l\'instant. Tire pour actualiser.',
+  'currencyDetailTitle': 'Détail de la devise',
+  'currencyDetailsSection': 'Détails',
+  'marketLabel': 'Marché',
+  'currencyPairLabel': 'Paire',
+  'rateTypeLabel': 'Type de taux',
+  'currencyCodeLabel': 'Code',
+  'registeredSince': 'Suivi depuis',
+  'variationLabel': 'Variation',
+  'officialRate': 'Officiel',
+  'parallelRate': 'Parallèle',
+  'closeAction': 'Fermer',
 };

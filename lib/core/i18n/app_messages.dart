@@ -120,4 +120,31 @@ class AppMessages {
   static String get emptyStateTitle => 'emptyStateTitle'.tr;
 
   static String get emptyStateMessage => 'emptyStateMessage'.tr;
+
+  // --- Currency detail sheet (#38) ---
+
+  static String get currencyDetailTitle => 'currencyDetailTitle'.tr;
+
+  static String get currencyDetailsSection => 'currencyDetailsSection'.tr;
+
+  static String get marketLabel => 'marketLabel'.tr;
+
+  static String get currencyPairLabel => 'currencyPairLabel'.tr;
+
+  static String get rateTypeLabel => 'rateTypeLabel'.tr;
+
+  static String get currencyCodeLabel => 'currencyCodeLabel'.tr;
+
+  static String get registeredSince => 'registeredSince'.tr;
+
+  static String get variationLabel => 'variationLabel'.tr;
+
+  /// Kind of market a rate comes from. Deliberately not `officialDollar` /
+  /// `parallelDollar`: the BCV also publishes the euro, the yuan and the rouble,
+  /// and calling those "official dollar" is wrong in every language.
+  static String get officialRate => 'officialRate'.tr;
+
+  static String get parallelRate => 'parallelRate'.tr;
+
+  static String get closeAction => 'closeAction'.tr;
 }
