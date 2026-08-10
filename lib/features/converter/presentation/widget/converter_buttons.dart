@@ -32,10 +32,8 @@ class _SelectCurrencyButton extends StatelessWidget {
     color: ColorValues.utilityBrand100(context),
     borderRadius: BorderRadius.circular(30),
     child: InkWell(
-      onTap: () => showBlurredDialog<void>(
-        context: context,
-        builder: (context) => _CurrencySelectorDialog(isInput: isInput),
-      ),
+      onTap: () =>
+          showCurrencySelectorSheet(context: context, isInput: isInput),
       hoverColor: ColorValues.utilityBrand800(context).withValues(alpha: 0.8),
       borderRadius: BorderRadius.circular(30),
       child: Padding(
