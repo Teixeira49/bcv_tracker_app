@@ -12,4 +12,18 @@ class Constants {
   /// The app logo (foreground layer), used as the branded illustration of the
   /// empty state. Declared as an asset in `pubspec.yaml`.
   static const String appLogoAsset = 'assets/images/foreground_icon_app.png';
+
+  /// Decimals shown for a converted amount.
+  ///
+  /// Two, because that is how a bolívar price is quoted — the converter used to
+  /// print the raw `double` and showed `864.0962999999999`, which is the
+  /// arithmetic, not the answer.
+  ///
+  /// **Deliberately a single constant.** Turning this into something the user
+  /// picks in settings should be a `SettingsController` read wired into
+  /// [CurrencyHelpers.castAmount]'s `decimals` argument, not a hunt through the
+  /// widgets — every call site already routes through here. The rounding is
+  /// applied **only when formatting**; `ConverterController` keeps the full
+  /// precision, so raising this never has to recompute anything.
+  static const int converterAmountDecimals = 2;
 }

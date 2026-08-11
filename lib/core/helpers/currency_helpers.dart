@@ -123,6 +123,27 @@ class CurrencyHelpers {
     return 'Bs.S ${value.toStringAsFixed(2)}';
   }
 
+  /// A converted amount, as the converter shows it.
+  ///
+  /// The pivot conversion divides doubles, so a clean input comes out as
+  /// `864.0962999999999`; printed raw it wrapped onto a second line and read as
+  /// noise rather than an answer. Rounding happens **here, at the point of
+  /// display** — `ConverterController` keeps the full value, which is the rule
+  /// the converter has followed since its rounding bug.
+  ///
+  /// [decimals] defaults to [Constants.converterAmountDecimals] and is exposed
+  /// so a future issue can make the precision a user setting without touching
+  /// any widget. A non-finite value degrades to zero for the same reason
+  /// `_sanitize` exists in the controller: `Infinity` and `NaN` format
+  /// verbatim and must never reach the screen.
+  static String castAmount({
+    required double value,
+    int decimals = Constants.converterAmountDecimals,
+  }) {
+    final double safe = value.isFinite ? value : 0.0;
+    return safe.toStringAsFixed(decimals);
+  }
+
   static String castCurrencySymbolText({required String currencyCode}) {
     switch (castCurrencyDisplayCode(currencyCode)) {
       case 'USD':

@@ -39,7 +39,13 @@ class _CurrencyInputCard extends StatelessWidget {
             _CurrencyInputFieldCard(
               currencyCode: currency.keyName,
               isInput: isInput,
-              amount: currency.convertedValue.toString(),
+              // Only the result is rounded. The input side keeps the raw string
+              // so the field does not fight what the user is typing: rounding
+              // `12.345` to `12.35` mid-keystroke would rewrite it under the
+              // caret (see `_CurrencyInputFieldCardState.didUpdateWidget`).
+              amount: isInput
+                  ? currency.convertedValue.toString()
+                  : CurrencyHelpers.castAmount(value: currency.convertedValue),
             ),
             // A market with no rate yields 0.0 instead of a conversion, and a
             // bare 0 reads like a legitimate result. Only the output card says
