@@ -23,23 +23,29 @@ class _ConverterBody extends StatelessWidget {
                   onRetry: controller.refreshConverterData,
                   isBusy: controller.isLoading,
                 )
-              : Stack(
-                  alignment: Alignment.center,
+              // The swap button is a **child of the column**, between the two
+              // cards, rather than centred in a `Stack` around them.
+              //
+              // Centred in a stack it sat on the middle of the whole column,
+              // which is the seam between the cards only while both are the
+              // same height — a coincidence, not a rule. The output card grows
+              // whenever its amount wraps to a second line or the
+              // "no rate" warning appears, and the button drifted down with it.
+              //
+              // It takes no `SizedBox` around it: its own 56 px are the gap,
+              // so the circle meets both cards and cannot come loose from the
+              // seam whatever they measure.
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(height: 16),
-                        _CurrencyInputCard(currency: controller.fromCurrency),
-                        const SizedBox(height: 32),
-                        _CurrencyInputCard(
-                          currency: controller.toCurrency,
-                          isInput: false,
-                        ),
-                        SizedBox(height: 16),
-                      ],
-                    ),
+                    SizedBox(height: WidthValues.spacingMd),
+                    _CurrencyInputCard(currency: controller.fromCurrency),
                     _SwapCurrencyButton(),
+                    _CurrencyInputCard(
+                      currency: controller.toCurrency,
+                      isInput: false,
+                    ),
+                    SizedBox(height: WidthValues.spacingMd),
                   ],
                 ),
         ),
