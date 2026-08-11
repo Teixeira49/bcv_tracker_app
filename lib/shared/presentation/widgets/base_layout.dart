@@ -14,12 +14,28 @@ class BaseLayout extends StatelessWidget {
 
   const BaseLayout({super.key, this.child, required this.margins, this.title});
 
+  /// Where the title sits inside the branded strip, as a share of the height.
+  /// Roughly centred in the strip `_BaseBody` reserves for it.
+  static const double _titleTopShare = 0.045;
+
   @override
-  Widget build(BuildContext context) => Stack(
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (BuildContext context, BoxConstraints constraints) {
+      // Same reason as `_BaseBody`: measured against the screen, the title kept
+      // its absolute offset while the body shrank under the keyboard, and ended
+      // up clipped behind the panel. Against the box it scales with it.
+      final double height = constraints.hasBoundedHeight
+          ? constraints.maxHeight
+          : MediaQuery.of(context).size.height;
+      return _buildFrame(context, height);
+    },
+  );
+
+  Widget _buildFrame(BuildContext context, double height) => Stack(
     children: [
       if (child != null) _BaseBody(margins: margins, child: child!),
       Positioned(
-        top: MediaQuery.of(context).size.height * 0.045,
+        top: height * _titleTopShare,
         left: 16,
         right: 8,
         child: Row(
@@ -66,44 +82,72 @@ class _BaseBody extends StatelessWidget {
 
   const _BaseBody({required this.child, required this.margins});
 
+  /// Share of the height taken by the branded strip behind the title.
+  static const double _headerShare = 0.10;
+
+  /// Share taken by the rounded panel that holds the page.
+  static const double _panelShare = 0.90;
+
   @override
-  Widget build(BuildContext context) => Container(
-    decoration: BoxDecoration(
-      gradient: LinearGradient(
-        colors: [
-          ColorValues.utilityMidNight(context),
-          ColorValues.utilityBrand500(context),
-        ],
-      ),
-    ),
-    height: MediaQuery.of(context).size.height,
-    width: MediaQuery.of(context).size.width,
-    child: Column(
-      children: [
-        SizedBox.fromSize(size: MediaQuery.of(context).size * 0.10),
-        Container(
-          height: MediaQuery.of(context).size.height * 0.90,
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            color: ColorValues.bgPrimary(context),
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16),
-              topRight: Radius.circular(16),
-            ),
-          ),
-          child: Stack(
-            alignment: AlignmentGeometry.topCenter,
-            children: [
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: _RoundedBaseBodyWidget(),
-              ),
-              Padding(padding: margins, child: child),
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (BuildContext context, BoxConstraints constraints) {
+      // Sized from the box this is given, **not** from `MediaQuery.size`.
+      //
+      // The two shares add up to the full height, so measuring the screen made
+      // the column as tall as the device no matter how much room it actually
+      // had. `DashboardPage`'s `Scaffold` resizes its body when the keyboard
+      // opens, so on the converter — the only page with a field — the layout
+      // overflowed by exactly the height of the keyboard, striped bar and all.
+      // Reading the constraints makes the page shrink with the body instead,
+      // and the scroll view inside brings the focused field into view.
+      final Size size = Size(
+        constraints.hasBoundedWidth
+            ? constraints.maxWidth
+            : MediaQuery.of(context).size.width,
+        constraints.hasBoundedHeight
+            ? constraints.maxHeight
+            : MediaQuery.of(context).size.height,
+      );
+
+      return Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              ColorValues.utilityMidNight(context),
+              ColorValues.utilityBrand500(context),
             ],
           ),
         ),
-      ],
-    ),
+        height: size.height,
+        width: size.width,
+        child: Column(
+          children: [
+            SizedBox(height: size.height * _headerShare),
+            Container(
+              height: size.height * _panelShare,
+              width: size.width,
+              decoration: BoxDecoration(
+                color: ColorValues.bgPrimary(context),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
+                ),
+              ),
+              child: Stack(
+                alignment: AlignmentGeometry.topCenter,
+                children: [
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: _RoundedBaseBodyWidget(),
+                  ),
+                  Padding(padding: margins, child: child),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    },
   );
 }
 
