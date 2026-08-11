@@ -195,6 +195,12 @@ class _CurrencyInputFieldCardState extends State<_CurrencyInputFieldCard> {
                   keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
                   ),
+                  // The keyboard type is only a hint to the on-screen keyboard;
+                  // a hardware one, a paste or a dictation would otherwise put
+                  // letters here and the amount would silently become 0.
+                  inputFormatters: const <TextInputFormatter>[
+                    AmountInputFormatter(),
+                  ],
                   onChanged: (value) {
                     //_controller.text = value;
                     if (value.isNotEmpty) {

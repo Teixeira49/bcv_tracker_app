@@ -1,10 +1,12 @@
 import 'package:bcv_tracker_app/core/i18n/app_messages.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../../../config/theme/colors/colors_values.dart';
 import '../../../../config/theme/width/width_values.dart';
+import '../../../../core/helpers/amount_input_formatter.dart';
 import '../../../../core/helpers/currency_helpers.dart';
 import '../../../../shared/domain/entities/currency.dart';
 // import '../../../../shared/presentation/controller/currency_controller.dart';
