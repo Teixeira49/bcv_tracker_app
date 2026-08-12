@@ -2,7 +2,7 @@
 
 Este documento es el **inventario de la suite**: primero lo que ya está cubierto, después lo que queda por hacer (roadmap). Mantenlo al día al agregar tests — la regla [`test-coverage.md`](../.agents/rules/test-coverage.md) exige que toda fuente, endpoint, controlador o helper de cálculo nuevo nazca con sus tests, y el check de PR de #27 (`flutter test` en GitHub Actions) lo hace cumplir en cada PR.
 
-## Cobertura actual (33 archivos, 197 tests)
+## Cobertura actual (39 archivos, 230 tests)
 
 | Área | Archivo | Qué cubre |
 |---|---|---|
@@ -10,6 +10,7 @@ Este documento es el **inventario de la suite**: primero lo que ya está cubiert
 | | `test/core/helpers/currency_helpers_average_test.dart` | Cálculo de promedios y mapeo de códigos |
 | | `test/core/helpers/currency_helpers_parse_date_test.dart` | Formato de fechas para la UI |
 | | `test/core/helpers/currency_helpers_detail_test.dart` | **(#38)** `isOfficialRate`, `castTendency`, `castOptionalDate` y los nombres traducidos de lira/yuan/rublo |
+| | `test/core/helpers/amount_input_formatter_test.dart` | **(#40)** Qué acepta y qué rechaza el campo de monto: dígitos, un separador, y nada de letras, símbolos o pegados a medio parsear |
 | **Datos / mapeo** | `test/shared/data/currency_normalizer_test.dart` | Normalización del promedio (dedup, merge buy/sell) |
 | | `test/shared/data/bcv_currencies_model_test.dart` | `toEntity()` convierte la lista, no filtra modelos |
 | | `test/shared/data/dollar_api_rest_test.dart` | Datasource: contrato saliente y `ApiException` (mock de `HttpManager`) |
@@ -25,11 +26,16 @@ Este documento es el **inventario de la suite**: primero lo que ya está cubiert
 | | `test/features/converter/converter_page_test.dart` | **(#28)** Cuerpo del conversor: render e input |
 | | `test/features/currency_detail/currency_detail_sheet_test.dart` | **(#38)** Cabecera, tabla de detalles, degradación sin `change`/`createDate`, avatar y huecos reservados |
 | | `test/features/home/home_currency_detail_tap_test.dart` | **(#38)** Tocar una tarjeta abre el detalle de esa tasa; inerte con placeholders |
+| | `test/shared/presentation/widgets/base_bottom_sheet_test.dart` | **(#40)** Contenedor compartido: anclaje, una sola cadena de scroll, cierre por arrastre y por botón, barra fija, teclado y semántica |
+| | `test/features/converter/currency_selector_sheet_test.dart` | **(#40)** El selector como hoja inferior: altura, categorías, scroll de la lista, selección de origen y destino, texto ampliado |
+| | `test/features/converter/converter_keyboard_test.dart` | **(#40)** El conversor con el teclado abierto: sin desbordes y encogiendo con el body; el campo filtra lo que un teclado físico puede mandar |
+| | `test/features/converter/converter_swap_button_test.dart` | **(#40)** El botón de intercambio no se despega de la costura aunque la tarjeta de salida crezca; el resultado se redondea al mostrar, no al calcular |
 | **Goldens** | `test/shared/presentation/widgets/app_state_view_golden_test.dart` | **(#35)** Estados de error y vacío, claro y oscuro |
 | | `test/shared/presentation/widgets/performance_indicator_widget_golden_test.dart` | **(#35)** Indicador de variación, claro y oscuro |
 | | `test/features/home/home_page_golden_test.dart` | **(#35)** Home, pestañas promedio y BCV, claro y oscuro |
 | | `test/features/converter/converter_page_golden_test.dart` | **(#35)** Cuerpo del conversor, claro y oscuro |
 | | `test/features/currency_detail/currency_detail_sheet_golden_test.dart` | **(#38)** Modal de detalle, tasa paralela y oficial, claro y oscuro |
+| | `test/features/converter/currency_selector_sheet_golden_test.dart` | **(#40)** Selector de divisas como hoja inferior, claro y oscuro |
 | **Config / i18n** | `test/config/enviroment/environment_test.dart` + `environment_empty_env_test.dart` | Validación de `CURRENCY_BACK`, `.env` ausente/vacío |
 | | `test/core/i18n/translation_parity_test.dart` | **(#36)** Paridad de claves en los 10 idiomas |
 | | `test/config/routes/app_pages_test.dart` | Registro de rutas nombradas |

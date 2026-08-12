@@ -89,6 +89,11 @@ components:
     backgroundColor: "{colors.midnight}"
     textColor: "{colors.accent}"
     rounded: "{rounded.md}"
+  bottomSheet:
+    backgroundColor: "{colors.neutral}"
+    borderColor: "{colors.info}"
+    rounded: "{rounded.xl}"
+    padding: "{spacing.md}"
   errorState:
     textColor: "{colors.error}"
     rounded: "{rounded.sm}"
@@ -194,6 +199,9 @@ Los tokens de `components` fijan las relaciones color→rol de los componentes r
 - **card:** fondo neutro, acento `info` en el borde, radio `md`. Es la unidad base: cada tasa, cada sección, es una tarjeta.
 - **primaryButton:** fondo `primary`, etiqueta `accent`. La acción principal.
 - **bottomNav:** tinte `info`, icono activo `accent`. Es un componente **propio** (`CustomBottomNavigatorBar`), no un `BottomNavigationBar`/`NavigationBar` de Material — decisión que #44 debe confirmar al migrar a M3.
+- **bottomSheet:** panel que sube desde el borde inferior, arrastrable. Radio `xl` (24) —mayor que el `md` de las tarjetas, porque es una superficie amplia y el gesto pide una esquina más suave—, borde `info` de 1.25 px y un halo suave del mismo tono, la misma profundidad por borde que el resto. Lleva una barra fija con el asa y el botón de cerrar, **sin texto**: su alto es fijo y no podría crecer con la escala tipográfica del sistema. Implementado en `shared/presentation/widgets/base_bottom_sheet.dart` y usado por el detalle de moneda (#38) y el selector del conversor (#40).
+
+  **Cuándo hoja inferior y cuándo diálogo:** una hoja inferior para contenido que se recorre —una lista, una ficha con secciones— porque queda al alcance del pulgar y aprovecha la altura; un diálogo centrado (`BaseModal`) para una decisión corta que interrumpe. El selector de divisas era lo primero dentro de lo segundo, y por eso cambió en #40.
 - **errorState / emptyState:** acento `error` vs. `warning`, radio `sm`. Hoy son tarjetas mínimas (`_ErrorAdvisorCard`); #11 los rediseña como componentes compartidos con branding, e #18 define qué dice cada uno según la causa.
 
 ## Do's and Don'ts

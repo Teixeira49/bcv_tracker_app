@@ -115,7 +115,9 @@ Entities live in `shared/domain/entities/` and `features/*/domain/entities/`. JS
 
 Named routes in `lib/config/routes/` — constants in `routes.dart` (`AppRoutes`), `GetPage` entries in `pages.dart` (`AppPages`). Navigate with `Get.toNamed()` / `Get.offAllNamed()` — never Flutter's `Navigator`, and never by passing a widget. Close dialogs and modals with `Get.back()`. Transitions belong on the `GetPage`, not the call site. Tabs are not routes: switching tabs changes `NavigationController.selectedIndex`.
 
-**Modals are not routes either.** `SettingsModal` and the converter's currency selector are shown with `showBlurredDialog`, and the currency detail sheet ([#38](https://github.com/Teixeira49/bcv_tracker_app/issues/38)) with `Get.bottomSheet` — all closed with `Get.back()`, none registered in `AppPages`. The price is that a modal is not reachable by deep link; making the detail sheet reachable means adding a `GetPage` that resolves the rate from a route parameter and renders the same widget. Open the detail through its single entry point, `showCurrencyDetailSheet`, never by constructing the sheet.
+**Modals are not routes either.** `SettingsModal` is shown with `showBlurredDialog`; the currency detail ([#38](https://github.com/Teixeira49/bcv_tracker_app/issues/38)) and the converter's currency selector ([#40](https://github.com/Teixeira49/bcv_tracker_app/issues/40)) are bottom sheets. All close with `Get.back()`, none is registered in `AppPages`. The price is that a modal is not reachable by deep link; making the detail sheet reachable means adding a `GetPage` that resolves the rate from a route parameter and renders the same widget. **Open every modal through its single entry point** — `showCurrencyDetailSheet`, `showCurrencySelectorSheet` — never by constructing the widget.
+
+**Bottom sheets share one container**: `shared/presentation/widgets/base_bottom_sheet.dart` (`BaseBottomSheet` + `showAppBottomSheet`). Its one rule is that content arrives as **slivers** — the sheet is a single `DraggableScrollableSheet` over a single `CustomScrollView`, so the drag that resizes it and the scroll that moves its content are the same gesture chain. Nesting a `ListView` inside breaks it and the sheet starts closing when the user meant to scroll. The keyboard is handled by GetX's own route, which already pads by `viewInsets.bottom`; do not pad again. `BaseModal` (an `AlertDialog`) stays for centred dialogs — see `DESIGN.md` for when each applies.
 
 ## Theming
 
@@ -132,6 +134,8 @@ Tests live in `test/`, mirroring `lib/`. Any change to a data source, a market m
 ## Versioning
 
 `pubspec.yaml` is the **only** file where the version is edited; Android, iOS and `codemagic.yaml` derive it. Never set the version in Xcode or Gradle. See `.agents/rules/version-sources.md`.
+
+**The Flutter SDK version is a different thing, and it is pinned.** The project builds on **Flutter 3.38.3**, declared in four places that must move together: `.github/workflows/pr-validation.yml` and the three workflows of `codemagic.yaml` — plus the development machine. They used to say `stable`, which installs whatever is stable that day, so CI ran ahead of the machines the code was written on: ten tests green locally failed the PR check against a `ListTile` assertion 3.38.3 does not carry ([#40](https://github.com/Teixeira49/bcv_tracker_app/issues/40)). The defect was real, but it surfaced late and for the wrong reason. Bumping the SDK is now a deliberate change with its own PR, touching all four at once.
 
 ## Known debt
 
