@@ -61,4 +61,15 @@ const Map<String, String> esEs = {
   'emptyStateTitle': 'Sin datos',
   'emptyStateMessage':
       'Aún no hay tasas para mostrar. Desliza para actualizar.',
+  'currencyDetailTitle': 'Detalle de la moneda',
+  'currencyDetailsSection': 'Detalles',
+  'marketLabel': 'Mercado',
+  'currencyPairLabel': 'Par',
+  'rateTypeLabel': 'Tipo de tasa',
+  'currencyCodeLabel': 'Código',
+  'registeredSince': 'Registrado desde',
+  'variationLabel': 'Variación',
+  'officialRate': 'Oficial',
+  'parallelRate': 'Paralelo',
+  'closeAction': 'Cerrar',
 };

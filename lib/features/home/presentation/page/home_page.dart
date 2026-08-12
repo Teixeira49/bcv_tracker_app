@@ -13,6 +13,7 @@ import '../../../../shared/presentation/widgets/base_layout.dart';
 import '../../../../shared/presentation/widgets/custom_badged.dart';
 import '../../../../shared/presentation/widgets/custom_refresh_indicator.dart';
 import '../../../../shared/presentation/widgets/custom_skeletonizer.dart';
+import '../../../currency_detail/presentation/page/show_currency_detail_sheet.dart';
 import '../controller/home_controller.dart';
 
 part '../widgets/home_body.dart';

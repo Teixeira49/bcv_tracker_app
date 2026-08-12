@@ -78,7 +78,7 @@ flutter build ios --release          # iOS release build
 **Dependency injection**: declared in `lib/config/bindings/initial_bindings.dart` with `Get.lazyPut` / `Get.put`. This is the single place to register controllers, repositories and services — resolve with `Get.find()`, never instantiate a controller inside a widget.
 
 **Feature-first structure under `lib/`**:
-- `features/` — self-contained modules (splash, home, converter, settings, dashboard), each with `presentation/` (controller + page + widgets) and `domain/`
+- `features/` — self-contained modules (splash, home, converter, currency_detail, settings, dashboard), each with `presentation/` (controller + page + widgets) and `domain/`
 - `shared/` — cross-feature entities, repository interfaces (`domain/`), data implementations (`data/`), shared widgets (`presentation/`)
 - `core/` — HTTP client, i18n, constants, helpers
 - `config/` — routes, theme, environment, bindings
@@ -101,6 +101,7 @@ REST API
 - `SettingsController` — persists language, theme and followed markets via `SharedPreferences`
 - `HomeController` — exposes `averageCurrencies`, `bcvCurrencies`, `isLoading`, `errorMessage`
 - `ConverterController` — pivot conversion with VES as base; consolidates average + BCV rates
+- `CurrencyDetailController` — holds the rate the detail sheet has open. The rate is a **snapshot handed over by the tapped card**, not a re-fetch; the controller exists so the sections still to come (chart [#5](https://github.com/Teixeira49/bcv_tracker_app/issues/5), actions [#7](https://github.com/Teixeira49/bcv_tracker_app/issues/7), converter [#39](https://github.com/Teixeira49/bcv_tracker_app/issues/39)) have somewhere to keep state across the rebuilds the sheet does while being dragged
 
 ## Data Modeling
 
@@ -108,11 +109,13 @@ Entities live in `shared/domain/entities/` and `features/*/domain/entities/`. JS
 
 ## Internationalization
 
-10 languages via GetX `Translations`. Language maps in `lib/core/i18n/languages/` (51 keys, all ten in parity, and `AppMessages` exposes exactly those 51). Use `AppMessages.<key>` for all UI text — never a raw string, and never `'<key>'.tr` in a widget: `app_messages.dart` is the only file that calls `.tr`. A new key goes into all ten files in the same commit, or GetX renders the raw key on screen for the other nine.
+10 languages via GetX `Translations`. Language maps in `lib/core/i18n/languages/` (71 keys, all ten in parity, and `AppMessages` exposes exactly those 71). Use `AppMessages.<key>` for all UI text — never a raw string, and never `'<key>'.tr` in a widget: `app_messages.dart` is the only file that calls `.tr`. A new key goes into all ten files in the same commit, or GetX renders the raw key on screen for the other nine.
 
 ## Routing
 
 Named routes in `lib/config/routes/` — constants in `routes.dart` (`AppRoutes`), `GetPage` entries in `pages.dart` (`AppPages`). Navigate with `Get.toNamed()` / `Get.offAllNamed()` — never Flutter's `Navigator`, and never by passing a widget. Close dialogs and modals with `Get.back()`. Transitions belong on the `GetPage`, not the call site. Tabs are not routes: switching tabs changes `NavigationController.selectedIndex`.
+
+**Modals are not routes either.** `SettingsModal` and the converter's currency selector are shown with `showBlurredDialog`, and the currency detail sheet ([#38](https://github.com/Teixeira49/bcv_tracker_app/issues/38)) with `Get.bottomSheet` — all closed with `Get.back()`, none registered in `AppPages`. The price is that a modal is not reachable by deep link; making the detail sheet reachable means adding a `GetPage` that resolves the rate from a route parameter and renders the same widget. Open the detail through its single entry point, `showCurrencyDetailSheet`, never by constructing the sheet.
 
 ## Theming
 
@@ -136,6 +139,6 @@ Verified against the code. Fix on contact where the rule says so; do not treat a
 
 - **GetX workers are never disposed** — `HomeController` and `ConverterController` register `ever()` without `onClose()`. `get` 4.7.3 has no automatic disposal, and `CurrencyRepository` is `permanent`, so listeners accumulate on every `fenix` recreation. Tracked in [#45](https://github.com/Teixeira49/bcv_tracker_app/issues/45). Because the `ever → update()` pattern was kept over `Obx`-granular ([#60](https://github.com/Teixeira49/bcv_tracker_app/issues/60)), this is a **permanent convention requirement**, not a one-time fix: every controller with a worker owns its `onClose()`, always.
 - **`SettingsController` is registered twice** — `Get.put` in `main.dart` and `Get.lazyPut` in `initial_bindings.dart:30`.
-- **`WidthValues` is unused** — the 8pt grid is declared but the 21 `EdgeInsets` in the app carry bare numbers.
+- **`WidthValues` is barely used** — the 8pt grid is declared and, since [#38](https://github.com/Teixeira49/bcv_tracker_app/issues/38), consumed by `features/currency_detail/`; the rest of the app's `EdgeInsets` still carry bare numbers. New UI uses the scale; migrate the older widgets on contact.
 - **Placeholder bundle identifiers** — `com.example.*` on both platforms blocks store publishing. Tracked in [#22](https://github.com/Teixeira49/bcv_tracker_app/issues/22).
 - **Invalid locale codes** — `SettingsController` offers `en_EN` and `ja_JA`; `AppTranslations` registers `en_US` and `ja_JP`. It works only because GetX falls back on the language code alone. Correcting them is now **safe**: the selector resolves an unknown stored code to `SettingsController.defaultLanguage` and `restoreLanguageCode` rewrites the preference, so an install carrying the old code no longer breaks the settings screen ([#54](https://github.com/Teixeira49/bcv_tracker_app/issues/54)).

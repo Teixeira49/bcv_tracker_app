@@ -29,6 +29,8 @@ El riesgo que evita: `Get.to(() => DetailPage(currency: c))` acopla el origen al
 
 5. **Argumentos vía `arguments`, no vía constructor**: `Get.toNamed(AppRoutes.detail, arguments: currency)` y se leen con `Get.arguments` en el controlador de destino (no en el `build` del widget). Para parámetros que deban sobrevivir a un deep link, usa parámetros de ruta (`/detail/:code`) y `Get.parameters`.
 6. **Cerrar diálogos y modales**: usa `Get.back()`, no `Navigator.pop(context)`. Un `Get.back()` cierra lo que GetX tenga arriba de la pila y mantiene una sola forma de retroceder en todo el código.
+
+   **Un modal no es una pantalla**: los puntos 3 y 5 no le aplican. `SettingsModal` y el selector de divisas del conversor se abren con `showBlurredDialog`, y el detalle de moneda ([#38](https://github.com/Teixeira49/bcv_tracker_app/issues/38)) con `Get.bottomSheet`; ninguno está en `AppPages` y todos reciben sus datos por constructor. Lo que sí exige la regla es un **único punto de entrada por modal** (`showCurrencyDetailSheet`), no `Get.bottomSheet` esparcido por los widgets. El costo, consciente: un modal no es alcanzable por deep link — cuando eso haga falta, se registra un `GetPage` que resuelva el dato desde un parámetro de ruta y renderice el mismo widget.
 7. **Las pestañas del bottom bar no son navegación de pila.** Cambiar de tab es cambiar el índice de `NavigationController`; no se hace con `Get.toNamed`. La navegación por rutas se reserva para pantallas que se apilan sobre el dashboard.
 8. **La navegación se dispara desde la capa de presentación** (widget o controlador), nunca desde `shared/data/` ni desde un repositorio.
 

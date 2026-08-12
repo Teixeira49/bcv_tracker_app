@@ -79,14 +79,26 @@ class CurrencyHelpers {
 
   /// Translated name of a rate, falling back to the name given by the backend.
   ///
-  /// The backend names rates in Spanish ("Dolar", "Promedio"), so rendering
-  /// them raw left the average tab untranslated in the other nine languages.
+  /// The backend names rates in Spanish ("Dolar", "Promedio", "Rublo"), so
+  /// rendering them raw left the average tab untranslated in the other nine
+  /// languages.
+  ///
+  /// The lira, the yuan and the rouble were added with the detail sheet (#38):
+  /// the BCV card never called this — it reads the country name from
+  /// [castCurrencyCountry], which was already translated — so the gap only
+  /// surfaced when the sheet started naming those same rates.
   static String castCurrencyDisplayName(Currency currency) {
     switch (currency.keyName) {
       case 'USD':
         return AppMessages.eeuuDollar;
       case 'EUR':
         return AppMessages.europeanEuro;
+      case 'TRY':
+        return AppMessages.turkishLira;
+      case 'CNY':
+        return AppMessages.chineseYuan;
+      case 'RUB':
+        return AppMessages.russianRuble;
       case 'USDT':
         return 'Tether';
       case 'USDC':
@@ -189,8 +201,53 @@ class CurrencyHelpers {
     return values.reduce((a, b) => a + b) / values.length;
   }
 
+  /// Shown instead of a value the backend did not send.
+  ///
+  /// Several fields of `CurrencySchema` are optional (`createDate`,
+  /// `updateDate`, `change`), and their absence is not an error: it means "the
+  /// source did not report it". Rendering a `0` there would read as data.
+  static const String emptyValuePlaceholder = '--';
+
   /// Shown instead of a date when there is none to format.
-  static const String emptyDatePlaceholder = '--';
+  static const String emptyDatePlaceholder = emptyValuePlaceholder;
+
+  /// Whether the rate comes from the official market.
+  ///
+  /// The BCV is the only official source the app consumes; everything else the
+  /// backend serves (crypto P2P, Yadio, Exchange Monitor) quotes the parallel
+  /// market. Matched by [Markets.bcv] — the exact `platform` string the backend
+  /// reports — so a market renamed upstream stops being labelled official
+  /// instead of silently mislabelling a parallel rate.
+  static bool isOfficialRate(Currency currency) =>
+      currency.platform == Markets.bcv;
+
+  /// Signed percentage change of a rate, for the detail view.
+  ///
+  /// `change` is optional in the contract, so a rate can arrive without it —
+  /// which is why `null` degrades to [emptyValuePlaceholder] instead of `0%`,
+  /// a figure the user would read as "the rate did not move". The four decimals
+  /// match what `PerformanceIndicatorWidget` already shows in the cards.
+  static String castTendency({double? value}) {
+    if (value == null) {
+      return emptyValuePlaceholder;
+    }
+    final String sign = value > 0 ? '+' : '';
+    return '$sign${value.toStringAsFixed(4)}%';
+  }
+
+  /// Formats an optional rate timestamp, degrading to [emptyValuePlaceholder].
+  ///
+  /// The card can afford to hide a missing date; the detail view states it
+  /// explicitly, so the absence has to be renderable.
+  static String castOptionalDate({
+    DateTime? date,
+    String format = Constants.defaultFormatDate,
+  }) {
+    if (date == null) {
+      return emptyValuePlaceholder;
+    }
+    return formatDate(date: date, format: format);
+  }
 
   /// Formats a date **published** by a source, keeping its wall clock.
   ///
