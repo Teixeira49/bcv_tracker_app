@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 
+import '../../../../core/helpers/currency_helpers.dart';
 import '../../../../shared/domain/conversion.dart';
 import '../../../../shared/domain/entities/currency.dart';
 
@@ -132,12 +133,25 @@ class CurrencyDetailController extends GetxController {
     update();
   }
 
-  /// Flips which side the amount is entered in, keeping what was typed.
+  /// Flips the conversion, **carrying the values across with their currencies**.
   ///
-  /// Keeping the amount is deliberate: the user typed a quantity, and swapping
-  /// asks "and the other way round?" about that same quantity.
-  void toggleDirection() {
+  /// This is how the full converter's swap behaves and it is the right model:
+  /// the figure belongs to its currency, so `USD 2,5 | VES 1903,04` inverts to
+  /// `VES 1903,04 | USD 2,50`, not to `VES 2,5`. Leaving the amount in place
+  /// silently changed the question — it asked what two and a half *bolívares*
+  /// are worth, and answered `0.00`, which read as a broken converter rather
+  /// than as a correct answer to a question nobody asked.
+  ///
+  /// The result is carried **as it is displayed**, through the same formatting
+  /// the view uses, so what moves is what the user was reading. That is also
+  /// why [CurrencyHelpers.castAmount] has to keep small values legible: rounding
+  /// the carried figure to `0.00` here would destroy it for good.
+  void toggleDirection(Currency rate) {
+    final String carried = CurrencyHelpers.castAmount(
+      value: convertedValueFor(rate),
+    );
     _isReversed = !_isReversed;
+    _amountInput = carried;
     update();
   }
 }

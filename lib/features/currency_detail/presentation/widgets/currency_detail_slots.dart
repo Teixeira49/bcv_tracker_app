@@ -153,6 +153,22 @@ class _CurrencyDetailConverterBodyState
   );
 
   @override
+  void didUpdateWidget(covariant _CurrencyDetailConverterBody oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // The controller changed the amount without the field doing it: a swap
+    // carried the result over, or the sheet was dismissed. Typing never lands
+    // here — `onChanged` writes the same text the field already holds — so this
+    // cannot fight the caret.
+    final String owned = widget.controller.amountInput;
+    if (owned != _amount.text) {
+      _amount.value = TextEditingValue(
+        text: owned,
+        selection: TextSelection.collapsed(offset: owned.length),
+      );
+    }
+  }
+
+  @override
   void dispose() {
     _amount.dispose();
     super.dispose();
@@ -195,7 +211,7 @@ class _CurrencyDetailConverterBodyState
         Align(
           alignment: Alignment.center,
           child: IconButton(
-            onPressed: controller.toggleDirection,
+            onPressed: () => controller.toggleDirection(widget.rate),
             tooltip: AppMessages.invertConversionAction,
             icon: const Icon(Icons.swap_vert_rounded),
             color: ColorValues.fgBrandSecondary(context),

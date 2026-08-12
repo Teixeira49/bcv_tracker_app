@@ -9,7 +9,7 @@ Este documento es el **inventario de la suite**: primero lo que ya está cubiert
 | **Helpers** | `test/core/helpers/backend_date_test.dart` | Parseo y formateo de fechas del backend |
 | | `test/core/helpers/currency_helpers_average_test.dart` | Cálculo de promedios y mapeo de códigos |
 | | `test/core/helpers/currency_helpers_parse_date_test.dart` | Formato de fechas para la UI |
-| | `test/core/helpers/currency_helpers_detail_test.dart` | **(#38)** `isOfficialRate`, `castTendency`, `castOptionalDate` y los nombres traducidos de lira/yuan/rublo |
+| | `test/core/helpers/currency_helpers_detail_test.dart` | **(#38, #39)** `isOfficialRate`, `castTendency`, `castOptionalDate`, los nombres traducidos de lira/yuan/rublo, y la precisión adaptativa de `castAmount` |
 | | `test/core/helpers/amount_input_formatter_test.dart` | **(#40)** Qué acepta y qué rechaza el campo de monto: dígitos, un separador, y nada de letras, símbolos o pegados a medio parsear |
 | **Datos / mapeo** | `test/shared/data/currency_normalizer_test.dart` | Normalización del promedio (dedup, merge buy/sell) |
 | | `test/shared/data/bcv_currencies_model_test.dart` | `toEntity()` convierte la lista, no filtra modelos |

@@ -53,31 +53,54 @@ void main() {
       expect(controller.toCurrencyFor(rate).keyName, 'VES');
     });
 
-    test('reverses, keeping the amount that was typed', () {
+    test('reversing carries the value across with its currency', () {
+      // The model the full converter's swap already follows: the figure belongs
+      // to its currency. `USD 2 | VES 304.60` inverts to `VES 304.60 | USD 2`,
+      // not to `VES 2` — which asked what two bolívares are worth and answered
+      // `0.00`, reading as a broken converter.
       final Currency rate = _rate(152.30);
       controller.open(rate);
-      controller.setAmount('10');
+      controller.setAmount('2');
+      expect(controller.convertedValueFor(rate), closeTo(304.60, 1e-9));
 
-      controller.toggleDirection();
+      controller.toggleDirection(rate);
 
       expect(controller.isReversed, isTrue);
       expect(controller.fromCurrencyFor(rate).keyName, 'VES');
       expect(controller.toCurrencyFor(rate), same(rate));
-      // The user asked "and the other way round?" about the same quantity.
-      expect(controller.amountInput, '10');
+      // What was the result is now the amount, exactly as it was displayed.
+      expect(controller.amountInput, '304.60');
+      expect(controller.convertedValueFor(rate), closeTo(2.0, 1e-6));
     });
 
-    test('the two directions are inverses of each other', () {
+    test('reversing twice returns to what was typed', () {
       final Currency rate = _rate(152.30);
       controller.open(rate);
+      controller.setAmount('2');
+
+      controller.toggleDirection(rate);
+      controller.toggleDirection(rate);
+
+      expect(controller.isReversed, isFalse);
+      expect(double.parse(controller.amountInput), closeTo(2.0, 1e-6));
+    });
+
+    test('a tiny result survives the crossing instead of rounding to zero', () {
+      // A few bolívares are thousandths of a dollar. Carrying `0.00` over would
+      // destroy the figure for good, which is why the display keeps it legible.
+      final Currency rate = _rate(761.22);
+      controller.open(rate);
+      controller.toggleDirection(rate); // VES -> USD
       controller.setAmount('1');
 
-      final double forward = controller.convertedValueFor(rate);
-      controller.toggleDirection();
-      final double back = controller.convertedValueFor(rate);
+      expect(controller.convertedValueFor(rate), closeTo(1 / 761.22, 1e-12));
 
-      expect(forward, closeTo(152.30, 1e-9));
-      expect(back, closeTo(1 / 152.30, 1e-9));
+      controller.toggleDirection(rate); // back to USD -> VES
+
+      expect(double.parse(controller.amountInput), greaterThan(0));
+      // The crossing costs a little precision — it carries what was shown —
+      // but the figure survives it, which is the point.
+      expect(controller.convertedValueFor(rate), closeTo(1.0, 0.001));
     });
   });
 
@@ -106,7 +129,7 @@ void main() {
       final Currency broken = _rate(0.0);
       controller.open(broken);
       controller.setAmount('10');
-      controller.toggleDirection();
+      controller.toggleDirection(broken);
 
       expect(controller.canConvertFor(broken), isFalse);
       expect(controller.convertedValueFor(broken), 0.0);
@@ -119,7 +142,7 @@ void main() {
       final Currency rate = _rate(152.30);
       controller.open(rate);
       controller.setAmount('99');
-      controller.toggleDirection();
+      controller.toggleDirection(rate);
 
       controller.dismiss();
 
@@ -163,11 +186,13 @@ void main() {
         ]) {
           final Currency rate = _rate(value);
 
+          // Direction first: reversing carries a value into the field, so the
+          // amount under test has to be set after it.
           controller
             ..dismiss()
             ..open(rate)
-            ..setAmount(amount)
-            ..toggleDirection(); // VES → rate, the same pair as below
+            ..toggleDirection(rate)
+            ..setAmount(amount);
           final double embedded = controller.convertedValueFor(rate);
 
           final double full = await throughFullConverter(rate, amount);
