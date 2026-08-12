@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 
 import '../../../../config/theme/colors/colors_values.dart';
 import '../../../../config/theme/width/width_values.dart';
+import '../../../../core/helpers/amount_input_formatter.dart';
 import '../../../../core/helpers/currency_helpers.dart';
 import '../../../../core/i18n/app_messages.dart';
 import '../../../../shared/domain/entities/currency.dart';
 import '../../../../shared/presentation/widgets/base_bottom_sheet.dart';
 import '../../../../shared/presentation/widgets/performance_indicator_widget.dart';
+import '../controller/currency_detail_controller.dart';
 import '../widgets/currency_detail_section.dart';
 
 part '../widgets/currency_detail_facts.dart';
@@ -43,11 +47,15 @@ class CurrencyDetailSheet extends StatelessWidget {
   /// The rate to detail, as the card had it. A snapshot, not a live value.
   final Currency currency;
 
-  /// Measured against the content #38 ships — header plus the seven detail
-  /// rows — so the sheet opens showing all of it and no more. The sections
-  /// still to come expand into the maximum extent instead, and anyone who
-  /// enlarges the system font simply scrolls.
-  static const double _initialExtent = 0.58;
+  /// Re-measured for #39: header, the detail rows **and** the first row of the
+  /// embedded converter.
+  ///
+  /// It was 0.58 while the sheet ended at the detail table. Leaving it there
+  /// put the converter entirely below the fold, where a feature nobody scrolls
+  /// to is a feature nobody has. It is not raised further on purpose — the
+  /// sheet is a detail *of* the list behind it, and one that opens nearly full
+  /// reads as a screen that replaced it.
+  static const double _initialExtent = 0.72;
 
   @override
   Widget build(BuildContext context) => BaseBottomSheet(

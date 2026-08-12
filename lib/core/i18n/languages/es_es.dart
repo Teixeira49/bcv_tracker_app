@@ -71,5 +71,8 @@ const Map<String, String> esEs = {
   'variationLabel': 'Variación',
   'officialRate': 'Oficial',
   'parallelRate': 'Paralelo',
+  'quickConverterSection': 'Conversor',
+  'amountLabel': 'Monto',
+  'invertConversionAction': 'Invertir la conversión',
   'closeAction': 'Cerrar',
 };

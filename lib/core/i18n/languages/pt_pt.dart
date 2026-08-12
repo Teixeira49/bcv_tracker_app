@@ -70,5 +70,8 @@ const Map<String, String> ptPt = {
   'variationLabel': 'Variação',
   'officialRate': 'Oficial',
   'parallelRate': 'Paralelo',
+  'quickConverterSection': 'Conversor',
+  'amountLabel': 'Montante',
+  'invertConversionAction': 'Inverter a conversão',
   'closeAction': 'Fechar',
 };

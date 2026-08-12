@@ -147,4 +147,12 @@ class AppMessages {
   static String get parallelRate => 'parallelRate'.tr;
 
   static String get closeAction => 'closeAction'.tr;
+
+  // --- Converter embedded in the currency detail (#39) ---
+
+  static String get quickConverterSection => 'quickConverterSection'.tr;
+
+  static String get amountLabel => 'amountLabel'.tr;
+
+  static String get invertConversionAction => 'invertConversionAction'.tr;
 }

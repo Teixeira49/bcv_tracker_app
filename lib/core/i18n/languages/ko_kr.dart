@@ -71,5 +71,8 @@ const Map<String, String> koKr = {
   'variationLabel': '변동',
   'officialRate': '공식',
   'parallelRate': '병행',
+  'quickConverterSection': '환전',
+  'amountLabel': '금액',
+  'invertConversionAction': '환전 방향 바꾸기',
   'closeAction': '닫기',
 };

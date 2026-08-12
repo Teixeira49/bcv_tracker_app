@@ -69,5 +69,8 @@ const Map<String, String> zhCn = {
   'variationLabel': '涨跌',
   'officialRate': '官方',
   'parallelRate': '平行',
+  'quickConverterSection': '换算',
+  'amountLabel': '金额',
+  'invertConversionAction': '反转换算方向',
   'closeAction': '关闭',
 };

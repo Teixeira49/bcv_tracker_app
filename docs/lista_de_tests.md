@@ -22,6 +22,7 @@ Este documento es el **inventario de la suite**: primero lo que ya está cubiert
 | | `test/shared/presentation/settings_controller_language_test.dart` | Idioma: `orElse`, normalización de código guardado |
 | | `test/shared/presentation/settings_controller_test.dart` | **(#28)** Tema y mercado favorito: persistencia y no-op |
 | | `test/features/currency_detail/currency_detail_controller_test.dart` | **(#38)** Rate abierta y limpiada, y disposición del worker (#45) |
+| | `test/features/currency_detail/currency_detail_converter_test.dart` | **(#39)** Conversor embebido: sentido y su inversa, coma decimal, tasa cero sin `Infinity`, limpieza al cerrar — y que el resultado **coincide con el conversor completo** |
 | **Widgets** | `test/features/home/home_page_test.dart` | **(#28)** Home: estado de error, sin-error, frame |
 | | `test/features/converter/converter_page_test.dart` | **(#28)** Cuerpo del conversor: render e input |
 | | `test/features/currency_detail/currency_detail_sheet_test.dart` | **(#38)** Cabecera, tabla de detalles, degradación sin `change`/`createDate`, avatar y huecos reservados |

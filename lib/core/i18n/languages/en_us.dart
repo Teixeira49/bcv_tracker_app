@@ -70,5 +70,8 @@ const Map<String, String> enUs = {
   'variationLabel': 'Change',
   'officialRate': 'Official',
   'parallelRate': 'Parallel',
+  'quickConverterSection': 'Converter',
+  'amountLabel': 'Amount',
+  'invertConversionAction': 'Reverse the conversion',
   'closeAction': 'Close',
 };

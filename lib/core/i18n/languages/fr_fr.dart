@@ -72,5 +72,8 @@ const Map<String, String> frFr = {
   'variationLabel': 'Variation',
   'officialRate': 'Officiel',
   'parallelRate': 'Parallèle',
+  'quickConverterSection': 'Convertisseur',
+  'amountLabel': 'Montant',
+  'invertConversionAction': 'Inverser la conversion',
   'closeAction': 'Fermer',
 };

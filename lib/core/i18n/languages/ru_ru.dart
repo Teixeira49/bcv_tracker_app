@@ -70,5 +70,8 @@ const Map<String, String> ruRu = {
   'variationLabel': 'Изменение',
   'officialRate': 'Официальный',
   'parallelRate': 'Параллельный',
+  'quickConverterSection': 'Конвертер',
+  'amountLabel': 'Сумма',
+  'invertConversionAction': 'Поменять направление',
   'closeAction': 'Закрыть',
 };

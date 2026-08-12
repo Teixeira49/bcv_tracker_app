@@ -71,5 +71,8 @@ const Map<String, String> deDe = {
   'variationLabel': 'Veränderung',
   'officialRate': 'Offiziell',
   'parallelRate': 'Parallel',
+  'quickConverterSection': 'Umrechner',
+  'amountLabel': 'Betrag',
+  'invertConversionAction': 'Umrechnung umkehren',
   'closeAction': 'Schließen',
 };

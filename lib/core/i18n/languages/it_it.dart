@@ -72,5 +72,8 @@ const Map<String, String> itIt = {
   'variationLabel': 'Variazione',
   'officialRate': 'Ufficiale',
   'parallelRate': 'Parallelo',
+  'quickConverterSection': 'Convertitore',
+  'amountLabel': 'Importo',
+  'invertConversionAction': 'Inverti la conversione',
   'closeAction': 'Chiudi',
 };

@@ -2,6 +2,7 @@ import 'package:alchemist/alchemist.dart';
 import 'package:bcv_tracker_app/config/theme/theme.dart';
 import 'package:bcv_tracker_app/core/constants/market_constants.dart';
 import 'package:bcv_tracker_app/core/i18n/app_translations.dart';
+import 'package:bcv_tracker_app/features/currency_detail/presentation/controller/currency_detail_controller.dart';
 import 'package:bcv_tracker_app/features/currency_detail/presentation/page/currency_detail_sheet.dart';
 import 'package:bcv_tracker_app/shared/domain/entities/currency.dart';
 import 'package:flutter/material.dart';
@@ -68,16 +69,20 @@ void _detailGolden(
     goldenTest(
       '$description — $mode',
       fileName: '${fileBase}_$mode',
-      pumpWidget: (tester, widget) => tester.pumpWidget(
-        GetMaterialApp(
-          debugShowCheckedModeBanner: false,
-          translations: AppTranslations(),
-          locale: const Locale('es', 'ES'),
-          fallbackLocale: const Locale('en', 'US'),
-          theme: theme,
-          home: widget,
-        ),
-      ),
+      pumpWidget: (tester, widget) {
+        Get.testMode = true;
+        Get.put(CurrencyDetailController());
+        return tester.pumpWidget(
+          GetMaterialApp(
+            debugShowCheckedModeBanner: false,
+            translations: AppTranslations(),
+            locale: const Locale('es', 'ES'),
+            fallbackLocale: const Locale('en', 'US'),
+            theme: theme,
+            home: widget,
+          ),
+        );
+      },
       builder: () => GoldenTestGroup(
         columns: scenarios.length,
         children: <Widget>[
@@ -91,7 +96,7 @@ void _detailGolden(
               // needs the extra room to be captured whole.
               child: SizedBox(
                 width: 420,
-                height: 1000,
+                height: 1400,
                 child: Container(
                   color: theme.scaffoldBackgroundColor,
                   child: CurrencyDetailSheet(currency: currency),
