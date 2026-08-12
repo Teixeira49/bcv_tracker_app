@@ -9,7 +9,12 @@ workflows:
     instance_type: mac_mini_m2
 
     environment:
-      flutter: stable
+      # Versión FIJA, la misma que `.github/workflows/pr-validation.yml` y que
+      # la máquina de desarrollo. `stable` a secas instala la del día, y esa
+      # deriva ya rompió la validación de #40 con una aserción de Flutter que
+      # la 3.38.3 no trae. Subir de versión es un cambio deliberado: se toca
+      # aquí (los tres workflows), en el workflow de GitHub y en local, a la vez.
+      flutter: 3.38.3
       groups:
         - firebase_credentials   # FIREBASE_TOKEN o GOOGLE_APPLICATION_CREDENTIALS
         - app_env                # CURRENCY_BACK
@@ -89,7 +94,12 @@ workflows:
     instance_type: mac_mini_m2
 
     environment:
-      flutter: stable
+      # Versión FIJA, la misma que `.github/workflows/pr-validation.yml` y que
+      # la máquina de desarrollo. `stable` a secas instala la del día, y esa
+      # deriva ya rompió la validación de #40 con una aserción de Flutter que
+      # la 3.38.3 no trae. Subir de versión es un cambio deliberado: se toca
+      # aquí (los tres workflows), en el workflow de GitHub y en local, a la vez.
+      flutter: 3.38.3
       xcode: latest
       cocoapods: default
       groups:
@@ -181,7 +191,12 @@ workflows:
     instance_type: mac_mini_m2
 
     environment:
-      flutter: stable
+      # Versión FIJA, la misma que `.github/workflows/pr-validation.yml` y que
+      # la máquina de desarrollo. `stable` a secas instala la del día, y esa
+      # deriva ya rompió la validación de #40 con una aserción de Flutter que
+      # la 3.38.3 no trae. Subir de versión es un cambio deliberado: se toca
+      # aquí (los tres workflows), en el workflow de GitHub y en local, a la vez.
+      flutter: 3.38.3
       xcode: latest
       cocoapods: default
       groups:

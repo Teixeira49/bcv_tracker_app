@@ -135,6 +135,8 @@ Tests live in `test/`, mirroring `lib/`. Any change to a data source, a market m
 
 `pubspec.yaml` is the **only** file where the version is edited; Android, iOS and `codemagic.yaml` derive it. Never set the version in Xcode or Gradle. See `.agents/rules/version-sources.md`.
 
+**The Flutter SDK version is a different thing, and it is pinned.** The project builds on **Flutter 3.38.3**, declared in four places that must move together: `.github/workflows/pr-validation.yml` and the three workflows of `codemagic.yaml` — plus the development machine. They used to say `stable`, which installs whatever is stable that day, so CI ran ahead of the machines the code was written on: ten tests green locally failed the PR check against a `ListTile` assertion 3.38.3 does not carry ([#40](https://github.com/Teixeira49/bcv_tracker_app/issues/40)). The defect was real, but it surfaced late and for the wrong reason. Bumping the SDK is now a deliberate change with its own PR, touching all four at once.
+
 ## Known debt
 
 Verified against the code. Fix on contact where the rule says so; do not treat as invisible:

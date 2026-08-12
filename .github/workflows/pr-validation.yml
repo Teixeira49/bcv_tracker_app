@@ -35,8 +35,19 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          # Mismo canal que el pipeline de distribución (codemagic.yaml), para
-          # que lo que valida la PR sea lo mismo que luego construye el release.
+          # Versión FIJA, no `stable` a secas — y la misma que codemagic.yaml,
+          # para que lo que valida la PR sea lo mismo que construye el release.
+          #
+          # `channel: stable` instala la stable *del día*, así que CI iba por
+          # delante de las máquinas de desarrollo. Eso pasó factura en #40: diez
+          # tests verdes en local fallaron aquí contra una aserción de
+          # `ListTile` que la 3.38.3 todavía no trae. El fallo era real y se
+          # arregló, pero se descubrió tarde y por el motivo equivocado.
+          #
+          # Al fijarla, subir de versión pasa a ser un cambio deliberado con su
+          # propia PR: se actualiza aquí, en los dos workflows de
+          # `codemagic.yaml` y en la máquina de desarrollo, a la vez.
+          flutter-version: 3.38.3
           channel: stable
           cache: true
 
