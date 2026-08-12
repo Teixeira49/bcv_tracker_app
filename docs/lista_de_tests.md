@@ -2,7 +2,7 @@
 
 Este documento es el **inventario de la suite**: primero lo que ya está cubierto, después lo que queda por hacer (roadmap). Mantenlo al día al agregar tests — la regla [`test-coverage.md`](../.agents/rules/test-coverage.md) exige que toda fuente, endpoint, controlador o helper de cálculo nuevo nazca con sus tests, y el check de PR de #27 (`flutter test` en GitHub Actions) lo hace cumplir en cada PR.
 
-## Cobertura actual (39 archivos, 230 tests)
+## Cobertura actual (40 archivos, 245 tests)
 
 | Área | Archivo | Qué cubre |
 |---|---|---|
