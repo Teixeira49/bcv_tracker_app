@@ -175,11 +175,25 @@ class _BaseBottomSheetSurface extends StatelessWidget {
       // panel opened over the page.
       child: ClipRRect(
         borderRadius: radius,
-        child: Semantics(
-          container: true,
-          explicitChildNodes: true,
-          label: semanticsLabel,
-          child: child,
+        // The content gets its own `Material`, **inside** the decoration.
+        //
+        // Anything that paints ink — a `ListTile`, an `InkWell` — draws it on
+        // the nearest `Material` ancestor. Without this that ancestor is
+        // outside the sheet, so the background above would paint over every
+        // ripple: the rows of the currency selector highlighted on tap and the
+        // user saw nothing. Flutter asserts on exactly this arrangement from
+        // 3.39 on; the invisible ink was there before the assertion was.
+        //
+        // Transparent because the colour is already on the `DecoratedBox`, which
+        // is also what carries the border and the glow a `Material` cannot.
+        child: Material(
+          type: MaterialType.transparency,
+          child: Semantics(
+            container: true,
+            explicitChildNodes: true,
+            label: semanticsLabel,
+            child: child,
+          ),
         ),
       ),
     );

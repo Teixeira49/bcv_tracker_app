@@ -72,18 +72,13 @@ class _CurrencyTileButton extends StatelessWidget {
   Widget build(BuildContext context) => GetBuilder<ConverterController>(
     builder: (controller) {
       bool isActive = isCurrencyActive(currency, controller);
-      return Container(
-        margin: EdgeInsets.symmetric(vertical: 2),
-        decoration: isActive
-            ? BoxDecoration(
-                border: Border.all(
-                  color: ColorValues.utilityInfo(context).withAlpha(120),
-                  width: 1.0,
-                ),
-                color: ColorValues.utilityInfo(context).withAlpha(50),
-                borderRadius: BorderRadius.circular(16),
-              )
-            : null,
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 2),
+        // The highlight of the selected row rides on the `ListTile` itself
+        // (`tileColor` + the `shape`'s side) rather than on a decorated box
+        // around it. A box with a background between the tile and its
+        // `Material` hides the ink: tapping the current currency drew a ripple
+        // nobody could see. Flutter asserts on that arrangement from 3.39 on.
         child: ListTile(
           trailing: _getIcon(context, isActive),
           leading: _CircleCurrencyTypeWidget(currencyCode: currency.keyName),
@@ -92,8 +87,17 @@ class _CurrencyTileButton extends StatelessWidget {
             '${CurrencyHelpers.castCurrencyDisplayName(currency)}',
           ),
           subtitle: Text(currency.platform),
+          tileColor: isActive
+              ? ColorValues.utilityInfo(context).withAlpha(50)
+              : null,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
+            side: isActive
+                ? BorderSide(
+                    color: ColorValues.utilityInfo(context).withAlpha(120),
+                    width: 1.0,
+                  )
+                : BorderSide.none,
           ),
           onTap: onTap,
         ),

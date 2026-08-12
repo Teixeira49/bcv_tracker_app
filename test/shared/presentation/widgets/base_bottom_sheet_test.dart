@@ -191,6 +191,32 @@ void main() {
     );
   });
 
+  testWidgets('gives its content a Material to paint ink on', (tester) async {
+    await _pumpHost(tester);
+    await _open(tester);
+
+    // Ink is drawn on the nearest `Material` ancestor. If that ancestor sits
+    // outside the sheet, the sheet's own background paints over every ripple —
+    // which is what happened to the rows of the currency selector, silently,
+    // until Flutter 3.39 started asserting on it. Asserting the structure here
+    // catches it on any version, including the older one this may build with.
+    final Finder material = find.descendant(
+      of: find.byType(BaseBottomSheet),
+      matching: find.byType(Material),
+    );
+    expect(material, findsWidgets, reason: 'the sheet must own a Material');
+
+    // And it has to be *inside* the decoration, not around it: no painted box
+    // may come between it and the content.
+    expect(
+      find.descendant(
+        of: material.first,
+        matching: find.byType(CustomScrollView),
+      ),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('names itself for assistive tech', (tester) async {
     await _pumpHost(tester);
     await _open(tester);
