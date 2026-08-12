@@ -71,5 +71,9 @@ const Map<String, String> deDe = {
   'variationLabel': 'Veränderung',
   'officialRate': 'Offiziell',
   'parallelRate': 'Parallel',
+  'searchCurrencyHint': 'Währung oder Markt suchen',
+  'noSearchResultsTitle': 'Keine Treffer',
+  'noSearchResultsMessage': 'Keine Währung passt zu „@query“.',
+  'clearSearchAction': 'Suche löschen',
   'closeAction': 'Schließen',
 };

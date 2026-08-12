@@ -72,5 +72,9 @@ const Map<String, String> frFr = {
   'variationLabel': 'Variation',
   'officialRate': 'Officiel',
   'parallelRate': 'Parallèle',
+  'searchCurrencyHint': 'Rechercher une devise ou un marché',
+  'noSearchResultsTitle': 'Aucun résultat',
+  'noSearchResultsMessage': 'Aucune devise ne correspond à « @query ».',
+  'clearSearchAction': 'Effacer la recherche',
   'closeAction': 'Fermer',
 };

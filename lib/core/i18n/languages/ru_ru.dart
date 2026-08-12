@@ -70,5 +70,9 @@ const Map<String, String> ruRu = {
   'variationLabel': 'Изменение',
   'officialRate': 'Официальный',
   'parallelRate': 'Параллельный',
+  'searchCurrencyHint': 'Поиск валюты или рынка',
+  'noSearchResultsTitle': 'Ничего не найдено',
+  'noSearchResultsMessage': 'Нет валют, соответствующих «@query».',
+  'clearSearchAction': 'Очистить поиск',
   'closeAction': 'Закрыть',
 };

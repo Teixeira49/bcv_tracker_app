@@ -71,5 +71,9 @@ const Map<String, String> koKr = {
   'variationLabel': '변동',
   'officialRate': '공식',
   'parallelRate': '병행',
+  'searchCurrencyHint': '통화 또는 시장 검색',
+  'noSearchResultsTitle': '결과 없음',
+  'noSearchResultsMessage': '“@query”와 일치하는 통화가 없습니다.',
+  'clearSearchAction': '검색 지우기',
   'closeAction': '닫기',
 };

@@ -71,5 +71,9 @@ const Map<String, String> esEs = {
   'variationLabel': 'Variación',
   'officialRate': 'Oficial',
   'parallelRate': 'Paralelo',
+  'searchCurrencyHint': 'Buscar moneda o mercado',
+  'noSearchResultsTitle': 'Sin resultados',
+  'noSearchResultsMessage': 'Ninguna moneda coincide con «@query».',
+  'clearSearchAction': 'Borrar búsqueda',
   'closeAction': 'Cerrar',
 };
