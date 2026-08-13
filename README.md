@@ -85,6 +85,38 @@ Esta aplicación depende directamente de su servicio backend para obtener los da
 
 ---
 
+## 🎨 Iconos y logos
+
+El arte de marca vive en [`assets/brand/`](assets/brand/) y **los iconos de la app
+se generan desde ahí** — ninguno se edita a mano. El origen es `dt_icon.svg`;
+todo lo demás sale de él.
+
+```
+assets/brand/dt_icon.svg          ← origen (lo entrega diseño)
+        │
+        ├── flutter test tool/generate_app_icon.dart
+        │        ├── assets/brand/app_icon.png             (1024², compuesto sobre #08253A)
+        │        ├── assets/brand/app_icon_foreground.png  (1024², transparente)
+        │        └── web/favicon.png + web/icons/*.png
+        │
+        └── dart run flutter_launcher_icons
+                 └── android/ + ios/  (todas las densidades)
+```
+
+**En ese orden**, y solo cuando cambie el arte:
+
+```bash
+flutter test tool/generate_app_icon.dart   # maestros + iconos web
+dart run flutter_launcher_icons             # Android e iOS
+```
+
+Por qué se rasteriza el SVG en vez de escalar un PNG, por qué el fondo
+adaptativo es un color plano y no una imagen, y cuál es el techo de nitidez de
+estos archivos: [`assets/brand/README.md`](assets/brand/README.md).
+
+> El icono venía de un PNG de **332×332** escalado a todas las densidades; eso
+> era lo que se veía pixelado ([#10](https://github.com/Teixeira49/bcv_tracker_app/issues/10)).
+
 ## 🤝 Contribuir
 
 Antes de abrir un PR, lee la [**Guía de Contribución**](CONTRIBUTING.md): arquitectura, reglas de implementación y el flujo `issue → rama → commits → PR → release`. El sistema de diseño de la app (tokens de color, tipografía, espaciado y su razonamiento) vive en [**`DESIGN.md`**](DESIGN.md), la fuente de verdad visual.
