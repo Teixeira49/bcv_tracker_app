@@ -18,6 +18,13 @@ class AppIcons {
   /// Solo el icono, sin wordmark. Mismo origen y mismas condiciones.
   static const String brandIcon = 'assets/brand/dt_icon.svg';
 
+  /// Solo el wordmark «DOLAR TRACKER», con el viewBox ajustado a su caja.
+  ///
+  /// Existe aparte de [mainLogo] porque el splash anima las dos piezas por
+  /// separado. Lo genera `tool/make_wordmark_svg.py` desde los contornos de la
+  /// misma fuente, así que el tipo es idéntico al del logo completo.
+  static const String brandWordmark = 'assets/brand/dt_wordmark.svg';
+
   static const String onlyLogo = 'assets/logo_center.svg';
 
   // ---------------------------------------------------------------------------

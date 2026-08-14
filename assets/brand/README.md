@@ -11,6 +11,7 @@ los iconos de Android, iOS y web se *generan*, no se editan.
 | `dt_logo.png` | El mismo logo compuesto, 1400×1400 |
 | `app_icon.png` | **Generado.** 1024², compuesto — lo consume `flutter_launcher_icons` |
 | `app_icon_foreground.png` | **Generado.** 1024², transparente — capa del icono adaptativo |
+| `dt_wordmark.svg` | **Generado.** Solo «DOLAR TRACKER», con el viewBox ajustado a su caja |
 
 ## Regenerar
 
@@ -45,7 +46,15 @@ volver a pasarlos por:
 ```bash
 python3 tool/flatten_brand_svg.py assets/brand/dt_logo.svg
 python3 tool/flatten_brand_svg.py assets/brand/dt_icon.svg
+python3 tool/make_wordmark_svg.py                 # regenera dt_wordmark.svg
 ```
+
+`dt_wordmark.svg` existe aparte porque **el splash anima el icono y el texto
+por separado**: el icono entra solo y sube cuando el texto aparece debajo. Sale
+de los contornos de la misma fuente, no de recortar el logo, así que el tipo es
+idéntico en los dos archivos. Su `viewBox` va ajustado a la caja del texto, y el
+splash usa esa proporción para saber cuánto tiene que subir el icono — si se
+regenera con otro texto, ese número cambia.
 
 El script convierte el `<text>` a trazados **leyendo los contornos reales de la
 fuente** con `fonttools` —no los redibuja a mano, así que el wordmark es

@@ -2,7 +2,7 @@
 
 Este documento es el **inventario de la suite**: primero lo que ya está cubierto, después lo que queda por hacer (roadmap). Mantenlo al día al agregar tests — la regla [`test-coverage.md`](../.agents/rules/test-coverage.md) exige que toda fuente, endpoint, controlador o helper de cálculo nuevo nazca con sus tests, y el check de PR de #27 (`flutter test` en GitHub Actions) lo hace cumplir en cada PR.
 
-## Cobertura actual (40 archivos, 234 tests)
+## Cobertura actual (40 archivos, 235 tests)
 
 | Área | Archivo | Qué cubre |
 |---|---|---|
@@ -24,7 +24,7 @@ Este documento es el **inventario de la suite**: primero lo que ya está cubiert
 | | `test/features/currency_detail/currency_detail_controller_test.dart` | **(#38)** Rate abierta y limpiada, y disposición del worker (#45) |
 | **Widgets** | `test/features/home/home_page_test.dart` | **(#28)** Home: estado de error, sin-error, frame |
 | | `test/features/converter/converter_page_test.dart` | **(#28)** Cuerpo del conversor: render e input |
-| | `test/features/splash/splash_page_test.dart` | **(#10)** El splash usa el logo de marca, lo pinta de blanco y limita su tamaño en tablets |
+| | `test/features/splash/splash_page_test.dart` | **(#10)** El splash usa el logo de marca, lo pinta de blanco, limita su tamaño en tablets, y su entrada: el texto empieza invisible y el icono sube al aparecer |
 | | `test/features/currency_detail/currency_detail_sheet_test.dart` | **(#38)** Cabecera, tabla de detalles, degradación sin `change`/`createDate`, avatar y huecos reservados |
 | | `test/features/home/home_currency_detail_tap_test.dart` | **(#38)** Tocar una tarjeta abre el detalle de esa tasa; inerte con placeholders |
 | | `test/shared/presentation/widgets/base_bottom_sheet_test.dart` | **(#40)** Contenedor compartido: anclaje, una sola cadena de scroll, cierre por arrastre y por botón, barra fija, teclado y semántica |
