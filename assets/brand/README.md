@@ -29,48 +29,53 @@ aborta su paso web porque este proyecto no tiene `web/index.html`, y de paso
 dejaba `favicon.png` en 16×16; por eso está en `generate: false` en el
 `pubspec.yaml`.
 
-## Dos cosas que no son obvias
+## Los SVG están aplanados a propósito
 
-### 1. Flutter no dibuja estos SVG tal cual
+`flutter_svg` 2.x renderiza con `vector_graphics`, al que le faltan dos cosas
+que traían los exports de diseño — y ninguna avisa, simplemente no dibuja:
 
-`flutter_svg` 2.x renderiza con `vector_graphics`, que **no resuelve un `<use>`
-apuntando a un `<image>` dentro de `<defs>`** ni soporta `<text>`. Los dos SVG
-nuevos usan ambas cosas, así que en Flutter:
-
-| Archivo | Lo que Flutter pinta realmente |
+| | Qué pasaba |
 |---|---|
-| `dt_icon.svg` | El anillo, **sin el dólar** |
-| `dt_logo.svg` | Dos barras negras y nada más |
+| `<text>` | «DOLAR TRACKER» salía como **dos barras negras sólidas**, una por palabra |
+| `<use>` → `<image>` en `<defs>` | El anillo con el dólar **no se dibujaba** |
 
-Comprobarlo:
+Los dos archivos ya vienen corregidos en el repo. Si diseño reexporta, hay que
+volver a pasarlos por:
 
 ```bash
-grep -c '<use' assets/brand/dt_logo.svg          # 1  -> el arte no se dibuja
-grep -oE '<(path|text|image)' assets/brand/dt_icon.svg | sort | uniq -c
+python3 tool/flatten_brand_svg.py assets/brand/dt_logo.svg
+python3 tool/flatten_brand_svg.py assets/brand/dt_icon.svg
 ```
 
-El generador lo esquiva reescribiendo el `<use>` como `<image>` en memoria (ver
-`_inlineUsedImages` en `tool/generate_app_icon.dart`); el archivo en disco queda
-como lo exportó diseño. **`logo_center.svg` y `logo_full.svg`, los antiguos, sí
-funcionan** porque llevan `<image>` directo y ningún `<text>`.
+El script convierte el `<text>` a trazados **leyendo los contornos reales de la
+fuente** con `fonttools` —no los redibuja a mano, así que el wordmark es
+exactamente Arial Narrow Bold— e incrusta la imagen en el sitio del `<use>`. Es
+idempotente: pasarlo dos veces no hace nada la segunda.
 
-### 2. Ninguno es vectorial del todo
+Comprobar que un SVG está listo para Flutter:
 
-Los cuatro incrustan un PNG en base64, así que tienen un techo de nitidez:
+```bash
+grep -c '<text\|<use' assets/brand/dt_logo.svg   # 0 -> listo
+```
+
+## El techo de nitidez
+
+Aplanarlos no los hace vectoriales del todo: el anillo con el dólar sigue
+siendo un PNG incrustado.
 
 | Archivo | Vectorial de verdad | Bitmap incrustado |
 |---|---|---|
-| `dt_icon.svg` | el anillo (3 paths) | el dólar, **206×378** |
-| `dt_logo.svg` | el wordmark (`<text>`) | anillo + dólar, **812×812** |
+| `dt_icon.svg` | el anillo (3 trazados) | el dólar, **206×378** |
+| `dt_logo.svg` | el wordmark (12 trazados) | anillo + dólar, **812×812** |
 
 **Para el icono da igual**: a 1024 px el dólar se amplía un 1,02 %, que no se
-ve. **Para el splash no**: estirar 812 px hasta el ancho de un móvil a 3x es
-~3,2× de ampliación, y por eso el logo del splash sigue pendiente en
-[#10](https://github.com/Teixeira49/bcv_tracker_app/issues/10).
+ve. **Para el splash importa**: estirar 812 px hasta el ancho de un móvil a 3x
+es ~3,2× de ampliación. Se ve aceptable, pero es el límite de estos archivos.
 
-Lo que lo desbloquea todo —splash nítido a cualquier tamaño, y un Lottie viable—
-es reexportar con el anillo y el dólar **convertidos a trazados** (*Expand* /
-*Convert to Curves* antes de exportar), y sin `<text>`.
+Lo que lo quitaría del todo es reexportar con el anillo y el dólar
+**convertidos a trazados** (*Expand* / *Convert to Curves*). Eso además haría
+viable un Lottie, que hoy no lo es: incrustar un bitmap en un Lottie es un GIF
+caro, sin recoloreado ni animación de trazo.
 
 ## El color
 

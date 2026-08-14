@@ -5,7 +5,18 @@ class AppIcons {
   // ---------------------------------------------------------------------------
   // Main icons
 
-  static const String mainLogo = 'assets/logo_full.svg';
+  /// Logo completo —icono y wordmark— para el splash.
+  ///
+  /// Vive en `assets/brand/` con el resto de la marca, y **está aplanado**: el
+  /// export de diseño traía el wordmark como `<text>` y el anillo tras un
+  /// `<use>`, y `flutter_svg` no dibuja ninguno de los dos. Ver
+  /// `assets/brand/README.md` antes de sustituirlo por un export nuevo.
+  ///
+  /// El arte es negro; quien lo pinta decide el color con un `colorFilter`.
+  static const String mainLogo = 'assets/brand/dt_logo.svg';
+
+  /// Solo el icono, sin wordmark. Mismo origen y mismas condiciones.
+  static const String brandIcon = 'assets/brand/dt_icon.svg';
 
   static const String onlyLogo = 'assets/logo_center.svg';
 

@@ -114,8 +114,12 @@ Por qué se rasteriza el SVG en vez de escalar un PNG, por qué el fondo
 adaptativo es un color plano y no una imagen, y cuál es el techo de nitidez de
 estos archivos: [`assets/brand/README.md`](assets/brand/README.md).
 
-> El icono venía de un PNG de **332×332** escalado a todas las densidades; eso
-> era lo que se veía pixelado ([#10](https://github.com/Teixeira49/bcv_tracker_app/issues/10)).
+El **splash** pinta `dt_logo.svg` desde `AppIcons.mainLogo`, en blanco mediante
+un `colorFilter` — el arte viene negro, así que el color lo decide el código.
+
+> El icono venía de un PNG de **332×332** escalado a todas las densidades, y el
+> splash estiraba un bitmap de **613×407** por el 80 % de la pantalla; eso era
+> lo que se veía pixelado ([#10](https://github.com/Teixeira49/bcv_tracker_app/issues/10)).
 
 ## 🤝 Contribuir
 
