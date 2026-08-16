@@ -72,5 +72,9 @@ const Map<String, String> itIt = {
   'variationLabel': 'Variazione',
   'officialRate': 'Ufficiale',
   'parallelRate': 'Parallelo',
+  'searchCurrencyHint': 'Cerca valuta o mercato',
+  'noSearchResultsTitle': 'Nessun risultato',
+  'noSearchResultsMessage': 'Nessuna valuta corrisponde a «@query».',
+  'clearSearchAction': 'Cancella ricerca',
   'closeAction': 'Chiudi',
 };

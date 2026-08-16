@@ -69,5 +69,9 @@ const Map<String, String> zhCn = {
   'variationLabel': '涨跌',
   'officialRate': '官方',
   'parallelRate': '平行',
+  'searchCurrencyHint': '搜索货币或市场',
+  'noSearchResultsTitle': '无结果',
+  'noSearchResultsMessage': '没有与“@query”匹配的货币。',
+  'clearSearchAction': '清除搜索',
   'closeAction': '关闭',
 };

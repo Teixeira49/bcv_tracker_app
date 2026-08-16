@@ -7,6 +7,7 @@ import 'package:bcv_tracker_app/shared/data/repositories/currency_repository.dar
 import 'package:bcv_tracker_app/shared/domain/entities/bcv_currencies.dart';
 import 'package:bcv_tracker_app/shared/domain/entities/currency.dart';
 import 'package:bcv_tracker_app/shared/domain/repositories/dollar_repositories.dart';
+import 'package:bcv_tracker_app/shared/presentation/widgets/app_state_view.dart';
 import 'package:bcv_tracker_app/shared/presentation/widgets/base_bottom_sheet.dart';
 import 'package:bcv_tracker_app/shared/presentation/widgets/base_modal.dart';
 import 'package:flutter/material.dart';
@@ -95,11 +96,17 @@ Future<void> _openSelector(WidgetTester tester, {required bool isInput}) async {
   await _settleSheet(tester);
 }
 
-/// The sheet's one scroll view.
-Finder get _sheetScrollable => find.descendant(
-  of: find.byType(BaseBottomSheet),
-  matching: find.byType(Scrollable),
-);
+/// The sheet's own scroll view.
+///
+/// `.first` because the search field brings a `Scrollable` of its own (every
+/// `EditableText` has one) and it is nested inside this one; tree order puts
+/// the outer one first.
+Finder get _sheetScrollable => find
+    .descendant(
+      of: find.byType(BaseBottomSheet),
+      matching: find.byType(Scrollable),
+    )
+    .first;
 
 /// Taps a row that the sheet already shows at its opening extent.
 ///
@@ -182,9 +189,9 @@ void main() {
     final ConverterController controller = Get.find<ConverterController>();
     await _openSelector(tester, isInput: true);
 
-    await _tapRow(tester, Markets.binance);
+    await _tapRow(tester, Markets.exchangeMonitor);
 
-    expect(controller.fromCurrency.currency.platform, Markets.binance);
+    expect(controller.fromCurrency.currency.platform, Markets.exchangeMonitor);
     expect(find.byType(BaseBottomSheet), findsNothing);
   });
 
@@ -201,6 +208,114 @@ void main() {
       expect(find.byType(BaseBottomSheet), findsNothing);
     },
   );
+
+  group('search (#41)', () {
+    /// The search box — scoped to the sheet, because the converter behind it
+    /// has two amount fields and a `TextFormField` builds a `TextField`.
+    final Finder searchField = find.descendant(
+      of: find.byType(BaseBottomSheet),
+      matching: find.byType(TextField),
+    );
+
+    /// Types into the search box and lets the filter run.
+    Future<void> search(WidgetTester tester, String query) async {
+      await tester.enterText(searchField, query);
+      await tester.pump();
+    }
+
+    testWidgets('the field is in the header, empty and not focused', (
+      tester,
+    ) async {
+      await _pumpConverter(tester);
+      await _openSelector(tester, isInput: true);
+
+      expect(find.text(AppMessages.searchCurrencyHint), findsOneWidget);
+      // Deliberately not auto-focused: the keyboard would cover the list the
+      // sheet exists to show, and most openings are "pick the one I can see".
+      expect(
+        tester.testTextInput.isVisible,
+        isFalse,
+        reason: 'opening the selector must not raise the keyboard',
+      );
+    });
+
+    testWidgets('typing filters the list in place', (tester) async {
+      await _pumpConverter(tester);
+      await _openSelector(tester, isInput: true);
+      expect(find.text(Markets.yadio), findsOneWidget);
+
+      await search(tester, 'binance');
+
+      expect(find.text(Markets.binance), findsOneWidget);
+      expect(find.text(Markets.yadio), findsNothing);
+      expect(find.text(AppMessages.originalCurrency), findsNothing);
+    });
+
+    testWidgets('it ignores case and accents', (tester) async {
+      await _pumpConverter(tester);
+      await _openSelector(tester, isInput: true);
+
+      // The rate is named "Dólar estadounidense"; nobody types the accent to
+      // search, and on a phone keyboard it is extra work.
+      await search(tester, 'DOLAR');
+
+      expect(find.textContaining(Markets.exchangeMonitor), findsWidgets);
+      expect(find.byType(AppStateView), findsNothing);
+    });
+
+    testWidgets('it matches the market as well as the currency', (
+      tester,
+    ) async {
+      await _pumpConverter(tester);
+      await _openSelector(tester, isInput: true);
+
+      await search(tester, 'bybit');
+
+      expect(find.text(Markets.bybit), findsOneWidget);
+      expect(find.text(Markets.binance), findsNothing);
+    });
+
+    testWidgets('no match shows a state, not a blank panel', (tester) async {
+      await _pumpConverter(tester);
+      await _openSelector(tester, isInput: true);
+
+      await search(tester, 'zzzz');
+
+      expect(find.byType(AppStateView), findsOneWidget);
+      expect(find.text(AppMessages.noSearchResultsTitle), findsOneWidget);
+      // The query is quoted back through GetX's parameters, not concatenated.
+      expect(find.textContaining('zzzz'), findsWidgets);
+      // No retry: the data is fine, the filter is what excluded everything.
+      expect(find.text(AppMessages.retryAction), findsNothing);
+    });
+
+    testWidgets('the clear button brings the whole list back', (tester) async {
+      await _pumpConverter(tester);
+      await _openSelector(tester, isInput: true);
+      await search(tester, 'binance');
+      expect(find.text(Markets.yadio), findsNothing);
+
+      await tester.tap(find.byTooltip(AppMessages.clearSearchAction));
+      await tester.pump();
+
+      expect(find.text(Markets.yadio), findsOneWidget);
+      expect(find.text(AppMessages.originalCurrency), findsOneWidget);
+    });
+
+    testWidgets('a filtered row can still be chosen', (tester) async {
+      await _pumpConverter(tester);
+      final ConverterController controller = Get.find<ConverterController>();
+      await _openSelector(tester, isInput: true);
+
+      // The point of the feature: reach a row that was below the fold without
+      // scrolling to it.
+      await search(tester, 'bybit');
+      await _tapRow(tester, Markets.bybit);
+
+      expect(controller.fromCurrency.currency.platform, Markets.bybit);
+      expect(find.byType(BaseBottomSheet), findsNothing);
+    });
+  });
 
   testWidgets('it holds together with the system text enlarged', (
     tester,

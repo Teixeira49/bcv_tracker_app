@@ -70,5 +70,9 @@ const Map<String, String> ptPt = {
   'variationLabel': 'Variação',
   'officialRate': 'Oficial',
   'parallelRate': 'Paralelo',
+  'searchCurrencyHint': 'Procurar moeda ou mercado',
+  'noSearchResultsTitle': 'Sem resultados',
+  'noSearchResultsMessage': 'Nenhuma moeda corresponde a «@query».',
+  'clearSearchAction': 'Limpar procura',
   'closeAction': 'Fechar',
 };
