@@ -41,8 +41,10 @@ class SettingsController extends GetxService {
   /// Whether the user has ever chosen a language on this install.
   ///
   /// Not the same question as "is [favLanguageCode] the default": the default
-  /// is also a legitimate choice, and telling the two apart is what lets the
-  /// app follow the device until the user says otherwise. See [startupLocale].
+  /// is also a legitimate choice, and telling the two apart is what decides
+  /// whether the app keeps following the device. Exposed because the settings
+  /// screen's behaviour depends on it — see [setFavLanguage].
+  bool get hasStoredLanguage => _hasStoredLanguage;
   bool _hasStoredLanguage = false;
 
   /// The language the app falls back to, and the first entry of
@@ -57,18 +59,41 @@ class SettingsController extends GetxService {
     flag: '🇪🇸',
   );
 
+  /// The ten languages this build ships, by **store-shaped locale code**.
+  ///
+  /// Every code here matches a key `AppTranslations` registers, exactly. Two of
+  /// them used not to: the selector offered `en_EN` and `ja_JA` while the
+  /// translations were filed under `en_US` and `ja_JP`, and it only worked
+  /// because GetX resolves on the language code alone when the full match
+  /// fails. Harmless on screen, but the invalid value was persisted to
+  /// `SharedPreferences` and handed to `intl` to format dates and amounts —
+  /// and it made "does the device locale match a language we publish?" a
+  /// question that could not be answered by comparison. #98 needs that
+  /// question answered, so the codes were corrected; [_legacyLanguageCodes]
+  /// carries the installs that already stored the old ones.
   final List<LanguageOption> languageOptions = const <LanguageOption>[
     defaultLanguage,
-    LanguageOption(code: 'en_EN', name: 'English', flag: '🇬🇧'),
+    LanguageOption(code: 'en_US', name: 'English', flag: '🇬🇧'),
     LanguageOption(code: 'pt_PT', name: 'Português', flag: '🇵🇹'),
     LanguageOption(code: 'zh_CN', name: '简体中文', flag: '🇨🇳'),
     LanguageOption(code: 'fr_FR', name: 'Français', flag: '🇫🇷'),
     LanguageOption(code: 'de_DE', name: 'Deutsch', flag: '🇩🇪'),
     LanguageOption(code: 'it_IT', name: 'Italiano', flag: '🇮🇹'),
-    LanguageOption(code: 'ja_JA', name: '日本語', flag: '🇯🇵'),
+    LanguageOption(code: 'ja_JP', name: '日本語', flag: '🇯🇵'),
     LanguageOption(code: 'ko_KR', name: '한국어', flag: '🇰🇷'),
     LanguageOption(code: 'ru_RU', name: 'Русский', flag: '🇷🇺'),
   ];
+
+  /// Codes past versions wrote, mapped to the ones this build uses.
+  ///
+  /// Without this, an install that had chosen English would hit
+  /// [restoreLanguageCode]'s "unknown code" branch and be **moved to Spanish**
+  /// — a correction to an internal identifier taking away a choice the user
+  /// made on purpose. Translated instead, and rewritten once.
+  static const Map<String, String> _legacyLanguageCodes = <String, String>{
+    'en_EN': 'en_US',
+    'ja_JA': 'ja_JP',
+  };
 
   /// The option the language selector must show: the one matching
   /// [favLanguageCode], or [defaultLanguage] when the stored code is not one
@@ -96,17 +121,53 @@ class SettingsController extends GetxService {
   /// value — so this is the starting point, not a permanent override.
   ThemeMode get startupThemeMode => favBrightness.value;
 
-  /// The locale the first frame must use, or `null` to follow the device.
+  /// The locale the first frame must use. Never `null`.
   ///
-  /// `null` when nothing was stored, which preserves the behaviour the app has
-  /// today: a fresh install follows `Get.deviceLocale`. That the selector then
-  /// shows a language the interface is not in is a separate defect, tracked in
-  /// [#98](https://github.com/Teixeira49/bcv_tracker_app/issues/98) — deciding
-  /// between following the device and imposing the default is a product call,
-  /// and this refactor deliberately changes no behaviour. When it is made, this
-  /// getter is the single place it lands.
-  Locale? get startupLocale =>
-      _hasStoredLanguage ? localeOf(favLanguageCode.value) : null;
+  /// It reads [favLanguageCode] unconditionally, and that is the fix for #98.
+  /// The interface and the selector are now driven by **one** value, so they
+  /// cannot disagree — which is exactly what they used to do: a fresh install
+  /// rendered in the device's language while the selector displayed "Español",
+  /// because the code fed the selector and `Get.deviceLocale` fed the screen,
+  /// and nothing reconciled them.
+  ///
+  /// On a fresh install [favLanguageCode] is already the device's language,
+  /// resolved by [resolveDeviceLanguage] — the app follows the device, which is
+  /// what it effectively did before. The difference is that the selector now
+  /// says so.
+  Locale get startupLocale => localeOf(favLanguageCode.value);
+
+  /// The shipped language that best matches [device], or the default.
+  ///
+  /// Two passes, and the second is the one that matters here. An exact
+  /// `xx_YY` hit is rare in the field: this app's own audience runs `es_VE`,
+  /// not `es_ES`, and English-speaking devices are as likely to be `en_GB` as
+  /// `en_US`. Matching on the language code alone is what makes "follow the
+  /// device" mean anything — without it, a Venezuelan phone would fall through
+  /// to the default and only *look* right by coincidence.
+  ///
+  /// A device in a language this build does not publish gets
+  /// [defaultLanguage], not the interface in that language: the app has ten
+  /// translations and Spanish is the one to land on when none of them fits.
+  String resolveDeviceLanguage(Locale? device) {
+    if (device == null) {
+      return defaultLanguage.code;
+    }
+
+    final String? country = device.countryCode;
+    if (country != null && country.isNotEmpty) {
+      final String exact = '${device.languageCode}_$country';
+      if (isKnownLanguage(exact)) {
+        return exact;
+      }
+    }
+
+    for (final LanguageOption option in languageOptions) {
+      if (option.code.split('_').first == device.languageCode) {
+        return option.code;
+      }
+    }
+    return defaultLanguage.code;
+  }
 
   /// Builds the [Locale] a `xx_YY` settings code names.
   ///
@@ -133,8 +194,10 @@ class SettingsController extends GetxService {
   /// registers the value its builder resolves to, so nothing can `Get.find`
   /// this service until the preferences are in memory. That is the whole point
   /// of #59 — the state is never observable half-loaded.
-  Future<SettingsController> init() async {
-    await loadPreferences();
+  /// [deviceLocale] defaults to `Get.deviceLocale` and is a parameter so a test
+  /// can name the device's language instead of inheriting the host's.
+  Future<SettingsController> init({Locale? deviceLocale}) async {
+    await loadPreferences(deviceLocale: deviceLocale ?? Get.deviceLocale);
     return this;
   }
 
@@ -143,7 +206,7 @@ class SettingsController extends GetxService {
   /// Pure state: no `Get.changeThemeMode`, no `Get.updateLocale`. See the class
   /// doc for why applying them here was both redundant and, for the locale,
   /// actively undone by `GetMaterialApp`.
-  Future<void> loadPreferences() async {
+  Future<void> loadPreferences({Locale? deviceLocale}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     final int? marketIndex = prefs.getInt(_favMarketKey);
@@ -159,10 +222,20 @@ class SettingsController extends GetxService {
       );
     }
 
+    // The language is the one setting with a meaningful "never chosen" state,
+    // and #98 is what happens when that state is ignored: the app followed the
+    // device while the selector kept displaying the default. Resolving the
+    // device's language into `favLanguageCode` collapses the two sources into
+    // one, so the screen and the selector are the same answer by construction.
     final String? langCode = prefs.getString(_langKey);
     if (langCode != null) {
       favLanguageCode.value = await restoreLanguageCode(prefs, langCode);
       _hasStoredLanguage = true;
+    } else {
+      favLanguageCode.value = resolveDeviceLanguage(deviceLocale);
+      // Deliberately **not** persisted. Following the device is a default, not
+      // a decision, and writing it down would freeze the app to whatever
+      // language the phone happened to be in on first launch.
     }
   }
 
@@ -180,6 +253,16 @@ class SettingsController extends GetxService {
   ) async {
     if (isKnownLanguage(stored)) return stored;
 
+    // A renamed code is not an unknown one. `en_EN` and `ja_JA` were this
+    // build's own identifiers until #98 corrected them, so an install carrying
+    // one gets translated and rewritten — not dropped to Spanish, which would
+    // take away a choice the user made deliberately.
+    final String? migrated = _legacyLanguageCodes[stored];
+    if (migrated != null) {
+      await prefs.setString(_langKey, migrated);
+      return migrated;
+    }
+
     await prefs.setString(_langKey, defaultLanguage.code);
     return defaultLanguage.code;
   }
@@ -192,12 +275,28 @@ class SettingsController extends GetxService {
     await prefs.setInt(_favMarketKey, index);
   }
 
+  /// Applies and persists a language chosen in the selector.
+  ///
+  /// **No early return on "already selected".** It used to open with
+  /// `if (favLanguageCode.value == code) return;`, and since the value started
+  /// at the default, tapping "Español" on a fresh install left through it
+  /// without ever applying anything — the user could not choose the language
+  /// the selector was showing them. That is the visible half of #98.
+  ///
+  /// The guard that replaces it compares against the **effective** locale
+  /// rather than against this object's own field, so it can only skip work that
+  /// has genuinely already happened. Persisting is unconditional and that is
+  /// the point: it turns "the phone is in English" into "the user wants
+  /// English", so a later change of the phone's language no longer moves the
+  /// app. Choosing the language you were already being shown is a real action.
   Future<void> setFavLanguage(String code) async {
-    if (favLanguageCode.value == code) return;
-
     favLanguageCode.value = code;
     _hasStoredLanguage = true;
-    Get.updateLocale(localeOf(code));
+
+    final Locale next = localeOf(code);
+    if (Get.locale != next) {
+      Get.updateLocale(next);
+    }
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(_langKey, code);

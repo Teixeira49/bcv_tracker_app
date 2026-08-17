@@ -2,7 +2,7 @@
 
 Este documento es el **inventario de la suite**: primero lo que ya está cubierto, después lo que queda por hacer (roadmap). Mantenlo al día al agregar tests — la regla [`test-coverage.md`](../.agents/rules/test-coverage.md) exige que toda fuente, endpoint, controlador o helper de cálculo nuevo nazca con sus tests, y el check de PR de #27 (`flutter test` en GitHub Actions) lo hace cumplir en cada PR.
 
-## Cobertura actual (45 archivos, 302 tests)
+## Cobertura actual (46 archivos, 320 tests)
 
 | Área | Archivo | Qué cubre |
 |---|---|---|
@@ -45,6 +45,7 @@ Este documento es el **inventario de la suite**: primero lo que ya está cubiert
 | | `test/core/i18n/search_folds_published_names_test.dart` | **(#104, #41)** La tilde de «Dólar» en `es_ES`, que buscar sin tilde encuentra el nombre publicado, y que la tabla de plegado cubre los diacríticos que la app realmente envía |
 | | `test/config/routes/app_pages_test.dart` | Registro de rutas nombradas |
 | | `test/config/theme/colors_constants_test.dart` | Opacidad de la paleta (alpha de 8 dígitos) |
+| | `test/shared/presentation/settings_controller_device_language_test.dart` | **(#98)** El primer arranque: la app sigue al dispositivo y el selector muestra ESE idioma, `es_VE`→`es_ES` y `en_GB`→`en_US` por el paso de solo-idioma, un idioma no publicado cae al defecto, seguir al dispositivo no se persiste, tocar el idioma ya mostrado sí lo aplica y lo guarda, y la migración de `en_EN`/`ja_JA` conserva el idioma en vez de perderlo |
 | | `test/shared/presentation/settings_controller_startup_test.dart` | **(#59)** El arranque asíncrono del servicio de ajustes: `Get.find` devuelve el estado ya cargado en el mismo turno, registro único y permanente, un `langCode` malformado no tumba el lanzamiento, y el **primer frame** ya lleva el tema y el idioma guardados — incluida la razón por la que el locale se pasa y no se aplica |
 | **Tooling / CI** | `test/tool/release_notes_txt_test.dart` | **(#93)** La derivación de `release_notes.json` al `.txt` que lee Firebase: elección de idioma, fallback, y que **nunca** produce notas vacías (JSON roto, entrada sin texto, sin `en-US`). Valida además el `release_notes.json` real contra el límite de 500 caracteres de Google Play y los `<`/`>` que Apple rechaza |
 
