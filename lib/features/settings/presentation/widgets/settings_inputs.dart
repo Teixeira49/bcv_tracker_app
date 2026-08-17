@@ -4,9 +4,16 @@ class _LanguageSelector extends StatelessWidget {
   const _LanguageSelector();
 
   @override
-  Widget build(BuildContext context) => GetBuilder<SettingsController>(
-    builder: (SettingsController controller) {
-      final selectedLanguage = controller.selectedLanguage;
+  Widget build(BuildContext context) {
+    final SettingsController controller = Get.find<SettingsController>();
+
+    // `Obx`, where the other two selectors already had one and this did not.
+    // Under `GetBuilder` this dropdown only ever refreshed because
+    // `Get.updateLocale` rebuilds the whole app — an accident, not a
+    // subscription. Reading `favLanguageCode` inside `Obx` makes it depend on
+    // the value it displays.
+    return Obx(() {
+      final LanguageOption selectedLanguage = controller.selectedLanguage;
 
       return DropdownButtonFormField<LanguageOption>(
         initialValue: selectedLanguage,
@@ -68,6 +75,6 @@ class _LanguageSelector extends StatelessWidget {
           }).toList();
         },
       );
-    },
-  );
+    });
+  }
 }

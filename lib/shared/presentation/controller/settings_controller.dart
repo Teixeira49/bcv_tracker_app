@@ -4,14 +4,46 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../domain/entities/language.dart';
 
-class SettingsController extends GetxController {
-  RxInt favMarketIndex = 0.obs;
-  var favBrightness = ThemeMode.system.obs;
-  var favLanguageCode = defaultLanguage.code.obs;
+/// The user's settings — theme, language, favourite market — for the whole
+/// session.
+///
+/// A **`GetxService`**, not a controller: it belongs to no view, outlives every
+/// screen and is the same role `CurrencyRepository` already plays. The name is
+/// kept for continuity with the rest of the codebase.
+///
+/// **Why the initialisation is asynchronous and awaited (#59).** Reading
+/// `SharedPreferences` is a disk round-trip. It used to be started from
+/// `onInit` and never awaited, so theme and locale landed at some point *after*
+/// the first frame and the app briefly showed defaults before jumping to the
+/// user's choice. Nobody saw it because the three-second splash was longer than
+/// a disk read — an accidental protection that would have disappeared the day
+/// someone shortened the splash. Now `main` awaits [init] before `runApp`, and
+/// `MyApp` reads [startupThemeMode] and [startupLocale] straight into
+/// `GetMaterialApp`: the first frame is already correct, with no window to
+/// flicker in.
+///
+/// **Why loading no longer calls `Get.changeThemeMode` / `Get.updateLocale`.**
+/// Those apply a *change* to a running app, and at startup there is nothing
+/// running yet — worse, `GetMaterialApp.initState` assigns `Get.locale` from
+/// its own `locale:` argument, so a locale set before `runApp` was overwritten
+/// on the spot. Startup goes through the constructor arguments; the setters
+/// below still use the framework calls, which is what they are for.
+class SettingsController extends GetxService {
+  /// One reactive style throughout: explicit type, `final`, `.obs`.
+  final RxInt favMarketIndex = 0.obs;
+  final Rx<ThemeMode> favBrightness = ThemeMode.system.obs;
+  final RxString favLanguageCode = defaultLanguage.code.obs;
 
   static const String _themeKey = 'theme_mode';
   static const String _langKey = 'language_code';
   static const String _favMarketKey = 'fav_market';
+
+  /// Whether the user has ever chosen a language on this install.
+  ///
+  /// Not the same question as "is [favLanguageCode] the default": the default
+  /// is also a legitimate choice, and telling the two apart is what lets the
+  /// app follow the device until the user says otherwise. See [startupLocale].
+  bool _hasStoredLanguage = false;
 
   /// The language the app falls back to, and the first entry of
   /// [languageOptions].
@@ -25,7 +57,7 @@ class SettingsController extends GetxController {
     flag: '🇪🇸',
   );
 
-  List<LanguageOption> languageOptions = [
+  final List<LanguageOption> languageOptions = const <LanguageOption>[
     defaultLanguage,
     LanguageOption(code: 'en_EN', name: 'English', flag: '🇬🇧'),
     LanguageOption(code: 'pt_PT', name: 'Português', flag: '🇵🇹'),
@@ -57,39 +89,80 @@ class SettingsController extends GetxController {
   bool isKnownLanguage(String code) =>
       languageOptions.any((LanguageOption language) => language.code == code);
 
-  @override
-  void onInit() {
-    super.onInit();
-    loadPreferences();
+  /// The theme `GetMaterialApp` must be built with.
+  ///
+  /// Read once, before the first frame. Later changes go through
+  /// [setFavTheme] and `Get.changeThemeMode`, which GetX resolves ahead of this
+  /// value — so this is the starting point, not a permanent override.
+  ThemeMode get startupThemeMode => favBrightness.value;
+
+  /// The locale the first frame must use, or `null` to follow the device.
+  ///
+  /// `null` when nothing was stored, which preserves the behaviour the app has
+  /// today: a fresh install follows `Get.deviceLocale`. That the selector then
+  /// shows a language the interface is not in is a separate defect, tracked in
+  /// [#98](https://github.com/Teixeira49/bcv_tracker_app/issues/98) — deciding
+  /// between following the device and imposing the default is a product call,
+  /// and this refactor deliberately changes no behaviour. When it is made, this
+  /// getter is the single place it lands.
+  Locale? get startupLocale =>
+      _hasStoredLanguage ? localeOf(favLanguageCode.value) : null;
+
+  /// Builds the [Locale] a `xx_YY` settings code names.
+  ///
+  /// Tolerates a code with no country part. Every entry of [languageOptions]
+  /// has one, so today this cannot be reached through the UI — but the code
+  /// also arrives from `SharedPreferences`, written by *any* past version of
+  /// the app, and the previous `code.split('_')[1]` would have thrown a
+  /// `RangeError` **during startup**, before any screen existed to report it.
+  /// A crash on launch is not an acceptable answer to a bad preference.
+  static Locale localeOf(String code) {
+    final List<String> parts = code
+        .split('_')
+        .where((String part) => part.isNotEmpty)
+        .toList();
+    if (parts.isEmpty) {
+      return localeOf(defaultLanguage.code);
+    }
+    return parts.length >= 2 ? Locale(parts[0], parts[1]) : Locale(parts[0]);
   }
 
-  Future<void> loadPreferences() async {
-    final prefs = await SharedPreferences.getInstance();
+  /// Loads the stored settings and returns itself, for `Get.putAsync`.
+  ///
+  /// Returning `this` is what lets the registration be awaited: `Get.putAsync`
+  /// registers the value its builder resolves to, so nothing can `Get.find`
+  /// this service until the preferences are in memory. That is the whole point
+  /// of #59 — the state is never observable half-loaded.
+  Future<SettingsController> init() async {
+    await loadPreferences();
+    return this;
+  }
 
-    // Cargar Marcado
-    final marketIndex = prefs.getInt(_favMarketKey);
+  /// Reads the three settings from `SharedPreferences` into the observables.
+  ///
+  /// Pure state: no `Get.changeThemeMode`, no `Get.updateLocale`. See the class
+  /// doc for why applying them here was both redundant and, for the locale,
+  /// actively undone by `GetMaterialApp`.
+  Future<void> loadPreferences() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    final int? marketIndex = prefs.getInt(_favMarketKey);
     if (marketIndex != null) {
       favMarketIndex.value = marketIndex;
     }
 
-    // Cargar Tema
-    final themeName = prefs.getString(_themeKey);
+    final String? themeName = prefs.getString(_themeKey);
     if (themeName != null) {
       favBrightness.value = ThemeMode.values.firstWhere(
-        (e) => e.name == themeName,
+        (ThemeMode mode) => mode.name == themeName,
         orElse: () => ThemeMode.system,
       );
     }
-    Get.changeThemeMode(favBrightness.value);
 
-    // Cargar Idioma
-    final langCode = prefs.getString(_langKey);
+    final String? langCode = prefs.getString(_langKey);
     if (langCode != null) {
-      final String resolved = await restoreLanguageCode(prefs, langCode);
-
-      favLanguageCode.value = resolved;
-      var localeParts = resolved.split('_');
-      Get.updateLocale(Locale(localeParts[0], localeParts[1]));
+      favLanguageCode.value = await restoreLanguageCode(prefs, langCode);
+      _hasStoredLanguage = true;
     }
   }
 
@@ -97,13 +170,10 @@ class SettingsController extends GetxController {
   /// languages this build ships, and returns the one the app must use.
   ///
   /// An unrecognised code is **written back** as the default, so the fallback
-  /// happens once instead of on every launch. Normalising here also guarantees
-  /// the `xx_YY` shape the caller assumes when it splits the locale: a stored
-  /// code without an underscore would otherwise throw on `localeParts[1]`.
+  /// happens once instead of on every launch.
   ///
-  /// Kept apart from [loadPreferences] because that one ends in
-  /// `Get.updateLocale`, a framework-wide side effect; this is the decision,
-  /// and it is the part worth testing.
+  /// Kept apart from [loadPreferences] because it is the decision, and the part
+  /// worth testing on its own.
   Future<String> restoreLanguageCode(
     SharedPreferences prefs,
     String stored,
@@ -114,32 +184,32 @@ class SettingsController extends GetxController {
     return defaultLanguage.code;
   }
 
-  void setFavMarket(int index) async {
+  Future<void> setFavMarket(int index) async {
     if (favMarketIndex.value == index) return;
 
     favMarketIndex.value = index;
-    final prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_favMarketKey, index);
   }
 
-  void setFavLanguage(String code) async {
+  Future<void> setFavLanguage(String code) async {
     if (favLanguageCode.value == code) return;
 
     favLanguageCode.value = code;
-    var localeParts = code.split('_');
-    Get.updateLocale(Locale(localeParts[0], localeParts[1]));
+    _hasStoredLanguage = true;
+    Get.updateLocale(localeOf(code));
 
-    final prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(_langKey, code);
   }
 
-  void setFavTheme(ThemeMode themeMode) async {
+  Future<void> setFavTheme(ThemeMode themeMode) async {
     if (favBrightness.value == themeMode) return;
 
     favBrightness.value = themeMode;
     Get.changeThemeMode(themeMode);
 
-    final prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(_themeKey, themeMode.name);
   }
 }
