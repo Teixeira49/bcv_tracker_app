@@ -73,5 +73,9 @@ const Map<String, String> ruRu = {
   'quickConverterSection': 'Конвертер',
   'amountLabel': 'Сумма',
   'invertConversionAction': 'Поменять направление',
+  'searchCurrencyHint': 'Поиск валюты или рынка',
+  'noSearchResultsTitle': 'Ничего не найдено',
+  'noSearchResultsMessage': 'Нет валют, соответствующих «@query».',
+  'clearSearchAction': 'Очистить поиск',
   'closeAction': 'Закрыть',
 };

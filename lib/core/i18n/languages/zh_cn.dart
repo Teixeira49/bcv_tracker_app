@@ -72,5 +72,9 @@ const Map<String, String> zhCn = {
   'quickConverterSection': '换算',
   'amountLabel': '金额',
   'invertConversionAction': '反转换算方向',
+  'searchCurrencyHint': '搜索货币或市场',
+  'noSearchResultsTitle': '无结果',
+  'noSearchResultsMessage': '没有与“@query”匹配的货币。',
+  'clearSearchAction': '清除搜索',
   'closeAction': '关闭',
 };

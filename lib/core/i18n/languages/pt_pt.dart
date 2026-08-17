@@ -73,5 +73,9 @@ const Map<String, String> ptPt = {
   'quickConverterSection': 'Conversor',
   'amountLabel': 'Montante',
   'invertConversionAction': 'Inverter a conversão',
+  'searchCurrencyHint': 'Procurar moeda ou mercado',
+  'noSearchResultsTitle': 'Sem resultados',
+  'noSearchResultsMessage': 'Nenhuma moeda corresponde a «@query».',
+  'clearSearchAction': 'Limpar procura',
   'closeAction': 'Fechar',
 };

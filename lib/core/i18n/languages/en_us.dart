@@ -73,5 +73,9 @@ const Map<String, String> enUs = {
   'quickConverterSection': 'Converter',
   'amountLabel': 'Amount',
   'invertConversionAction': 'Reverse the conversion',
+  'searchCurrencyHint': 'Search currency or market',
+  'noSearchResultsTitle': 'No results',
+  'noSearchResultsMessage': 'No currency matches “@query”.',
+  'clearSearchAction': 'Clear search',
   'closeAction': 'Close',
 };

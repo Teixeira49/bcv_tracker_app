@@ -84,13 +84,18 @@ void main() {
     await _pumpHost(tester);
     await _open(tester);
 
-    // One scrollable, not two: the drag that resizes the sheet and the scroll
+    // One scroll view, not two: the drag that resizes the sheet and the scroll
     // that moves the content have to be the same gesture chain, or dragging on
     // the content fights the sheet.
+    //
+    // Asserted on `CustomScrollView` rather than on `Scrollable`, because
+    // content may legitimately nest one of those — a `TextField` carries its
+    // own, as the currency selector's search box does — without joining the
+    // vertical chain. What must stay unique is the sheet's own scroll view.
     expect(
       find.descendant(
         of: find.byType(BaseBottomSheet),
-        matching: find.byType(Scrollable),
+        matching: find.byType(CustomScrollView),
       ),
       findsOneWidget,
     );

@@ -74,5 +74,9 @@ const Map<String, String> jaJp = {
   'quickConverterSection': '換算',
   'amountLabel': '金額',
   'invertConversionAction': '換算の向きを反転',
+  'searchCurrencyHint': '通貨または市場を検索',
+  'noSearchResultsTitle': '該当なし',
+  'noSearchResultsMessage': '「@query」に一致する通貨はありません。',
+  'clearSearchAction': '検索をクリア',
   'closeAction': '閉じる',
 };

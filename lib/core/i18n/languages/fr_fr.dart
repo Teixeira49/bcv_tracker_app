@@ -75,5 +75,9 @@ const Map<String, String> frFr = {
   'quickConverterSection': 'Convertisseur',
   'amountLabel': 'Montant',
   'invertConversionAction': 'Inverser la conversion',
+  'searchCurrencyHint': 'Rechercher une devise ou un marché',
+  'noSearchResultsTitle': 'Aucun résultat',
+  'noSearchResultsMessage': 'Aucune devise ne correspond à « @query ».',
+  'clearSearchAction': 'Effacer la recherche',
   'closeAction': 'Fermer',
 };

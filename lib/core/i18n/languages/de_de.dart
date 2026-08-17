@@ -74,5 +74,9 @@ const Map<String, String> deDe = {
   'quickConverterSection': 'Umrechner',
   'amountLabel': 'Betrag',
   'invertConversionAction': 'Umrechnung umkehren',
+  'searchCurrencyHint': 'Währung oder Markt suchen',
+  'noSearchResultsTitle': 'Keine Treffer',
+  'noSearchResultsMessage': 'Keine Währung passt zu „@query“.',
+  'clearSearchAction': 'Suche löschen',
   'closeAction': 'Schließen',
 };

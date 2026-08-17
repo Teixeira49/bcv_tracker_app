@@ -109,7 +109,7 @@ Entities live in `shared/domain/entities/` and `features/*/domain/entities/`. JS
 
 ## Internationalization
 
-10 languages via GetX `Translations`. Language maps in `lib/core/i18n/languages/` (74 keys, all ten in parity, and `AppMessages` exposes exactly those 74). Use `AppMessages.<key>` for all UI text — never a raw string, and never `'<key>'.tr` in a widget: `app_messages.dart` is the only file that calls `.tr`. A new key goes into all ten files in the same commit, or GetX renders the raw key on screen for the other nine.
+10 languages via GetX `Translations`. Language maps in `lib/core/i18n/languages/` (75 keys, all ten in parity, and `AppMessages` exposes exactly those 75). Use `AppMessages.<key>` for all UI text — never a raw string, and never `'<key>'.tr` in a widget: `app_messages.dart` is the only file that calls `.tr`. A new key goes into all ten files in the same commit, or GetX renders the raw key on screen for the other nine.
 
 ## Routing
 
