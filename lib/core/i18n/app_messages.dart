@@ -148,6 +148,13 @@ class AppMessages {
 
   static String get closeAction => 'closeAction'.tr;
 
+  // --- Converter embedded in the currency detail (#39) ---
+
+  static String get quickConverterSection => 'quickConverterSection'.tr;
+
+  static String get amountLabel => 'amountLabel'.tr;
+
+  static String get invertConversionAction => 'invertConversionAction'.tr;
   // --- Currency selector search (#41) ---
 
   static String get searchCurrencyHint => 'searchCurrencyHint'.tr;

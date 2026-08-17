@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:bcv_tracker_app/core/constants/constants.dart';
 import 'package:bcv_tracker_app/core/constants/market_constants.dart';
 import 'package:bcv_tracker_app/core/helpers/backend_date.dart';
@@ -123,6 +125,18 @@ class CurrencyHelpers {
     return 'Bs.S ${value.toStringAsFixed(2)}';
   }
 
+  /// Significant digits kept when [Constants.converterAmountDecimals] alone
+  /// would render a real amount as zero.
+  ///
+  /// Four rather than two because this figure is not only read: the detail
+  /// sheet's converter carries the displayed value across when the direction is
+  /// reversed, so every digit dropped here is precision lost from the next
+  /// conversion. Two cost about 1% on a round trip; four keep it under 0.01%.
+  static const int _significantDigitsWhenTiny = 4;
+
+  /// Ceiling on the expansion, so a denormal cannot produce an absurd string.
+  static const int _maxDecimals = 12;
+
   /// A converted amount, as the converter shows it.
   ///
   /// The pivot conversion divides doubles, so a clean input comes out as
@@ -131,17 +145,38 @@ class CurrencyHelpers {
   /// display** — `ConverterController` keeps the full value, which is the rule
   /// the converter has followed since its rounding bug.
   ///
+  /// The precision **adapts**: [decimals] normally, more when that would erase
+  /// the figure. See the comment in the body and
+  /// [_significantDigitsWhenTiny].
+  ///
   /// [decimals] defaults to [Constants.converterAmountDecimals] and is exposed
-  /// so a future issue can make the precision a user setting without touching
-  /// any widget. A non-finite value degrades to zero for the same reason
-  /// `_sanitize` exists in the controller: `Infinity` and `NaN` format
+  /// so a future issue can make the base precision a user setting without
+  /// touching any widget. A non-finite value degrades to zero for the same
+  /// reason `CurrencyConversion.sanitize` exists: `Infinity` and `NaN` format
   /// verbatim and must never reach the screen.
   static String castAmount({
     required double value,
     int decimals = Constants.converterAmountDecimals,
   }) {
     final double safe = value.isFinite ? value : 0.0;
-    return safe.toStringAsFixed(decimals);
+    final String fixed = safe.toStringAsFixed(decimals);
+
+    // Two decimals is right for a bolívar price, and wrong in the other
+    // direction: a few bolívares are thousandths of a dollar, and `0.00` for a
+    // real amount is not a rounding, it is the figure erased. When the default
+    // would wipe a non-zero value out, keep enough decimals to show it.
+    //
+    // Detected by rendering rather than by comparing magnitudes, so the rule is
+    // exactly "the default would have shown nothing" — no threshold to keep in
+    // sync with [decimals].
+    if (safe == 0 || double.parse(fixed) != 0) {
+      return fixed;
+    }
+
+    final int firstSignificant = -(log(safe.abs()) / ln10).floor();
+    final int expanded = (firstSignificant + _significantDigitsWhenTiny - 1)
+        .clamp(decimals, _maxDecimals);
+    return safe.toStringAsFixed(expanded);
   }
 
   static String castCurrencySymbolText({required String currencyCode}) {

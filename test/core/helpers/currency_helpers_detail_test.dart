@@ -122,4 +122,39 @@ void main() {
       expect(CurrencyHelpers.castCurrencyDisplayName(currency), 'Peso chileno');
     });
   });
+
+  group('castAmount', () {
+    test('two decimals, as a bolívar price is quoted', () {
+      expect(CurrencyHelpers.castAmount(value: 864.0962999999999), '864.10');
+      expect(CurrencyHelpers.castAmount(value: 2.5), '2.50');
+      expect(CurrencyHelpers.castAmount(value: 0), '0.00');
+    });
+
+    test('keeps a small amount legible instead of erasing it', () {
+      // A few bolívares are thousandths of a dollar. `0.00` there is not a
+      // rounding, it is the figure gone — and the detail sheet then carries
+      // that figure across when the direction is reversed.
+      expect(CurrencyHelpers.castAmount(value: 0.0013137), '0.001314');
+      expect(CurrencyHelpers.castAmount(value: 0.0000040), '0.000004000');
+    });
+
+    test('only expands when the default would have shown nothing', () {
+      // 0.005 rounds to 0.01, which is a real figure, so it is left alone.
+      expect(CurrencyHelpers.castAmount(value: 0.005), '0.01');
+      expect(CurrencyHelpers.castAmount(value: 0.994), '0.99');
+    });
+
+    test('a negative amount keeps its sign and its digits', () {
+      expect(CurrencyHelpers.castAmount(value: -0.0013137), '-0.001314');
+    });
+
+    test('a non-finite value never reaches the screen', () {
+      expect(CurrencyHelpers.castAmount(value: double.infinity), '0.00');
+      expect(CurrencyHelpers.castAmount(value: double.nan), '0.00');
+    });
+
+    test('the base precision stays a parameter, for a future setting', () {
+      expect(CurrencyHelpers.castAmount(value: 2.5, decimals: 4), '2.5000');
+    });
+  });
 }

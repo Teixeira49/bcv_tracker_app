@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import '../../../../shared/data/repositories/currency_repository.dart';
+import '../../../../shared/domain/conversion.dart';
 import '../../../../shared/domain/entities/currency.dart';
 import '../../domain/entities/convertible_currency.dart';
 
@@ -125,18 +126,10 @@ class ConverterController extends GetxController {
   /// data yet — and dividing doubles by zero does not throw in Dart: it yields
   /// `Infinity`, or `NaN` when the dividend is zero too. The views read this
   /// getter to say so instead of painting a meaningless number.
-  bool get isConversionUnavailable =>
-      !_isUsableRate(fromCurrency.currency.value) ||
-      !_isUsableRate(toCurrency.currency.value);
-
-  /// A rate can only take part in the conversion when it is finite and not
-  /// zero: zero cannot divide, and a non-finite rate poisons every result it
-  /// touches.
-  static bool _isUsableRate(double rate) => rate.isFinite && rate != 0.0;
-
-  /// Last line of defence before a value reaches the UI: `Infinity` and `NaN`
-  /// are formatted verbatim by `toString()`, so they never leave this class.
-  static double _sanitize(double value) => value.isFinite ? value : 0.0;
+  bool get isConversionUnavailable => !CurrencyConversion.canConvert(
+    fromRate: fromCurrency.currency.value,
+    toRate: toCurrency.currency.value,
+  );
 
   bool? selectCurrency(Currency selected, {required bool isInput}) {
     final Currency current = isInput
@@ -178,16 +171,14 @@ class ConverterController extends GetxController {
       toCurrency = ConvertibleCurrency(currency: newTo, convertedValue: 1.0);
       fromCurrency = fromCurrency.copyWith(currency: newFrom);
 
-      // Reverse Calculation: From = (ToAmount * ToRate) / FromRate
-      final double toAmount = 1.0;
-      final double toRate = newTo.value;
-      final double fromRate = newFrom.value;
-
-      // Same guard as [calculator]: this branch divides too, so a market with
-      // no rate would put `Infinity` in the input field.
-      final double fromAmount = _isUsableRate(fromRate) && _isUsableRate(toRate)
-          ? _sanitize((toAmount * toRate) / fromRate)
-          : 0.0;
+      // Reverse calculation: From = (ToAmount * ToRate) / FromRate. Same
+      // shared maths as [calculator], read the other way round, so the guard
+      // against a market with no rate comes for free.
+      final double fromAmount = CurrencyConversion.convert(
+        amount: 1.0,
+        fromRate: newTo.value,
+        toRate: newFrom.value,
+      );
       fromCurrency = fromCurrency.copyWith(convertedValue: fromAmount);
     } else {
       // Logic: Reset "From" to 1 (standard behavior), calculate "To"
@@ -219,26 +210,17 @@ class ConverterController extends GetxController {
       return;
     }
 
-    String formattedValue = value.replaceAll(',', '.');
-    if (formattedValue == '.') formattedValue = '0';
-
-    final double amount = double.tryParse(formattedValue) ?? 0.0;
+    final double amount = CurrencyConversion.parseAmount(value);
 
     fromCurrency = fromCurrency.copyWith(convertedValue: amount);
 
-    final double fromRate = fromCurrency.currency.value;
-    final double toRate = toCurrency.currency.value;
-
-    if (!_isUsableRate(fromRate) || !_isUsableRate(toRate)) {
-      // Dividing here would hand `Infinity` (or `NaN`) straight to the view.
-      // Zero is the honest placeholder; [isConversionUnavailable] is what tells
-      // the user the pair has no rate to convert with.
-      toCurrency = toCurrency.copyWith(convertedValue: 0.0);
-      update();
-      return;
-    }
-
-    final double result = _sanitize((amount * fromRate) / toRate);
+    // Zero when the pair cannot convert, which is the honest placeholder;
+    // [isConversionUnavailable] is what tells the user why.
+    final double result = CurrencyConversion.convert(
+      amount: amount,
+      fromRate: fromCurrency.currency.value,
+      toRate: toCurrency.currency.value,
+    );
 
     toCurrency = toCurrency.copyWith(convertedValue: result);
     update();

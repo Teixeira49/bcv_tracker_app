@@ -2,6 +2,7 @@ import 'package:bcv_tracker_app/core/constants/market_constants.dart';
 import 'package:bcv_tracker_app/core/helpers/currency_helpers.dart';
 import 'package:bcv_tracker_app/core/i18n/app_messages.dart';
 import 'package:bcv_tracker_app/core/i18n/app_translations.dart';
+import 'package:bcv_tracker_app/features/currency_detail/presentation/controller/currency_detail_controller.dart';
 import 'package:bcv_tracker_app/features/currency_detail/presentation/page/currency_detail_sheet.dart';
 import 'package:bcv_tracker_app/features/currency_detail/presentation/widgets/currency_detail_section.dart';
 import 'package:bcv_tracker_app/shared/domain/entities/currency.dart';
@@ -15,6 +16,12 @@ import 'package:get/get.dart';
 /// height, real translations. No repository and no controller are involved —
 /// the sheet is fed the rate the card already had.
 Future<void> _pumpSheet(WidgetTester tester, Currency currency) async {
+  // The converter section (#39) reads its amount and direction from the
+  // controller, so the sheet now needs it registered — as the app does in
+  // `initial_bindings.dart`.
+  Get.testMode = true;
+  Get.put(CurrencyDetailController());
+
   await tester.pumpWidget(
     GetMaterialApp(
       translations: AppTranslations(),
@@ -173,7 +180,8 @@ void main() {
     // Their presence is the contract #5, #7 and #39 build against: the slots
     // hold their final position in the sliver list and already carry the rate.
     // `skipOffstage: false` because a sliver with no geometry is off-stage by
-    // definition — which is precisely what "renders nothing" means here.
+    // definition — which is precisely what "renders nothing" means for the two
+    // still empty.
     for (final Type slot in <Type>[
       CurrencyDetailChartSlot,
       CurrencyDetailActionsSlot,
@@ -182,10 +190,19 @@ void main() {
       expect(find.byType(slot, skipOffstage: false), findsOneWidget);
     }
 
-    // And nothing of theirs is painted: the only section on screen is the
-    // detail table. #38 requires the sheet to look complete without them.
+    // Two sections on screen: the detail table and the converter #39 filled.
+    // The chart (#5) and the actions (#7) still paint nothing, so the sheet
+    // stays complete without them — which is what #38 asked for.
     expect(
       find.byType(CurrencyDetailSection, skipOffstage: false),
+      findsNWidgets(2),
+    );
+    expect(find.text(AppMessages.currencyDetailsSection), findsOneWidget);
+    // `skipOffstage: false`: the converter is the last section, so in this
+    // harness it sits just below the fold. Being built is what matters here —
+    // that it is reachable is the sheet's scrolling, tested elsewhere.
+    expect(
+      find.text(AppMessages.quickConverterSection, skipOffstage: false),
       findsOneWidget,
     );
   });

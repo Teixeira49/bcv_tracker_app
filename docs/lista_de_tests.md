@@ -9,6 +9,7 @@ Este documento es el **inventario de la suite**: primero lo que ya está cubiert
 | **Helpers** | `test/core/helpers/backend_date_test.dart` | Parseo y formateo de fechas del backend |
 | | `test/core/helpers/currency_helpers_average_test.dart` | Cálculo de promedios y mapeo de códigos |
 | | `test/core/helpers/currency_helpers_parse_date_test.dart` | Formato de fechas para la UI |
+| | `test/core/helpers/currency_helpers_detail_test.dart` | **(#38, #39)** `isOfficialRate`, `castTendency`, `castOptionalDate`, los nombres traducidos de lira/yuan/rublo, y la precisión adaptativa de `castAmount` |
 | | `test/core/helpers/currency_helpers_detail_test.dart` | **(#38)** `isOfficialRate`, `castTendency`, `castOptionalDate` y los nombres traducidos de lira/yuan/rublo |
 | | `test/core/helpers/search_text_test.dart` | **(#41)** Plegado de mayúsculas y acentos, y coincidencia por nombre o mercado; incluye los scripts no latinos |
 | | `test/core/helpers/amount_input_formatter_test.dart` | **(#40)** Qué acepta y qué rechaza el campo de monto: dígitos, un separador, y nada de letras, símbolos o pegados a medio parsear |
@@ -23,6 +24,7 @@ Este documento es el **inventario de la suite**: primero lo que ya está cubiert
 | | `test/shared/presentation/settings_controller_language_test.dart` | Idioma: `orElse`, normalización de código guardado |
 | | `test/shared/presentation/settings_controller_test.dart` | **(#28)** Tema y mercado favorito: persistencia y no-op |
 | | `test/features/currency_detail/currency_detail_controller_test.dart` | **(#38)** Rate abierta y limpiada, y disposición del worker (#45) |
+| | `test/features/currency_detail/currency_detail_converter_test.dart` | **(#39)** Conversor embebido: sentido y su inversa, coma decimal, tasa cero sin `Infinity`, limpieza al cerrar — y que el resultado **coincide con el conversor completo** |
 | **Widgets** | `test/features/home/home_page_test.dart` | **(#28)** Home: estado de error, sin-error, frame |
 | | `test/features/converter/converter_page_test.dart` | **(#28)** Cuerpo del conversor: render e input |
 | | `test/features/currency_detail/currency_detail_sheet_test.dart` | **(#38)** Cabecera, tabla de detalles, degradación sin `change`/`createDate`, avatar y huecos reservados |

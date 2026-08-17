@@ -30,9 +30,16 @@ part of '../page/currency_detail_sheet.dart';
 //    chart. Return the empty sliver instead of a placeholder.
 // 5. **No text literals.** Every label goes through `AppMessages` in the ten
 //    languages (`i18n-convention.md`).
-// 6. **State goes in `CurrencyDetailController`**, not in a `StatefulWidget`:
-//    a chart range or a converter amount has to survive the rebuilds the sheet
-//    does while being dragged.
+// 6. **State of record goes in `CurrencyDetailController`**, not in a
+//    `StatefulWidget`: a chart range or a converter amount has to survive the
+//    rebuilds the sheet does while being dragged. A widget may still own the
+//    plumbing that binds to it — the converter keeps a `TextEditingController`
+//    seeded from the controller and written only towards it — but the value
+//    anyone else reads lives on the controller.
+// 7. **Take the rate from the slot's `currency`, not from the controller**,
+//    even though they hold the same thing at runtime: the sheet renders what it
+//    was handed, and a section that reads a second source is a sheet that shows
+//    one rate and operates on another the day the two drift.
 
 /// The empty sliver every unfilled slot renders.
 const Widget _noSection = SliverToBoxAdapter(child: SizedBox.shrink());
@@ -81,19 +88,20 @@ class CurrencyDetailActionsSlot extends StatelessWidget {
   Widget build(BuildContext context) => _noSection;
 }
 
-/// Converter dedicated to this rate — **reserved for [#39]**.
+/// Converter dedicated to this rate — **filled by [#39]**.
 ///
-/// An embedded amount field that converts against [currency] only, without
-/// making the user pick the pair the way the Converter tab does. The pivot maths
-/// already exist in `ConverterController`; the section should reuse them rather
-/// than recompute a rate, so a fix to the rounding lands in both places at once.
+/// An amount field that converts against [currency] only: the sheet already
+/// fixed which currency this is about, so offering a selector here would be
+/// asking a question the context answered. The direction flips between "this
+/// rate into bolívares" and back.
 ///
-/// Last section of the sheet: it is the one that grows tallest and the one a
-/// keyboard covers, and the sheet expands to `_maxExtent` to make room.
+/// The maths are **not** reimplemented. Both this and the full converter call
+/// `CurrencyConversion`, which is what makes #39's "exactly the same result"
+/// verifiable instead of asserted — a test runs an amount through both and
+/// compares.
 ///
-/// See the contract at the top of this file before filling it in — point 2
-/// matters most here, since a text field inside the sheet scrolls into view
-/// through the same controller.
+/// Last section of the sheet: it is the one a keyboard covers, and the sheet
+/// expands to its maximum extent to make room.
 class CurrencyDetailConverterSlot extends StatelessWidget {
   const CurrencyDetailConverterSlot({super.key, required this.currency});
 
@@ -101,5 +109,193 @@ class CurrencyDetailConverterSlot extends StatelessWidget {
   final Currency currency;
 
   @override
-  Widget build(BuildContext context) => _noSection;
+  Widget build(BuildContext context) => SliverToBoxAdapter(
+    child: GetBuilder<CurrencyDetailController>(
+      builder: (CurrencyDetailController controller) => CurrencyDetailSection(
+        title: AppMessages.quickConverterSection,
+        child: _CurrencyDetailConverterBody(
+          controller: controller,
+          rate: currency,
+        ),
+      ),
+    ),
+  );
+}
+
+/// The amount in, the result out, and the button that swaps them.
+class _CurrencyDetailConverterBody extends StatefulWidget {
+  const _CurrencyDetailConverterBody({
+    required this.controller,
+    required this.rate,
+  });
+
+  final CurrencyDetailController controller;
+
+  /// The rate the sheet is detailing. Passed down rather than read off the
+  /// controller so the section converts exactly what the sheet shows.
+  final Currency rate;
+
+  @override
+  State<_CurrencyDetailConverterBody> createState() =>
+      _CurrencyDetailConverterBodyState();
+}
+
+class _CurrencyDetailConverterBodyState
+    extends State<_CurrencyDetailConverterBody> {
+  /// Owns the field's text; the value of record lives on the controller.
+  ///
+  /// The two are seeded once and then only ever written **towards** the
+  /// controller. Writing back would fight the typing: `1.` parses to the same
+  /// number as `1.0` but is not the same text, and replacing it would move the
+  /// caret out from under the user.
+  late final TextEditingController _amount = TextEditingController(
+    text: widget.controller.amountInput,
+  );
+
+  @override
+  void didUpdateWidget(covariant _CurrencyDetailConverterBody oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // The controller changed the amount without the field doing it: a swap
+    // carried the result over, or the sheet was dismissed. Typing never lands
+    // here — `onChanged` writes the same text the field already holds — so this
+    // cannot fight the caret.
+    final String owned = widget.controller.amountInput;
+    if (owned != _amount.text) {
+      _amount.value = TextEditingValue(
+        text: owned,
+        selection: TextSelection.collapsed(offset: owned.length),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _amount.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final CurrencyDetailController controller = widget.controller;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        _ConverterRow(
+          currency: controller.fromCurrencyFor(widget.rate),
+          child: TextField(
+            controller: _amount,
+            onChanged: controller.setAmount,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            // The same guard the full converter got in #40: the keyboard type
+            // is a hint to the on-screen keyboard, not a constraint on what a
+            // hardware one, a paste or a dictation can send.
+            inputFormatters: const <TextInputFormatter>[AmountInputFormatter()],
+            // Flutter scrolls the *caret* into view when the keyboard opens,
+            // which left the field visible and the result right under the fold:
+            // you typed an amount and could not see the answer. This asks for
+            // the swap button and the result row to be kept on screen with it.
+            scrollPadding: EdgeInsets.only(bottom: WidthValues.spacing7xl),
+            textAlign: TextAlign.end,
+            decoration: InputDecoration(
+              isDense: true,
+              border: InputBorder.none,
+              hintText: AppMessages.amountLabel,
+            ),
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              color: ColorValues.textPrimary(context),
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.center,
+          child: IconButton(
+            onPressed: () => controller.toggleDirection(widget.rate),
+            tooltip: AppMessages.invertConversionAction,
+            icon: const Icon(Icons.swap_vert_rounded),
+            color: ColorValues.fgBrandSecondary(context),
+          ),
+        ),
+        _ConverterRow(
+          currency: controller.toCurrencyFor(widget.rate),
+          child: Text(
+            CurrencyHelpers.castAmount(
+              value: controller.convertedValueFor(widget.rate),
+            ),
+            textAlign: TextAlign.end,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              color: ColorValues.textPrimary(context),
+            ),
+          ),
+        ),
+        // Only on the side that shows a result: saying it twice is noise, and
+        // a bare 0 there would read as a legitimate conversion.
+        if (!controller.canConvertFor(widget.rate)) ...<Widget>[
+          SizedBox(height: WidthValues.spacingXs),
+          Row(
+            children: <Widget>[
+              Icon(
+                Icons.error_outline,
+                size: 16,
+                color: ColorValues.textWarningPrimary(context),
+              ),
+              SizedBox(width: WidthValues.spacingXs),
+              Flexible(
+                child: Text(
+                  AppMessages.conversionUnavailable,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: ColorValues.textWarningPrimary(context),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+/// One side of the conversion: which currency it is, and the figure.
+class _ConverterRow extends StatelessWidget {
+  const _ConverterRow({required this.currency, required this.child});
+
+  final Currency currency;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    children: <Widget>[
+      Text(
+        CurrencyHelpers.castCurrencySymbolText(currencyCode: currency.keyName),
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w700,
+          color: ColorValues.textSecondary(context),
+        ),
+      ),
+      SizedBox(width: WidthValues.spacingXs),
+      Flexible(
+        child: Text(
+          CurrencyHelpers.castCurrencyDisplayCode(currency.keyName),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: 14,
+            color: ColorValues.textTertiary(context),
+          ),
+        ),
+      ),
+      SizedBox(width: WidthValues.spacingXs),
+      Expanded(flex: 3, child: child),
+    ],
+  );
 }
