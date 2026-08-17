@@ -100,7 +100,7 @@ REST API
 - `CurrencyRepository` — persistent service holding live currency data; every feature controller observes it
 - `SettingsController` — persists language, theme and followed markets via `SharedPreferences`
 - `HomeController` — exposes `averageCurrencies`, `bcvCurrencies`, `isLoading`, `errorMessage`
-- `ConverterController` — pivot conversion with VES as base; consolidates average + BCV rates
+- `ConverterController` — the full converter's selection and state. The **arithmetic** is not here: it lives in `shared/domain/conversion.dart` (`CurrencyConversion`), which the embedded converter of the detail sheet calls too, so the two cannot drift ([#39](https://github.com/Teixeira49/bcv_tracker_app/issues/39))
 - `CurrencyDetailController` — holds the rate the detail sheet has open. The rate is a **snapshot handed over by the tapped card**, not a re-fetch; the controller exists so the sections still to come (chart [#5](https://github.com/Teixeira49/bcv_tracker_app/issues/5), actions [#7](https://github.com/Teixeira49/bcv_tracker_app/issues/7), converter [#39](https://github.com/Teixeira49/bcv_tracker_app/issues/39)) have somewhere to keep state across the rebuilds the sheet does while being dragged
 
 ## Data Modeling
@@ -109,7 +109,7 @@ Entities live in `shared/domain/entities/` and `features/*/domain/entities/`. JS
 
 ## Internationalization
 
-10 languages via GetX `Translations`. Language maps in `lib/core/i18n/languages/` (71 keys, all ten in parity, and `AppMessages` exposes exactly those 71). Use `AppMessages.<key>` for all UI text — never a raw string, and never `'<key>'.tr` in a widget: `app_messages.dart` is the only file that calls `.tr`. A new key goes into all ten files in the same commit, or GetX renders the raw key on screen for the other nine.
+10 languages via GetX `Translations`. Language maps in `lib/core/i18n/languages/` (75 keys, all ten in parity, and `AppMessages` exposes exactly those 75). Use `AppMessages.<key>` for all UI text — never a raw string, and never `'<key>'.tr` in a widget: `app_messages.dart` is the only file that calls `.tr`. A new key goes into all ten files in the same commit, or GetX renders the raw key on screen for the other nine.
 
 ## Routing
 

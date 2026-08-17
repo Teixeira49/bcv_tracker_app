@@ -70,5 +70,12 @@ const Map<String, String> enUs = {
   'variationLabel': 'Change',
   'officialRate': 'Official',
   'parallelRate': 'Parallel',
+  'quickConverterSection': 'Converter',
+  'amountLabel': 'Amount',
+  'invertConversionAction': 'Reverse the conversion',
+  'searchCurrencyHint': 'Search currency or market',
+  'noSearchResultsTitle': 'No results',
+  'noSearchResultsMessage': 'No currency matches “@query”.',
+  'clearSearchAction': 'Clear search',
   'closeAction': 'Close',
 };

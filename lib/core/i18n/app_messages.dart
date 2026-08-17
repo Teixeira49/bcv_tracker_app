@@ -147,4 +147,28 @@ class AppMessages {
   static String get parallelRate => 'parallelRate'.tr;
 
   static String get closeAction => 'closeAction'.tr;
+
+  // --- Converter embedded in the currency detail (#39) ---
+
+  static String get quickConverterSection => 'quickConverterSection'.tr;
+
+  static String get amountLabel => 'amountLabel'.tr;
+
+  static String get invertConversionAction => 'invertConversionAction'.tr;
+  // --- Currency selector search (#41) ---
+
+  static String get searchCurrencyHint => 'searchCurrencyHint'.tr;
+
+  static String get noSearchResultsTitle => 'noSearchResultsTitle'.tr;
+
+  /// What the user typed, quoted back at them.
+  ///
+  /// A method rather than a getter because the query is interpolated by GetX
+  /// (`@query`), not concatenated here: the word order around the quotes
+  /// differs between the ten languages, and gluing strings would fix it to the
+  /// Spanish one (see `i18n-convention.md`, rule 7).
+  static String noSearchResultsMessage(String query) =>
+      'noSearchResultsMessage'.trParams(<String, String>{'query': query});
+
+  static String get clearSearchAction => 'clearSearchAction'.tr;
 }

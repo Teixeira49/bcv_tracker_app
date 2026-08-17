@@ -71,5 +71,12 @@ const Map<String, String> esEs = {
   'variationLabel': 'Variación',
   'officialRate': 'Oficial',
   'parallelRate': 'Paralelo',
+  'quickConverterSection': 'Conversor',
+  'amountLabel': 'Monto',
+  'invertConversionAction': 'Invertir la conversión',
+  'searchCurrencyHint': 'Buscar moneda o mercado',
+  'noSearchResultsTitle': 'Sin resultados',
+  'noSearchResultsMessage': 'Ninguna moneda coincide con «@query».',
+  'clearSearchAction': 'Borrar búsqueda',
   'closeAction': 'Cerrar',
 };

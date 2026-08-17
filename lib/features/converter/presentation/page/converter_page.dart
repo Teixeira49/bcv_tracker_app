@@ -8,6 +8,7 @@ import '../../../../config/theme/colors/colors_values.dart';
 import '../../../../config/theme/width/width_values.dart';
 import '../../../../core/helpers/amount_input_formatter.dart';
 import '../../../../core/helpers/currency_helpers.dart';
+import '../../../../core/helpers/search_text.dart';
 import '../../../../shared/domain/entities/currency.dart';
 // import '../../../../shared/presentation/controller/currency_controller.dart';
 import '../../../../shared/presentation/widgets/app_state_view.dart';

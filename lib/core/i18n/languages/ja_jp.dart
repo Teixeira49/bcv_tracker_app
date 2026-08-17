@@ -71,5 +71,12 @@ const Map<String, String> jaJp = {
   'variationLabel': '変動',
   'officialRate': '公定',
   'parallelRate': '並行',
+  'quickConverterSection': '換算',
+  'amountLabel': '金額',
+  'invertConversionAction': '換算の向きを反転',
+  'searchCurrencyHint': '通貨または市場を検索',
+  'noSearchResultsTitle': '該当なし',
+  'noSearchResultsMessage': '「@query」に一致する通貨はありません。',
+  'clearSearchAction': '検索をクリア',
   'closeAction': '閉じる',
 };
