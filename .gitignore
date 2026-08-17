@@ -69,3 +69,8 @@ app.*.map.json
 .mcp.local.json
 # Alchemist writes the actual/diff images here when a golden fails; never commit them.
 test/**/failures/
+
+# Notas del tester: `release_notes.json` es la fuente y sí se versiona; el .txt
+# lo deriva `tool/release_notes_txt.dart` en cada build (#93). Dos archivos con
+# la misma prosa se desincronizan, y el que nadie lee lo hace primero.
+release_notes.txt

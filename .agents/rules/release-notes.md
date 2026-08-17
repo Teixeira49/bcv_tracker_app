@@ -3,6 +3,8 @@ description: Formato y contenido de las notas de versión que consume Codemagic 
 paths:
   - "release_notes.json"
   - "release_notes*.txt"
+  - "tool/release_notes_txt.dart"
+  - "test/tool/release_notes_txt_test.dart"
   - "CHANGELOG.md"
   - "docs/release/**"
   # Los cuatro de arriba aún no existen en el repo, así que por sí solos dejaban
@@ -34,7 +36,7 @@ PR mergeado
 
 ## El archivo que lee Codemagic
 
-Codemagic recoge automáticamente un archivo llamado **`release_notes.json`** (o `release_notes.txt`) situado en el **directorio de trabajo del proyecto**, que aquí es la raíz del repositorio. No hay que declararlo en `codemagic.yaml`.
+Codemagic reconoce un archivo llamado **`release_notes.json`** (o `release_notes.txt`) situado en el **directorio de trabajo del proyecto**, que aquí es la raíz del repositorio. Para el correo de build y Slack basta con que esté ahí; para que llegue a Firebase App Distribution hace falta el paso que describe [Cómo llega el archivo al tester](#cómo-llega-el-archivo-al-tester).
 
 ```json
 [
@@ -63,23 +65,43 @@ Para el envío a revisión de App Store, cada entrada admite además `descriptio
 
    Escribe **primero la versión de 500** y expándela si hace falta. Comprimir 4.000 a 500 produce un texto amputado; ampliar 500 bien escritos es trivial.
 
-## ⚠️ Hoy la app no recoge este archivo
+## Cómo llega el archivo al tester
 
-Codemagic solo publica `release_notes.json` automáticamente cuando la distribución va por su bloque **`publishing:`**. Los tres workflows de `codemagic.yaml` invocan el CLI de Firebase a mano en un paso de script:
+Codemagic solo publica `release_notes.json` **por su cuenta** cuando la distribución va por su bloque `publishing:`. Los tres workflows de `codemagic.yaml` invocan el CLI de Firebase a mano, y el CLI toma **texto plano**, no el JSON multi-idioma. Durante un tiempo eso significó que las notas eran literalmente `Build #12 – rama master` —una línea que repite lo que la consola de Firebase ya muestra encima— y que este archivo se ignoraba. **Ya no** (#93):
 
 ```yaml
-firebase appdistribution:distribute \
-  --release-notes "Build #${CM_BUILD_NUMBER:-1} – rama ${CM_BRANCH:-master}"
+# 1) Antes de compilar: deriva el .txt del .json, y falla si el .json está mal
+- name: Derivar notas del tester
+  script: dart run tool/release_notes_txt.dart
+
+# 2) Al distribuir: el CLI lee el .txt derivado
+- name: Distribuir a Firebase App Distribution
+  script: |
+    firebase appdistribution:distribute \
+      ... \
+      --release-notes-file release_notes.txt
 ```
 
-Esa cadena no dice nada al tester: repite el número de build que ya se ve en la consola. Mientras siga así, `release_notes.json` **se ignora**. Hay dos salidas, y conviene decidirla antes de la primera versión que se quiera anunciar de verdad:
+Lo que hay que saber para escribir las notas:
 
-- **Pasar el archivo a mano** — cambio mínimo, funciona con el script actual:
-  ```yaml
-  --release-notes-file release_notes.txt
-  ```
-  (el CLI de Firebase toma texto plano, no el JSON multi-idioma)
-- **Migrar al bloque `publishing: firebase:`** de Codemagic — entonces las notas, el correo y Slack salen del `release_notes.json` sin tocar nada más.
+- **`release_notes.json` sigue siendo la única fuente.** El `.txt` es un artefacto de build, está gitignored y no se edita nunca. Dos archivos con la misma prosa se desincronizan, y el que nadie lee lo hace primero.
+- **El tester lee `es-ES`.** [`tool/release_notes_txt.dart`](../../tool/release_notes_txt.dart) recorre `kPreferredLanguages` —hoy `es-ES`, luego `en-US`— y cae al **primer idioma del archivo** si no encuentra ninguno, que es la misma regla que aplica Codemagic. Esa coincidencia es deliberada: si algún día se migra al bloque `publishing:`, lo que se publica no cambia sin que nadie se entere.
+- **`en-US` sigue siendo obligatoria** aunque no sea la que ve el tester, y el script **falla el build** si falta. Es la entrada que Codemagic manda al correo y a Slack.
+- **No hay fallback a una cadena genérica.** Un JSON ausente, roto o con una entrada vacía tumba el build en el paso 1, en segundos y antes de compilar. Es a propósito: degradar en silencio a "Build #N" es exactamente cómo las notas dejaron de llegar la primera vez.
+- Lo cubre `test/tool/release_notes_txt_test.dart`, que además valida el `release_notes.json` real del repo contra el límite de 500 caracteres y la prohibición de `<`/`>`. Un release que deje el archivo mal rompe la suite antes de llegar a CI.
+
+### Por qué este camino y no `publishing: firebase:`
+
+Migrar al bloque `publishing: firebase:` de Codemagic también resuelve el problema, lee el JSON nativamente y borra los tres scripts del CLI. Se descartó por ahora, no por gusto:
+
+| | `--release-notes-file` (elegido) | `publishing: firebase:` |
+|---|---|---|
+| Credenciales | Ninguna nueva; sigue la autenticación actual | Pide `firebase_service_account` (el **contenido** del JSON de service account) o el `firebase_token` que Firebase marcó como deprecado. `GOOGLE_APPLICATION_CREDENTIALS` es una **ruta** y ese bloque no la acepta |
+| Idioma que ve el tester | El que se elija; hoy `es-ES` | Fijo: `en-US` |
+| Verificable antes de mergear | Sí, la derivación corre en local y tiene tests | No, hace falta lanzar un build real |
+| Si sale mal | El paso falla en segundos | Los workflows solo se disparan en push a `master`: se descubre en el peor momento |
+
+Sigue siendo el destino razonable a largo plazo. El día que el service account esté confirmado en la consola de Codemagic, la migración es cambiar los scripts por el bloque — y `kPreferredLanguages` documenta qué se pierde al hacerlo.
 
 ## Qué idiomas escribir
 
@@ -110,7 +132,8 @@ Tres criterios:
 - [ ] Sin `<`, `>`, markdown ni enlaces.
 - [ ] El contenido es coherente con `CHANGELOG.md` y con `docs/release/RELEASE_v<X.Y.Z>.md`, y ninguno contradice lo que el PR realmente cambió.
 - [ ] Los códigos de locale llevan guion y existen (`es-ES`, `ja-JP`).
-- [ ] Si la distribución sigue yendo por script, las notas se pasan con `--release-notes-file`; si no, no llegan.
+- [ ] `flutter test test/tool/` pasa: valida el JSON real contra los límites de arriba, así que si esta lista está bien la suite lo confirma sola.
+- [ ] Nadie ha commiteado un `release_notes.txt`: se deriva en cada build y está gitignored.
 
 ## Relación con las otras reglas
 
