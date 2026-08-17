@@ -95,10 +95,18 @@ class MyApp extends StatelessWidget {
       // `ctrl.themeMode ?? themeMode` and `Get.locale ?? locale`, so the
       // setters take precedence over these starting values.
       themeMode: settings.startupThemeMode,
-      // `null` means "no stored choice, follow the device" — today's behaviour,
-      // kept deliberately. #98 is where that decision gets revisited.
-      locale: settings.startupLocale ?? Get.deviceLocale,
-      fallbackLocale: const Locale('en', 'US'),
+      // One source for the interface and for the settings selector, which is
+      // the fix for #98. This used to be `Get.deviceLocale` while the selector
+      // read `favLanguageCode`, so on a fresh install the app rendered in the
+      // phone's language and the selector claimed "Español". The service now
+      // resolves the device's language into that same field, so the two cannot
+      // drift apart. Never null.
+      locale: settings.startupLocale,
+      // Unreachable in practice — `startupLocale` always resolves to one of the
+      // ten languages `AppTranslations` registers — and kept as a backstop.
+      fallbackLocale: SettingsController.localeOf(
+        SettingsController.defaultLanguage.code,
+      ),
       translations: AppTranslations(),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:bcv_tracker_app/features/splash/presentation/page/splash_page.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 import '../../features/converter/presentation/controller/converter_controller.dart';
@@ -27,11 +28,15 @@ class InitialBinding extends Bindings {
   /// registered here; everything else stays in [dependencies]. Registration
   /// still happens in this one file, which is what
   /// `.agents/rules/dependency-injection.md` asks for.
-  static Future<void> initServices() async {
+  /// [deviceLocale] overrides the device's language, which the settings service
+  /// follows until the user picks one (#98). A parameter so a test can name it
+  /// instead of inheriting whatever the host machine is set to; production
+  /// leaves it out and the service reads `Get.deviceLocale`.
+  static Future<void> initServices({Locale? deviceLocale}) async {
     // `permanent`: settings outlive every route, and re-reading the disk on a
     // rebuild would reopen the very window #59 closed.
     await Get.putAsync<SettingsController>(
-      () => SettingsController().init(),
+      () => SettingsController().init(deviceLocale: deviceLocale),
       permanent: true,
     );
   }

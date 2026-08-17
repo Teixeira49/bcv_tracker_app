@@ -65,7 +65,9 @@ void main() {
     test('a fresh install exposes the defaults, not an error', () async {
       SharedPreferences.setMockInitialValues(<String, Object>{});
 
-      await InitialBinding.initServices();
+      await InitialBinding.initServices(
+        deviceLocale: const Locale('cs', 'CZ'), // not a language we publish
+      );
 
       final SettingsController settings = Get.find<SettingsController>();
       expect(settings.favBrightness.value, ThemeMode.system);
@@ -73,9 +75,9 @@ void main() {
         settings.favLanguageCode.value,
         SettingsController.defaultLanguage.code,
       );
-      // Nothing stored means "follow the device" — today's behaviour, kept
-      // deliberately by #59 and revisited by #98.
-      expect(settings.startupLocale, isNull);
+      // Never null since #98: the interface and the selector read one value.
+      expect(settings.startupLocale, const Locale('es', 'ES'));
+      expect(settings.hasStoredLanguage, isFalse);
     });
 
     test('a stored language becomes the startup locale', () async {
@@ -141,7 +143,7 @@ void main() {
       await tester.pumpWidget(
         GetMaterialApp(
           themeMode: settings.startupThemeMode,
-          locale: settings.startupLocale ?? const Locale('en', 'US'),
+          locale: settings.startupLocale,
           theme: ThemeData.light(),
           darkTheme: ThemeData.dark(),
           home: const SizedBox(),
