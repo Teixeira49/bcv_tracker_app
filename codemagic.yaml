@@ -37,6 +37,13 @@ workflows:
       - name: Instalar dependencias
         script: flutter pub get
 
+      # Antes de compilar, a propósito: si las notas están mal, el build cae en
+      # segundos en vez de a los quince minutos. El script no tiene fallback a
+      # una cadena genérica — un fallback silencioso es exactamente cómo las
+      # notas dejaron de llegar (#93).
+      - name: Derivar notas del tester
+        script: dart run tool/release_notes_txt.dart
+
       - name: Analizar código
         script: flutter analyze
 
@@ -63,7 +70,7 @@ workflows:
             build/app/outputs/flutter-apk/app-release.apk \
             --app "$FIREBASE_APP_ID_ANDROID" \
             --groups "testers-pre-produccion" \
-            --release-notes "Build #${CM_BUILD_NUMBER:-1} – rama ${CM_BRANCH:-master}"
+            --release-notes-file release_notes.txt
 
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
@@ -124,6 +131,12 @@ workflows:
       - name: Instalar dependencias Flutter
         script: flutter pub get
 
+      # Mismo paso, mismo motivo y mismo sitio que en `android-firebase`: las
+      # notas se derivan antes de compilar para que un JSON roto no cueste un
+      # build entero (#93).
+      - name: Derivar notas del tester
+        script: dart run tool/release_notes_txt.dart
+
       - name: Instalar pods
         script: |
           cd ios
@@ -158,7 +171,7 @@ workflows:
             $(find build/ios/ipa -name "*.ipa" | head -1) \
             --app "$FIREBASE_APP_ID_IOS" \
             --groups "testers-pre-produccion" \
-            --release-notes "Build #${CM_BUILD_NUMBER:-1} – rama ${CM_BRANCH:-master}"
+            --release-notes-file release_notes.txt
 
     artifacts:
       - build/ios/ipa/*.ipa
@@ -220,6 +233,12 @@ workflows:
       - name: Instalar dependencias Flutter
         script: flutter pub get
 
+      # Un solo paso para las dos distribuciones: Android e iOS leen el mismo
+      # `release_notes.txt`, así que el tester ve exactamente el mismo texto en
+      # las dos plataformas (#93).
+      - name: Derivar notas del tester
+        script: dart run tool/release_notes_txt.dart
+
       - name: Instalar pods
         script: |
           cd ios
@@ -255,7 +274,7 @@ workflows:
             build/app/outputs/flutter-apk/app-release.apk \
             --app "$FIREBASE_APP_ID_ANDROID" \
             --groups "testers-pre-produccion" \
-            --release-notes "Build #${CM_BUILD_NUMBER:-1} – rama ${CM_BRANCH:-master}"
+            --release-notes-file release_notes.txt
 
       - name: Distribuir iOS a Firebase
         script: |
@@ -263,10 +282,14 @@ workflows:
             $(find build/ios/ipa -name "*.ipa" | head -1) \
             --app "$FIREBASE_APP_ID_IOS" \
             --groups "testers-pre-produccion" \
-            --release-notes "Build #${CM_BUILD_NUMBER:-1} – rama ${CM_BRANCH:-master}"
+            --release-notes-file release_notes.txt
 
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
+      # El .sha1 lo emite `flutter build apk` junto al binario y `android-firebase`
+      # ya lo adjuntaba; aquí faltaba. Es la huella con la que un tester puede
+      # comprobar que el APK que descargó es el que produjo este build.
+      - build/app/outputs/flutter-apk/app-release.apk.sha1
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
 
