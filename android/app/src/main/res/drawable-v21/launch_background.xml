@@ -1,12 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Modify this file to customize your launch splash screen -->
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="?android:colorBackground" />
+<!--
+  Igual que `drawable/launch_background.xml`, para API 21–30 (#102).
 
-    <!-- You can insert your own image assets here -->
-    <!-- <item>
+  Idéntico a propósito: el arranque de marca **no cambia con el tema del
+  sistema**, porque el splash de Flutter al que da paso tampoco cambia — su
+  degradado usa `ColorValues.utilityMidNight`/`utilityBrand500`, y esos dos
+  devuelven el mismo color en claro y en oscuro. Un fondo que se aclarase en
+  modo claro reintroduciría el corte que #102 quita.
+
+  Antes decía `?android:colorBackground`, que es exactamente lo que hacía que
+  el destello fuera blanco con el sistema en claro y negro con el sistema en
+  oscuro. Ninguno de los dos es de la marca.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/brand_launch_background" />
+
+    <item>
         <bitmap
             android:gravity="center"
-            android:src="@mipmap/launch_image" />
-    </item> -->
+            android:src="@drawable/ic_launcher_foreground" />
+    </item>
 </layer-list>

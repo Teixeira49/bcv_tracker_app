@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Arranque nativo en Android 12+ con el sistema en oscuro (#102).
+
+  **Este archivo es fácil de no escribir, y no es redundante — está medido.**
+  Android elige la carpeta de recursos por precedencia de calificadores, y el
+  **modo noche va por delante de la versión de plataforma** (`vNN` es el último
+  de la tabla). Así que un dispositivo en oscuro con Android 12+ resuelve
+  `LaunchTheme` desde `values-night/`, no desde `values-v31/`, y se queda con el
+  tema que **no** declara `windowSplashScreenBackground`.
+
+  Comprobado en un emulador API 36, y hubo que forzarlo para verlo: con el mismo
+  navy en todas partes el arranque se veía bien igualmente, porque sin
+  `windowSplashScreenBackground` el sistema cae en el `windowBackground` del
+  tema — que también apunta al drawable de marca. Poniendo un magenta en
+  `drawable/launch_background.xml` y quitando esta carpeta, el arranque en
+  oscuro salió **magenta**; con la carpeta puesta, navy. Eso es la prueba de que
+  `values-v31` no cubre el modo oscuro.
+
+  Consecuencia práctica: sin este archivo el resultado *hoy* sería correcto por
+  el fallback, y se rompería en silencio el día que el drawable de ≤11 cambie.
+
+  El contenido es idéntico al de `values-v31/` por el mismo motivo que los dos
+  `launch_background.xml`: el splash de Flutter no cambia con el tema, así que
+  el arranque tampoco.
+-->
+<resources>
+    <style name="LaunchTheme" parent="@android:style/Theme.Black.NoTitleBar">
+        <item name="android:windowSplashScreenBackground">@color/brand_launch_background</item>
+    </style>
+</resources>

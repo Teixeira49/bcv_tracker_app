@@ -99,6 +99,35 @@ void main() {
       );
     });
   }
+
+  // iOS launch image (#102). The `LaunchScreen.storyboard` still shipped the
+  // three blank PNGs `flutter create` leaves behind, on a white background —
+  // the same alien flash #102 is about, on the other platform.
+  //
+  // **Transparent, not on navy.** The storyboard already paints the background,
+  // and Apple stretches a launch screen across every device size: an opaque
+  // tile would show its own edges on any aspect ratio the art was not cut for.
+  // With alpha, the colour has exactly one source — `backgroundColor` in the
+  // storyboard — and it cannot drift from this file.
+  //
+  // 180 pt is the size the storyboard reserves; @2x and @3x are the same art at
+  // the densities iOS asks for, so it is sharp on every device (the criterion
+  // of #10, applied to the launch screen).
+  for (final (String file, int px) in <(String, int)>[
+    ('ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage.png', 180),
+    ('ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@2x.png', 360),
+    ('ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@3x.png', 540),
+  ]) {
+    testWidgets('$file — $px², transparent', (tester) async {
+      await _render(
+        tester,
+        svg: svg,
+        size: px.toDouble(),
+        to: file,
+        floor: 2 * 1024,
+      );
+    });
+  }
 }
 
 /// Rewrites `<use xlink:href="#id"/>` into the `<image>` it points at.
