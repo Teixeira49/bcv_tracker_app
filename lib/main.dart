@@ -28,7 +28,12 @@ void main() async {
     return;
   }
 
-  Get.put(SettingsController());
+  // Awaited on purpose: the theme and the language have to be in memory before
+  // the first frame, or the app paints its defaults and then jumps to what the
+  // user chose. See `InitialBinding.initServices` for why this cannot live in
+  // the binding, and `SettingsController` for what used to hide the flicker.
+  await InitialBinding.initServices();
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
@@ -64,6 +69,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Registered and fully loaded by `InitialBinding.initServices()`, awaited
+    // in `main` before this widget can exist — so this `find` cannot miss.
+    final SettingsController settings = Get.find<SettingsController>();
+
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: Constants.appTitle,
@@ -75,8 +84,20 @@ class MyApp extends StatelessWidget {
       getPages: AppPages.routes,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      locale: Get.deviceLocale,
+      // Straight from the settings service, which `main` finished loading
+      // before `runApp`. Passing the stored values here — rather than calling
+      // `Get.changeThemeMode` / `Get.updateLocale` during startup — is what
+      // makes the very first frame correct: `GetMaterialApp.initState` assigns
+      // `Get.locale` from this argument, so a locale applied earlier would have
+      // been overwritten right here (#59).
+      //
+      // Runtime changes still work through the framework: GetX resolves
+      // `ctrl.themeMode ?? themeMode` and `Get.locale ?? locale`, so the
+      // setters take precedence over these starting values.
+      themeMode: settings.startupThemeMode,
+      // `null` means "no stored choice, follow the device" — today's behaviour,
+      // kept deliberately. #98 is where that decision gets revisited.
+      locale: settings.startupLocale ?? Get.deviceLocale,
       fallbackLocale: const Locale('en', 'US'),
       translations: AppTranslations(),
     );

@@ -13,6 +13,29 @@ import '../../shared/presentation/controller/settings_controller.dart';
 import '../enviroment/enviroment.dart';
 
 class InitialBinding extends Bindings {
+  /// Services that must be **fully constructed before the first frame**.
+  ///
+  /// Awaited by `main` ahead of `runApp`, and deliberately not part of
+  /// [dependencies]: GetX calls `initialBinding?.dependencies()` from
+  /// `GetMaterialApp.initState` **without awaiting it**
+  /// (`get_material_app.dart:226`), so an asynchronous registration declared
+  /// there is fire-and-forget — the first screen builds while it is still in
+  /// flight, and `Get.find` on it throws because `Get.putAsync` only registers
+  /// the instance once its builder resolves.
+  ///
+  /// So the split is not stylistic. Anything the first frame *reads* is
+  /// registered here; everything else stays in [dependencies]. Registration
+  /// still happens in this one file, which is what
+  /// `.agents/rules/dependency-injection.md` asks for.
+  static Future<void> initServices() async {
+    // `permanent`: settings outlive every route, and re-reading the disk on a
+    // rebuild would reopen the very window #59 closed.
+    await Get.putAsync<SettingsController>(
+      () => SettingsController().init(),
+      permanent: true,
+    );
+  }
+
   @override
   Future<void> dependencies() async {
     Get.lazyPut<SplashPage>(() => SplashPage(), fenix: true);
@@ -28,7 +51,11 @@ class InitialBinding extends Bindings {
       () => DollarRepository(dollarApi: Get.find()),
       fenix: true,
     );
-    Get.lazyPut<SettingsController>(() => SettingsController(), fenix: true);
+    // `SettingsController` is not registered here: it is a service the first
+    // frame reads, so it goes through `initServices()` above. The `lazyPut`
+    // that used to sit on this line was inert anyway — `main` had already
+    // registered the instance with `Get.put`, which is the double registration
+    // #45 catalogued.
 
     // New Injections
     Get.put<CurrencyRepository>(CurrencyRepository(), permanent: true);
