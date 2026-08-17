@@ -263,6 +263,38 @@ void main() {
       expect(find.byType(AppStateView), findsNothing);
     });
 
+    testWidgets('and it does so against the name the app really publishes', (
+      tester,
+    ) async {
+      // The test above folds the accent of a name written by the fixture. This
+      // one folds the accent of `AppMessages.eeuuDollar` — the copy a user
+      // reads — which is what #104 made possible: before the Spanish map
+      // spelled «Dólar» with its accent there was nothing accented on screen to
+      // search, and #41's criterion could not be shown, only argued.
+      await _pumpConverter(tester);
+      await _openSelector(tester, isInput: true);
+
+      final String published = AppMessages.eeuuDollar;
+      expect(
+        published,
+        contains('ó'),
+        reason:
+            'the sheet renders es_ES here, so the dollar must arrive accented '
+            'for this test to prove anything',
+      );
+      final Finder row = find.text('USD $published');
+      expect(row, findsWidgets);
+
+      await search(tester, 'dolar');
+
+      expect(
+        row,
+        findsWidgets,
+        reason: 'typing "dolar" must keep "$published" on screen',
+      );
+      expect(find.byType(AppStateView), findsNothing);
+    });
+
     testWidgets('it matches the market as well as the currency', (
       tester,
     ) async {

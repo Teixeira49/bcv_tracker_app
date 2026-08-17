@@ -31,7 +31,7 @@ Este documento es el **inventario de la suite**: primero lo que ya está cubiert
 | | `test/features/currency_detail/currency_detail_sheet_test.dart` | **(#38)** Cabecera, tabla de detalles, degradación sin `change`/`createDate`, avatar y huecos reservados |
 | | `test/features/home/home_currency_detail_tap_test.dart` | **(#38)** Tocar una tarjeta abre el detalle de esa tasa; inerte con placeholders |
 | | `test/shared/presentation/widgets/base_bottom_sheet_test.dart` | **(#40)** Contenedor compartido: anclaje, una sola cadena de scroll, cierre por arrastre y por botón, barra fija, teclado y semántica |
-| | `test/features/converter/currency_selector_sheet_test.dart` | **(#40, #41)** El selector como hoja inferior: altura, categorías, scroll, selección de origen y destino, texto ampliado — y el buscador: filtrado en vivo, acentos, sin resultados, borrado y elegir un resultado |
+| | `test/features/converter/currency_selector_sheet_test.dart` | **(#40, #41)** El selector como hoja inferior: altura, categorías, scroll, selección de origen y destino, texto ampliado — y el buscador: filtrado en vivo, acentos (también contra la copy real de `AppMessages`, #104), sin resultados, borrado y elegir un resultado |
 | | `test/features/converter/converter_keyboard_test.dart` | **(#40)** El conversor con el teclado abierto: sin desbordes y encogiendo con el body; el campo filtra lo que un teclado físico puede mandar |
 | | `test/features/converter/converter_swap_button_test.dart` | **(#40)** El botón de intercambio no se despega de la costura aunque la tarjeta de salida crezca; el resultado se redondea al mostrar, no al calcular |
 | **Goldens** | `test/shared/presentation/widgets/app_state_view_golden_test.dart` | **(#35)** Estados de error y vacío, claro y oscuro |
@@ -42,6 +42,7 @@ Este documento es el **inventario de la suite**: primero lo que ya está cubiert
 | | `test/features/converter/currency_selector_sheet_golden_test.dart` | **(#40)** Selector de divisas como hoja inferior, claro y oscuro |
 | **Config / i18n** | `test/config/enviroment/environment_test.dart` + `environment_empty_env_test.dart` | Validación de `CURRENCY_BACK`, `.env` ausente/vacío |
 | | `test/core/i18n/translation_parity_test.dart` | **(#36)** Paridad de claves en los 10 idiomas |
+| | `test/core/i18n/search_folds_published_names_test.dart` | **(#104, #41)** La tilde de «Dólar» en `es_ES`, que buscar sin tilde encuentra el nombre publicado, y que la tabla de plegado cubre los diacríticos que la app realmente envía |
 | | `test/config/routes/app_pages_test.dart` | Registro de rutas nombradas |
 | | `test/config/theme/colors_constants_test.dart` | Opacidad de la paleta (alpha de 8 dígitos) |
 
