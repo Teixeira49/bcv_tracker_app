@@ -1,3 +1,9 @@
+/// App-wide values that are neither colours, copy, nor configuration.
+///
+/// Durations, date formats and the app title: things with a business meaning that
+/// would otherwise be magic numbers scattered across widgets. Anything that
+/// changes per environment is **not** here — that is `Environment` and the `.env`
+/// file (`.agents/rules/environment-variables.md`).
 class Constants {
   const Constants._();
 

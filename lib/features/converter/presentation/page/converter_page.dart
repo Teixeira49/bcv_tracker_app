@@ -24,6 +24,13 @@ part '../widget/converter_buttons.dart';
 part '../widget/converter_modals.dart';
 part '../widget/converter_widgets.dart';
 
+/// The full converter: a pair of rates, an amount and the result.
+///
+/// Reads `ConverterController`, whose pair **survives between visits to this tab**
+/// — deliberately, so a calculation can be returned to. The one thing allowed to
+/// replace it is the detail sheet's hand-off
+/// ([#103](https://github.com/Teixeira49/bcv_tracker_app/issues/103)), and only on
+/// an explicit tap.
 class ConverterPage extends StatelessWidget {
   const ConverterPage({super.key});
 

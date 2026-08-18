@@ -1,5 +1,22 @@
 import 'package:get/get.dart';
 
+/// Every string the user can read, as typed getters.
+///
+/// The **only** file in the app that calls `.tr`. Widgets go through these getters
+/// instead, which buys autocompletion, a central inventory, and a compile error
+/// when a key is removed — where a raw `'homeView'.tr` in a widget would just
+/// render the key on screen.
+///
+/// A new key goes into **all ten** language files in the same commit. Miss one and
+/// GetX shows the raw key for that language; nothing throws, and it surfaces only
+/// by switching language by hand. `.agents/rules/i18n-convention.md` has the
+/// parity script.
+///
+/// The getters below are deliberately left without individual docstrings: the key
+/// name and the getter name are the same word, and a comment restating it is what
+/// `.agents/rules/documentation-convention.md` calls out as noise. The few that
+/// *are* documented are the ones with a reason — see [officialRate] and
+/// [noSearchResultsMessage].
 class AppMessages {
   static String get homeView => 'homeView'.tr;
 

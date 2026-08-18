@@ -10,6 +10,16 @@ import '../../config/theme/icons/icons_constants.dart';
 import '../../features/home/domain/entities/currency_country.dart';
 import '../../shared/domain/entities/currency.dart';
 
+/// Turns rate data into the strings and dressing the UI shows.
+///
+/// The seam between what the backend sends and what a screen can render: a
+/// translated name for a currency code, a flag, a symbol, an amount formatted for
+/// display, a date kept in the right timezone. Pure functions, so their tests need
+/// neither fakes nor GetX.
+///
+/// **Formatting happens here and only here.** The controllers keep full precision
+/// and this rounds at the point of display — the order that fixed the converter's
+/// original rounding bug, and one that must not be inverted. See [castAmount].
 class CurrencyHelpers {
   static CurrencyCountry castCurrencyCountry({required String currencyCode}) {
     switch (currencyCode) {

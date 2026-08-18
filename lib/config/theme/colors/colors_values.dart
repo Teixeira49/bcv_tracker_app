@@ -1,6 +1,21 @@
 import 'package:flutter/material.dart';
 import 'colors_constants.dart'; // Asegúrate de que este import apunte a tu archivo
 
+/// Every colour the UI asks for, resolved for the active theme.
+///
+/// The layer widgets actually call: each accessor takes a `BuildContext`, reads the
+/// brightness and returns the right shade from `AppColors`. That is why a widget
+/// never needs a `Theme.of(context).brightness ==` branch of its own.
+///
+/// The accessors are intentionally undocumented one by one: their names *are* the
+/// documentation (`textWhite`, `borderPrimary`, `utilityBrand500`), and a line
+/// saying "the white text colour" above `textWhite` is the kind of comment
+/// `.agents/rules/documentation-convention.md` explicitly tells you not to write.
+/// What is worth knowing is the two-layer split above, and that these — not
+/// `Theme.of(context).colorScheme` — remain the source for the app's own widgets
+/// even after the Material 3 migration
+/// ([#44](https://github.com/Teixeira49/bcv_tracker_app/issues/44)); the
+/// `ColorScheme` mainly feeds Material's built-in components.
 class ColorValues {
   // -------------------------------------------------------
   // <---------------- Text color values ------------------>

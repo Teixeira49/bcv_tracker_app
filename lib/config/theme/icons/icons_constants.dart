@@ -1,3 +1,14 @@
+/// Asset paths for every icon, flag and logo the app draws.
+///
+/// Paths in one place so a renamed or moved asset breaks in a single file instead
+/// of at each `SvgPicture.asset` call — a wrong path is a runtime failure in
+/// Flutter, not a compile error, so centralising is the only thing that makes it
+/// catchable.
+///
+/// The individual constants carry no docstrings on purpose: the name and the path
+/// together already say everything (`flagVenezuelaIcon`), and
+/// `.agents/rules/documentation-convention.md` rules out comments that repeat the
+/// code.
 class AppIcons {
   static const String imagesRoute = 'assets/images';
   static const String iconsRoute = 'assets/icons';

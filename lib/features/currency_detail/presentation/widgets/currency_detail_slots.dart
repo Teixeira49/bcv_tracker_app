@@ -44,7 +44,7 @@ part of '../page/currency_detail_sheet.dart';
 /// The empty sliver every unfilled slot renders.
 const Widget _noSection = SliverToBoxAdapter(child: SizedBox.shrink());
 
-/// Historical evolution of the rate — **reserved for [#5]**.
+/// Historical evolution of the rate — **reserved for [#5](https://github.com/Teixeira49/bcv_tracker_app/issues/5)**.
 ///
 /// Blocked upstream: there is no historical endpoint yet
 /// (`bcv_tracker_backend#14`). When it exists, the series is fetched by
@@ -67,7 +67,7 @@ class CurrencyDetailChartSlot extends StatelessWidget {
   Widget build(BuildContext context) => _noSection;
 }
 
-/// Share and save — **reserved for [#7]**.
+/// Share and save — **reserved for [#7](https://github.com/Teixeira49/bcv_tracker_app/issues/7)**.
 ///
 /// A row of actions on the rate: share it as text or image, pin it as a
 /// favourite. Saving needs somewhere to persist to — `SettingsController` and
@@ -77,7 +77,7 @@ class CurrencyDetailChartSlot extends StatelessWidget {
 /// Placed under the facts so the sheet reads as *information first, actions
 /// after*.
 ///
-/// **Still empty after [#103].** That issue's one action —hand the rate to the
+/// **Still empty after [#103](https://github.com/Teixeira49/bcv_tracker_app/issues/103).** That issue's one action —hand the rate to the
 /// full converter— is not an action *on the rate*, it is a continuation of the
 /// quick converter, so it lives in that section's heading row instead of here.
 /// See [_OpenInConverterButton].
@@ -149,7 +149,7 @@ class _OpenInConverterButton extends StatelessWidget {
   );
 }
 
-/// Converter dedicated to this rate — **filled by [#39]**.
+/// Converter dedicated to this rate — **filled by [#39](https://github.com/Teixeira49/bcv_tracker_app/issues/39)**.
 ///
 /// An amount field that converts against [currency] only: the sheet already
 /// fixed which currency this is about, so offering a selector here would be

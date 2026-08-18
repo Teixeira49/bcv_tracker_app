@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
+/// A rounded, coloured pill around [child].
+///
+/// The app's one badge shape. Used for the variation indicator and the rate-type
+/// label, so those two cannot drift apart in radius or padding.
 class CustomBadged extends StatelessWidget {
+  /// Wraps [child] in a pill of [color].
   const CustomBadged({
     super.key,
     required this.child,
@@ -27,7 +32,13 @@ class CustomBadged extends StatelessWidget {
   );
 }
 
+/// [CustomBadged] that responds to a tap.
+///
+/// A separate class rather than a nullable `onTap` on [CustomBadged]: a pill that
+/// might be tappable is a pill whose ink and semantics are conditional, and the
+/// two read very differently to assistive tech.
 class CustomBadgedButton extends StatelessWidget {
+  /// Wraps [child] in a tappable pill of [color].
   const CustomBadgedButton({
     super.key,
     required this.child,

@@ -13,6 +13,18 @@ import '../../shared/domain/repositories/dollar_repositories.dart';
 import '../../shared/presentation/controller/settings_controller.dart';
 import '../enviroment/enviroment.dart';
 
+/// The app's whole dependency graph, in one file.
+///
+/// Everything is registered here and resolved with `Get.find()`; nothing constructs
+/// a controller inside a widget, because a second instance would listen to the same
+/// service while only the registered one is bound to the view — and the bug
+/// surfaces as "the screen does not update", far from its cause. See
+/// `.agents/rules/dependency-injection.md`.
+///
+/// **Two entry points, and the split is load-bearing.** [dependencies] is called by
+/// `GetMaterialApp` from its `initState` and **not awaited**, so anything the first
+/// frame has to read cannot be registered there. That goes in [initServices],
+/// which `main` awaits before `runApp`.
 class InitialBinding extends Bindings {
   /// Services that must be **fully constructed before the first frame**.
   ///

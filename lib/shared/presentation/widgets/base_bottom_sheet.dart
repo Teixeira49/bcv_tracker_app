@@ -7,8 +7,8 @@ import '../../../core/i18n/app_messages.dart';
 
 /// Container of the app's draggable bottom sheets.
 ///
-/// Introduced with the currency detail ([#38]) and extracted here when the
-/// converter's currency selector moved to the same shape ([#40]) — the issue
+/// Introduced with the currency detail ([#38](https://github.com/Teixeira49/bcv_tracker_app/issues/38)) and extracted here when the
+/// converter's currency selector moved to the same shape ([#40](https://github.com/Teixeira49/bcv_tracker_app/issues/40)) — the issue
 /// itself asked for the container to be shared if the two ended up alike, and
 /// they did. `BaseModal` (an `AlertDialog`) stays for the centred dialogs:
 /// this is not a replacement for it, it is the other half of the pair.
@@ -40,7 +40,7 @@ import '../../../core/i18n/app_messages.dart';
 /// keyboard and the extents below are fractions of the height that is left.
 /// **Do not add that padding again** — it would apply twice and leave a gap the
 /// height of the keyboard. A sheet that opens with a field focused (the search
-/// of [#41]) will want a larger [initialExtent], since that fraction is taken
+/// of [#41](https://github.com/Teixeira49/bcv_tracker_app/issues/41)) will want a larger [initialExtent], since that fraction is taken
 /// from the reduced height.
 class BaseBottomSheet extends StatelessWidget {
   const BaseBottomSheet({
