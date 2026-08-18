@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.1+2
+version: 1.1.0+3
 
 environment:
   sdk: ^3.9.0
@@ -57,16 +57,25 @@ dev_dependencies:
   flutter_launcher_icons: ^0.14.3
   alchemist: ^0.14.0
 
+# Los iconos se GENERAN; no se editan a mano. Las dos fuentes de abajo salen a
+# su vez de `assets/brand/dt_icon.svg` con `flutter test tool/generate_app_icon.dart`
+# — ver `assets/brand/README.md`. Antes esto apuntaba a un PNG de 332x332, que
+# es lo que se veía pixelado en densidades altas (#10).
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
+  image_path: "assets/brand/app_icon.png"
+  # Web apagado a propósito: este proyecto no tiene `web/index.html`, sin el
+  # cual la herramienta aborta el paso web — y de paso pisaba `favicon.png`
+  # dejándolo en 16x16. Los iconos web los escribe `tool/generate_app_icon.dart`
+  # desde el mismo maestro, así que salen del mismo sitio y con el mismo pixel.
   web:
-    generate: true
-    image_path: "assets/images/foreground_icon_app.png"
-  image_path_ios: "assets/images/foreground_icon_app.png"
-  image_path_android: "assets/images/foreground_icon_app.png"
-  adaptive_icon_background: "assets/images/background_icon_app.png"
-  adaptive_icon_foreground: "assets/images/foreground_icon_app.png"
+    generate: false
+  # Color plano en vez de una imagen: el fondo adaptativo de Android solo tiene
+  # que ser el lienzo, y el PNG anterior (1920x1306, ni siquiera cuadrado) se
+  # recortaba distinto en cada máscara.
+  adaptive_icon_background: "#08253A"
+  adaptive_icon_foreground: "assets/brand/app_icon_foreground.png"
   min_sdk_android: 23
   remove_alpha_ios: true
 
@@ -85,6 +94,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
+    - assets/brand/
     - assets/icons/
     - assets/images/
     - assets/icons/flags/

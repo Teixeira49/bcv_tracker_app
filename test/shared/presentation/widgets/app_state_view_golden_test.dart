@@ -27,6 +27,17 @@ void main() {
           name: 'empty',
           child: goldenScenarioSurface(AppStateView.empty(onRetry: () {})),
         ),
+        // #41. Must not look like `empty`: there the app has nothing, here the
+        // user's own filter excluded everything — hence the struck-through
+        // magnifier instead of the logo, and no retry button.
+        GoldenTestScenario(
+          name: 'no results',
+          child: goldenScenarioSurface(
+            const AppStateView.noResults(
+              message: 'Ninguna moneda coincide con «bitcoin».',
+            ),
+          ),
+        ),
       ],
     ),
   );

@@ -1,9 +1,25 @@
 import 'package:bcv_tracker_app/config/theme/colors/colors_values.dart';
 import 'package:flutter/material.dart';
 
-enum CustomRefreshIndicatorType { classic, adaptive, noSpinner }
+/// Which pull-to-refresh affordance [CustomRefreshIndicator] draws.
+enum CustomRefreshIndicatorType {
+  /// Material's own spinner.
+  classic,
 
+  /// The platform's spinner — Material on Android, Cupertino on iOS.
+  adaptive,
+
+  /// No spinner at all: the gesture still refreshes, but the screen shows its own
+  /// loading state instead. Used where a shimmer is already saying it.
+  noSpinner,
+}
+
+/// Pull-to-refresh in one place, with a choice of affordance.
+///
+/// Wraps the platform indicators so [indicatorType] is the only decision a screen
+/// makes, and so `onRefresh` has one signature across the app.
 class CustomRefreshIndicator extends StatelessWidget {
+  /// Wraps [child] in a refresh gesture that calls `onRefresh`.
   const CustomRefreshIndicator({
     required this.onRefresh,
     required this.child,

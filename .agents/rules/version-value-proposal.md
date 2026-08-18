@@ -76,7 +76,9 @@ Si el usuario indica otro número, se usa el suyo sin discutir: la versión es u
 No hay API pública que romper, así que el criterio es **qué deja de funcionar en un teléfono que ya tiene la app**:
 
 - Formato incompatible de lo persistido en `SharedPreferences` (claves de tema, idioma, mercados seguidos) sin migración.
-- Subir `minSdkVersion` (hoy 23) o el deployment target de iOS (hoy 12.0): dispositivos que dejan de recibir la actualización.
+- Subir `minSdkVersion` (hoy 23) o el deployment target de iOS (hoy **15.0**): dispositivos que dejan de recibir la actualización.
+
+  > ⚠️ **Comprueba antes si hay algo que romper.** En `v1.1.0` el target de iOS subió de 13.0 a 15.0 —lo exige el Firebase iOS SDK que arrastra `firebase_core`— y **no** se publicó como MAJOR: iOS nunca se ha distribuido (bundle `com.example.*`, workflows desactivados), así que no había ninguna instalación que dejara de actualizar, y iOS 15 soporta el mismo hardware que iOS 13. La cláusula existe por el daño, no por el número: si el daño no puede ocurrir, dilo en el release note y no infles la versión. La desviación se documenta siempre — ver `docs/release/RELEASE_v1.1.0.md`.
 - Exigir una versión de backend que la anterior no soportaba — si el usuario no actualiza, o si el backend aún no está desplegado, la app queda inservible.
 - Retirar un mercado o una divisa que la gente estaba consultando.
 

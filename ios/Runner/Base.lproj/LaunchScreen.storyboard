@@ -19,7 +19,17 @@
                             <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" image="LaunchImage" translatesAutoresizingMaskIntoConstraints="NO" id="YRO-k0-Ey4">
                             </imageView>
                         </subviews>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <!--
+                            Navy de marca #08253A (#102). Era blanco puro, la
+                            plantilla de `flutter create`, y producía el mismo
+                            destello ajeno que en Android antes de dar paso al
+                            degradado del splash de Flutter. Los tres canales
+                            son 8/255, 37/255 y 58/255. Es el ÚNICO sitio donde
+                            se declara el color del arranque de iOS: la imagen
+                            que va encima tiene alfa a propósito, para que no
+                            pueda desincronizarse de este valor.
+                        -->
+                        <color key="backgroundColor" red="0.031372549019607843" green="0.14509803921568629" blue="0.22745098039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="YRO-k0-Ey4" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="1a2-6s-vTC"/>
                             <constraint firstItem="YRO-k0-Ey4" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="4X2-HB-R7a"/>
@@ -32,6 +42,12 @@
         </scene>
     </scenes>
     <resources>
-        <image name="LaunchImage" width="168" height="185"/>
+        <!--
+            180² desde #102: el arte es cuadrado, y estas medidas las genera
+            `flutter test tool/generate_app_icon.dart` desde el mismo
+            `dt_icon.svg` que el icono de la app. Eran 168×185, la proporción de
+            los PNG en blanco de la plantilla.
+        -->
+        <image name="LaunchImage" width="180" height="180"/>
     </resources>
 </document>

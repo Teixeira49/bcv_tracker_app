@@ -10,7 +10,21 @@ import '../../../../core/network/http_manager.dart';
 import '../../../../core/network/http_operation.dart';
 import '../../model/model.dart';
 
+/// [IDollarApi] over REST, through [HttpManager].
+///
+/// Builds the request from `DollarEndpoints`, deserialises with the models, and
+/// turns every transport failure into `ApiException` — nothing Dio-shaped leaves
+/// here.
+///
+/// The `HttpManager` is injectable for exactly one reason: it is what lets a test
+/// assert the **outgoing contract** — the path and the method actually sent — with a
+/// canned response and no network. `.agents/rules/test-coverage.md` requires that,
+/// plus a case each for non-2xx, timeout and empty body.
 class DollarApiRest implements IDollarApi {
+  /// Takes the backend base URL and, optionally, the client to send through.
+  ///
+  /// [client] defaults to a fresh [HttpManager]; a test passes a fake instead,
+  /// which is how the outgoing path and method get asserted without a network.
   DollarApiRest({required String apiUrl, HttpManager? client})
     : _apiUrl = apiUrl,
       _client = client ?? HttpManager();

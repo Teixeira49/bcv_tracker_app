@@ -1,5 +1,22 @@
 import 'package:get/get.dart';
 
+/// Every string the user can read, as typed getters.
+///
+/// The **only** file in the app that calls `.tr`. Widgets go through these getters
+/// instead, which buys autocompletion, a central inventory, and a compile error
+/// when a key is removed — where a raw `'homeView'.tr` in a widget would just
+/// render the key on screen.
+///
+/// A new key goes into **all ten** language files in the same commit. Miss one and
+/// GetX shows the raw key for that language; nothing throws, and it surfaces only
+/// by switching language by hand. `.agents/rules/i18n-convention.md` has the
+/// parity script.
+///
+/// The getters below are deliberately left without individual docstrings: the key
+/// name and the getter name are the same word, and a comment restating it is what
+/// `.agents/rules/documentation-convention.md` calls out as noise. The few that
+/// *are* documented are the ones with a reason — see [officialRate] and
+/// [noSearchResultsMessage].
 class AppMessages {
   static String get homeView => 'homeView'.tr;
 
@@ -120,4 +137,59 @@ class AppMessages {
   static String get emptyStateTitle => 'emptyStateTitle'.tr;
 
   static String get emptyStateMessage => 'emptyStateMessage'.tr;
+
+  // --- Currency detail sheet (#38) ---
+
+  static String get currencyDetailTitle => 'currencyDetailTitle'.tr;
+
+  static String get currencyDetailsSection => 'currencyDetailsSection'.tr;
+
+  static String get marketLabel => 'marketLabel'.tr;
+
+  static String get currencyPairLabel => 'currencyPairLabel'.tr;
+
+  static String get rateTypeLabel => 'rateTypeLabel'.tr;
+
+  static String get currencyCodeLabel => 'currencyCodeLabel'.tr;
+
+  static String get registeredSince => 'registeredSince'.tr;
+
+  static String get variationLabel => 'variationLabel'.tr;
+
+  /// Kind of market a rate comes from. Deliberately not `officialDollar` /
+  /// `parallelDollar`: the BCV also publishes the euro, the yuan and the rouble,
+  /// and calling those "official dollar" is wrong in every language.
+  static String get officialRate => 'officialRate'.tr;
+
+  static String get parallelRate => 'parallelRate'.tr;
+
+  static String get closeAction => 'closeAction'.tr;
+
+  // --- Converter embedded in the currency detail (#39) ---
+
+  static String get quickConverterSection => 'quickConverterSection'.tr;
+
+  /// Hands the detailed rate over to the full converter (#103), carrying the
+  /// amount and the direction with it.
+  static String get openInConverterAction => 'openInConverterAction'.tr;
+
+  static String get amountLabel => 'amountLabel'.tr;
+
+  static String get invertConversionAction => 'invertConversionAction'.tr;
+  // --- Currency selector search (#41) ---
+
+  static String get searchCurrencyHint => 'searchCurrencyHint'.tr;
+
+  static String get noSearchResultsTitle => 'noSearchResultsTitle'.tr;
+
+  /// What the user typed, quoted back at them.
+  ///
+  /// A method rather than a getter because the query is interpolated by GetX
+  /// (`@query`), not concatenated here: the word order around the quotes
+  /// differs between the ten languages, and gluing strings would fix it to the
+  /// Spanish one (see `i18n-convention.md`, rule 7).
+  static String noSearchResultsMessage(String query) =>
+      'noSearchResultsMessage'.trParams(<String, String>{'query': query});
+
+  static String get clearSearchAction => 'clearSearchAction'.tr;
 }

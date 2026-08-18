@@ -28,7 +28,12 @@ void main() async {
     return;
   }
 
-  Get.put(SettingsController());
+  // Awaited on purpose: the theme and the language have to be in memory before
+  // the first frame, or the app paints its defaults and then jumps to what the
+  // user chose. See `InitialBinding.initServices` for why this cannot live in
+  // the binding, and `SettingsController` for what used to hide the flicker.
+  await InitialBinding.initServices();
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
@@ -59,11 +64,23 @@ class ConfigurationErrorApp extends StatelessWidget {
   }
 }
 
+/// The app itself, once the configuration is known to be usable.
+///
+/// Wires the routing table, the ten translations and the two themes. The theme and
+/// the locale come **from `SettingsController`, already loaded** — `main` awaits
+/// `InitialBinding.initServices()` before this can exist — and they are *passed*
+/// rather than applied, because `GetMaterialApp.initState` assigns `Get.locale`
+/// from its own argument and would overwrite anything set earlier
+/// ([#59](https://github.com/Teixeira49/bcv_tracker_app/issues/59)).
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Registered and fully loaded by `InitialBinding.initServices()`, awaited
+    // in `main` before this widget can exist — so this `find` cannot miss.
+    final SettingsController settings = Get.find<SettingsController>();
+
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: Constants.appTitle,
@@ -75,9 +92,29 @@ class MyApp extends StatelessWidget {
       getPages: AppPages.routes,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      locale: Get.deviceLocale,
-      fallbackLocale: const Locale('en', 'US'),
+      // Straight from the settings service, which `main` finished loading
+      // before `runApp`. Passing the stored values here — rather than calling
+      // `Get.changeThemeMode` / `Get.updateLocale` during startup — is what
+      // makes the very first frame correct: `GetMaterialApp.initState` assigns
+      // `Get.locale` from this argument, so a locale applied earlier would have
+      // been overwritten right here (#59).
+      //
+      // Runtime changes still work through the framework: GetX resolves
+      // `ctrl.themeMode ?? themeMode` and `Get.locale ?? locale`, so the
+      // setters take precedence over these starting values.
+      themeMode: settings.startupThemeMode,
+      // One source for the interface and for the settings selector, which is
+      // the fix for #98. This used to be `Get.deviceLocale` while the selector
+      // read `favLanguageCode`, so on a fresh install the app rendered in the
+      // phone's language and the selector claimed "Español". The service now
+      // resolves the device's language into that same field, so the two cannot
+      // drift apart. Never null.
+      locale: settings.startupLocale,
+      // Unreachable in practice — `startupLocale` always resolves to one of the
+      // ten languages `AppTranslations` registers — and kept as a backstop.
+      fallbackLocale: SettingsController.localeOf(
+        SettingsController.defaultLanguage.code,
+      ),
       translations: AppTranslations(),
     );
   }

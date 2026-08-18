@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Arranque nativo en Android 12+ (API 31), modo claro (#102).
+
+  Desde Android 12 la pantalla de arranque la gobierna la SplashScreen API del
+  sistema, y `windowSplashScreenBackground` es la forma de decirle el color.
+  La plantilla de `flutter create` no trae `values-v31`, así que este archivo no
+  existía.
+
+  **Matiz que conviene no repetir mal:** no es que 12+ *ignore*
+  `windowBackground` — cuando `windowSplashScreenBackground` no está declarado,
+  el sistema cae en `windowBackground`. Medido en un emulador API 36 con un
+  magenta en `drawable/launch_background.xml`: el arranque salió magenta. Por eso
+  el arreglo funciona incluso con este archivo fuera, y por eso este archivo
+  sigue mereciendo existir: declara la intención en el atributo que la API de 12+
+  lee de verdad, en vez de depender de un fallback.
+
+  **No se declara `windowSplashScreenAnimatedIcon` a propósito.** Sin él, el
+  sistema usa el icono adaptativo de la app, que ya es el arte correcto
+  (`assets/brand/dt_icon.svg`, blanco sobre `#08253A`) y ya está en las cinco
+  densidades. Apuntar a un drawable propio sería un segundo sitio del que puede
+  salir el icono del arranque, y el día que la marca cambie habría que acordarse
+  de los dos. Tampoco hace falta `windowSplashScreenIconBackgroundColor`: el
+  fondo del icono adaptativo y este fondo son el mismo color, así que el círculo
+  con el que Android 12 recorta el icono no deja borde visible.
+
+  `LaunchTheme` es lo único que este archivo redefine. Todo lo demás — en
+  particular `NormalTheme` — se hereda de `values/styles.xml`, porque Android
+  fusiona por recurso y no por archivo.
+-->
+<resources>
+    <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowSplashScreenBackground">@color/brand_launch_background</item>
+    </style>
+</resources>

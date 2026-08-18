@@ -10,12 +10,22 @@ class _SettingsSectionTitle extends StatelessWidget {
       Text(title, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 22));
 }
 
+/// The settings selectors read the service with `Obx`, not `GetBuilder`.
+///
+/// `SettingsController` is a `GetxService` since #59, and `GetBuilder<T>` is
+/// bound to `T extends GetxController`, so it no longer type-checks. It was
+/// also doing nothing: the service never calls `update()`, so the `GetBuilder`
+/// wrapping these widgets never rebuilt on its own — it was an instance
+/// locator with a rebuild mechanism attached that nothing ever triggered. The
+/// `Obx` inside was already carrying the reactivity.
 class _MarketSelector extends StatelessWidget {
   const _MarketSelector();
 
   @override
-  Widget build(BuildContext context) => GetBuilder<SettingsController>(
-    builder: (SettingsController controller) => Obx(
+  Widget build(BuildContext context) {
+    final SettingsController controller = Get.find<SettingsController>();
+
+    return Obx(
       () => Row(
         spacing: 8,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -32,16 +42,18 @@ class _MarketSelector extends StatelessWidget {
           ),
         ],
       ),
-    ),
-  );
+    );
+  }
 }
 
 class _ThemeSelector extends StatelessWidget {
   const _ThemeSelector();
 
   @override
-  Widget build(BuildContext context) => GetBuilder<SettingsController>(
-    builder: (SettingsController controller) => Obx(
+  Widget build(BuildContext context) {
+    final SettingsController controller = Get.find<SettingsController>();
+
+    return Obx(
       () => Row(
         spacing: 8,
         children: [
@@ -65,6 +77,6 @@ class _ThemeSelector extends StatelessWidget {
           ),
         ],
       ),
-    ),
-  );
+    );
+  }
 }

@@ -1,7 +1,21 @@
 import 'package:bcv_tracker_app/core/helpers/backend_date.dart';
 import 'package:bcv_tracker_app/shared/domain/entities/entities.dart';
 
+/// Wire format of one rate, and the seam back to [Currency].
+///
+/// Where the backend's shape is dealt with and then left behind: optional fields
+/// read with a fallback, `platform_img` empty strings turned into `null`, `num`
+/// widened to `double`, and dates normalised **once**. Nothing above the data layer
+/// should ever normalise something that came off the network.
+///
+/// It **extends the entity**, so a `CurrencyModel` satisfies every signature that
+/// asks for a `Currency` and the compiler cannot tell you when one leaks upward.
+/// `.toEntity()` is therefore mandatory even though returning `this` would compile
+/// — see `.agents/rules/entities-vs-models.md`, and the four places a new field has
+/// to touch.
 class CurrencyModel extends Currency {
+  /// Builds a model directly. Normally reached through [fromJson]; the explicit
+  /// constructor is what the mapping tests construct expectations with.
   CurrencyModel({
     required super.name,
     required super.keyName,
@@ -41,6 +55,13 @@ class CurrencyModel extends Currency {
     return url.isEmpty ? null : url;
   }
 
+  /// Returns a plain [Currency] with the same values.
+  ///
+  /// **Mandatory even though `return this` would compile.** The model extends the
+  /// entity, so returning itself type-checks and leaves an object of the data
+  /// layer alive in the domain — where nothing would fail until this class grew
+  /// state of its own. Constructing a new [Currency] is what makes the boundary
+  /// real instead of nominal.
   Currency toEntity() {
     return Currency(
       name: name,

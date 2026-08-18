@@ -83,6 +83,7 @@ Reglas que el asistente debe respetar. Cada archivo lleva un `description` en el
 | [`environment-variables.md`](rules/environment-variables.md) | Sincroniza `Environment`, `.env.example`, README y `codemagic.yaml` al tocar variables de entorno |
 | [`test-coverage.md`](rules/test-coverage.md) | Toda fuente, endpoint, controlador o helper de cálculo nace con sus tests en el mismo PR |
 | [`documentation-convention.md`](rules/documentation-convention.md) | Todo lo público nace documentado con dartdoc, explicando el porqué y no el qué |
+| [`documentation-coverage.md`](rules/documentation-coverage.md) | El nivel que no puede retroceder: 75/75 tipos, cero avisos de `dart doc`, y las tres exenciones declaradas |
 | [`logging-convention.md`](rules/logging-convention.md) | Todo pasa por `AppLogger` con niveles; cada `catch` de un límite registra su causa; en release nada sensible ni URLs en crudo |
 | [`design-system.md`](rules/design-system.md) | `DESIGN.md` es la fuente de verdad visual; un token nuevo se declara ahí primero y luego en `config/theme/`; verificar en claro y oscuro |
 

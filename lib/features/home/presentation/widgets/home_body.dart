@@ -26,7 +26,11 @@ class _HomeBodyState extends State<_HomeBody>
   @override
   void dispose() {
     _tabController.dispose();
-    settingsController.dispose();
+    // `settingsController` is **not** disposed here. It is app-wide state this
+    // widget only reads; tearing it down when the Home tab goes away would take
+    // the user's theme and language with it. It used to be disposed, and only
+    // stopped compiling when #59 made the service a `GetxService` — the class
+    // change turned a silent lifecycle bug into a compiler error.
     super.dispose();
   }
 

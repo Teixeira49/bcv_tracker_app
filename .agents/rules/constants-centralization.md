@@ -64,7 +64,7 @@ Container(
 A la fecha de escribir esta regla:
 
 - **Colores: al día.** No hay ni un `Color(0xFF...)` fuera de `lib/config/theme/`; los 137 usos pasan por `AppColors`.
-- **Espaciados: pendiente.** `WidthValues` está definido pero **sin usar**: los 22 `EdgeInsets` de la app llevan números sueltos. Al tocar un widget, migra sus paddings a la escala (regla del boy-scout), sin desviar el objetivo del PR.
+- **Espaciados: en adopción.** `WidthValues` ya se consume en `features/currency_detail/` (#38), que nació usando la escala; el resto de los `EdgeInsets` de la app siguen con números sueltos. **La UI nueva usa la escala**; al tocar un widget viejo, migra sus paddings (regla del boy-scout), sin desviar el objetivo del PR.
 
 ## Excepciones
 

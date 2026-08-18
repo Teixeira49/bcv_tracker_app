@@ -2,13 +2,17 @@
 
 Este documento es el **inventario de la suite**: primero lo que ya está cubierto, después lo que queda por hacer (roadmap). Mantenlo al día al agregar tests — la regla [`test-coverage.md`](../.agents/rules/test-coverage.md) exige que toda fuente, endpoint, controlador o helper de cálculo nuevo nazca con sus tests, y el check de PR de #27 (`flutter test` en GitHub Actions) lo hace cumplir en cada PR.
 
-## Cobertura actual (19 archivos, 123 tests)
+## Cobertura actual (48 archivos, 337 tests)
 
 | Área | Archivo | Qué cubre |
 |---|---|---|
 | **Helpers** | `test/core/helpers/backend_date_test.dart` | Parseo y formateo de fechas del backend |
 | | `test/core/helpers/currency_helpers_average_test.dart` | Cálculo de promedios y mapeo de códigos |
 | | `test/core/helpers/currency_helpers_parse_date_test.dart` | Formato de fechas para la UI |
+| | `test/core/helpers/currency_helpers_detail_test.dart` | **(#38, #39)** `isOfficialRate`, `castTendency`, `castOptionalDate`, los nombres traducidos de lira/yuan/rublo, y la precisión adaptativa de `castAmount` |
+| | `test/core/helpers/currency_helpers_detail_test.dart` | **(#38)** `isOfficialRate`, `castTendency`, `castOptionalDate` y los nombres traducidos de lira/yuan/rublo |
+| | `test/core/helpers/search_text_test.dart` | **(#41)** Plegado de mayúsculas y acentos, y coincidencia por nombre o mercado; incluye los scripts no latinos |
+| | `test/core/helpers/amount_input_formatter_test.dart` | **(#40)** Qué acepta y qué rechaza el campo de monto: dígitos, un separador, y nada de letras, símbolos o pegados a medio parsear |
 | **Datos / mapeo** | `test/shared/data/currency_normalizer_test.dart` | Normalización del promedio (dedup, merge buy/sell) |
 | | `test/shared/data/bcv_currencies_model_test.dart` | `toEntity()` convierte la lista, no filtra modelos |
 | | `test/shared/data/dollar_api_rest_test.dart` | Datasource: contrato saliente y `ApiException` (mock de `HttpManager`) |
@@ -19,12 +23,33 @@ Este documento es el **inventario de la suite**: primero lo que ya está cubiert
 | | `test/navigation/navigation_controller_test.dart` | **(#28)** `changeIndex`, observabilidad del índice |
 | | `test/shared/presentation/settings_controller_language_test.dart` | Idioma: `orElse`, normalización de código guardado |
 | | `test/shared/presentation/settings_controller_test.dart` | **(#28)** Tema y mercado favorito: persistencia y no-op |
+| | `test/features/currency_detail/currency_detail_controller_test.dart` | **(#38)** Rate abierta y limpiada, y disposición del worker (#45) |
+| | `test/features/currency_detail/currency_detail_converter_test.dart` | **(#39)** Conversor embebido: sentido y su inversa, coma decimal, tasa cero sin `Infinity`, limpieza al cerrar — y que el resultado **coincide con el conversor completo** |
 | **Widgets** | `test/features/home/home_page_test.dart` | **(#28)** Home: estado de error, sin-error, frame |
 | | `test/features/converter/converter_page_test.dart` | **(#28)** Cuerpo del conversor: render e input |
+| | `test/features/splash/splash_page_test.dart` | **(#10)** El splash usa el logo de marca, lo pinta de blanco, limita su tamaño en tablets, y su entrada: el texto empieza invisible y el icono sube al aparecer |
+| | `test/features/currency_detail/currency_detail_sheet_test.dart` | **(#38)** Cabecera, tabla de detalles, degradación sin `change`/`createDate`, avatar y huecos reservados |
+| | `test/features/home/home_currency_detail_tap_test.dart` | **(#38)** Tocar una tarjeta abre el detalle de esa tasa; inerte con placeholders |
+| | `test/shared/presentation/widgets/base_bottom_sheet_test.dart` | **(#40)** Contenedor compartido: anclaje, una sola cadena de scroll, cierre por arrastre y por botón, barra fija, teclado y semántica |
+| | `test/features/converter/currency_selector_sheet_test.dart` | **(#40, #41)** El selector como hoja inferior: altura, categorías, scroll, selección de origen y destino, texto ampliado — y el buscador: filtrado en vivo, acentos (también contra la copy real de `AppMessages`, #104), sin resultados, borrado y elegir un resultado |
+| | `test/features/converter/converter_keyboard_test.dart` | **(#40)** El conversor con el teclado abierto: sin desbordes y encogiendo con el body; el campo filtra lo que un teclado físico puede mandar |
+| | `test/features/converter/converter_swap_button_test.dart` | **(#40)** El botón de intercambio no se despega de la costura aunque la tarjeta de salida crezca; el resultado se redondea al mostrar, no al calcular |
+| | `test/features/converter/converter_preload_from_detail_test.dart` | **(#103)** El traspaso del detalle al conversor completo: la tasa llega seleccionada con su mercado, el sentido y el monto cruzan tal cual, la regla pivote se mantiene, y —la mitad que importa— cambiar de pestaña o abrir y cerrar el detalle **no** toca la selección del usuario |
+| | `test/features/currency_detail/currency_detail_open_in_converter_test.dart` | **(#103)** El botón: los tres pasos y su orden (cargar, cerrar, cambiar de pestaña), que el monto tecleado sobrevive al cierre, y que un detalle invertido traslada también el sentido |
+| **Goldens** | `test/shared/presentation/widgets/app_state_view_golden_test.dart` | **(#35)** Estados de error y vacío, claro y oscuro |
+| | `test/shared/presentation/widgets/performance_indicator_widget_golden_test.dart` | **(#35)** Indicador de variación, claro y oscuro |
+| | `test/features/home/home_page_golden_test.dart` | **(#35)** Home, pestañas promedio y BCV, claro y oscuro |
+| | `test/features/converter/converter_page_golden_test.dart` | **(#35)** Cuerpo del conversor, claro y oscuro |
+| | `test/features/currency_detail/currency_detail_sheet_golden_test.dart` | **(#38)** Modal de detalle, tasa paralela y oficial, claro y oscuro |
+| | `test/features/converter/currency_selector_sheet_golden_test.dart` | **(#40)** Selector de divisas como hoja inferior, claro y oscuro |
 | **Config / i18n** | `test/config/enviroment/environment_test.dart` + `environment_empty_env_test.dart` | Validación de `CURRENCY_BACK`, `.env` ausente/vacío |
 | | `test/core/i18n/translation_parity_test.dart` | **(#36)** Paridad de claves en los 10 idiomas |
+| | `test/core/i18n/search_folds_published_names_test.dart` | **(#104, #41)** La tilde de «Dólar» en `es_ES`, que buscar sin tilde encuentra el nombre publicado, y que la tabla de plegado cubre los diacríticos que la app realmente envía |
 | | `test/config/routes/app_pages_test.dart` | Registro de rutas nombradas |
 | | `test/config/theme/colors_constants_test.dart` | Opacidad de la paleta (alpha de 8 dígitos) |
+| | `test/shared/presentation/settings_controller_device_language_test.dart` | **(#98)** El primer arranque: la app sigue al dispositivo y el selector muestra ESE idioma, `es_VE`→`es_ES` y `en_GB`→`en_US` por el paso de solo-idioma, un idioma no publicado cae al defecto, seguir al dispositivo no se persiste, tocar el idioma ya mostrado sí lo aplica y lo guarda, y la migración de `en_EN`/`ja_JA` conserva el idioma en vez de perderlo |
+| | `test/shared/presentation/settings_controller_startup_test.dart` | **(#59)** El arranque asíncrono del servicio de ajustes: `Get.find` devuelve el estado ya cargado en el mismo turno, registro único y permanente, un `langCode` malformado no tumba el lanzamiento, y el **primer frame** ya lleva el tema y el idioma guardados — incluida la razón por la que el locale se pasa y no se aplica |
+| **Tooling / CI** | `test/tool/release_notes_txt_test.dart` | **(#93)** La derivación de `release_notes.json` al `.txt` que lee Firebase: elección de idioma, fallback, y que **nunca** produce notas vacías (JSON roto, entrada sin texto, sin `en-US`). Valida además el `release_notes.json` real contra el límite de 500 caracteres de Google Play y los `<`/`>` que Apple rechaza |
 
 > Todos los tests **mockean la red**: ninguno llama al backend real (fakes de `HttpManager` / `IDollarApi` / `IDollarRepository`). Las imágenes de red en los widget tests se evitan vaciando los placeholders del skeleton.
 

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Colores de marca para el arranque nativo (#102).
+
+  En un archivo aparte de `colors.xml` a propósito: ese lo escribe
+  `flutter_launcher_icons` para `ic_launcher_background`, y una regeneración
+  del icono no debe poder llevarse por delante el fondo del splash.
+
+  El valor coincide con `ic_launcher_background` y con la constante `navy` de
+  `tool/generate_app_icon.dart`, y eso no es casualidad: en Android 12+ el
+  sistema dibuja el icono adaptativo encima de este fondo, así que el lienzo
+  para el que se diseñó el icono y el fondo del arranque tienen que ser el
+  mismo color o se ve el borde del icono recortado.
+
+  Por qué este y no un extremo del degradado del splash de Flutter
+  (#070E15 → #02466D): cae entre los dos, así que la costura hacia el
+  degradado es un escalón pequeño en vez de un corte. Ver `assets/brand/README.md`.
+-->
+<resources>
+    <color name="brand_launch_background">#08253A</color>
+</resources>

@@ -50,5 +50,10 @@ class DollarEndpoints {
     },
   };
 
+  /// Official BCV rates plus the effective date the institution reported.
+  ///
+  /// `with-memory` is the variant that answers from the backend's stored copy when
+  /// the BCV's own page is unreachable — which it regularly is, since that side
+  /// scrapes HTML. It is why the app can open on official rates during an outage.
   static const String currentBCVDollar = '$_apiEndpoints/bcv/with-memory';
 }
