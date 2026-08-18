@@ -172,7 +172,18 @@ void main() {
     });
 
     test('the tester gets Spanish', () {
-      expect(renderReleaseNotes(source), contains('tasas'));
+      // Asserted against the file's own `es-ES` entry rather than against a word
+      // that happens to be in it. An earlier version of this test looked for
+      // "tasas", which tied it to one release's prose and broke on the next —
+      // the kind of test people delete instead of fixing.
+      final List<dynamic> entries = jsonDecode(source) as List<dynamic>;
+      final String spanish =
+          entries.cast<Map<String, dynamic>>().firstWhere(
+                (Map<String, dynamic> e) => e['language'] == 'es-ES',
+              )['text']
+              as String;
+
+      expect(renderReleaseNotes(source), '${spanish.trim()}\n');
     });
 
     test('every language fits the 500 characters Google Play allows', () {
