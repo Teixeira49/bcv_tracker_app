@@ -1,12 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Modify this file to customize your launch splash screen -->
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@android:color/white" />
+<!--
+  Pantalla de arranque nativa, Android 11 y anteriores (#102).
 
-    <!-- You can insert your own image assets here -->
-    <!-- <item>
+  Es lo que el sistema pinta mientras el proceso arranca y el motor de Flutter
+  todavía no ha dibujado nada. Antes era `@android:color/white`, la plantilla de
+  `flutter create` sin tocar, y por eso el arranque se veía como dos apps
+  encadenadas: blanco liso → degradado azul con el logo → Home.
+
+  El icono es `ic_launcher_foreground`: arte blanco con fondo transparente, el
+  mismo que alimenta el icono adaptativo. Se usa ese y no `@mipmap/launcher_icon`
+  porque a partir de API 26 ese nombre resuelve a `mipmap-anydpi-v26/launcher_icon.xml`,
+  que es un `<adaptive-icon>` y no un bitmap — `<bitmap>` no lo acepta y el build
+  falla. El foreground es un PNG real en las cinco densidades.
+
+  **Este archivo sigue teniendo efecto en Android 12+**, al contrario de lo que
+  suele leerse. La SplashScreen API de 12+ usa `windowSplashScreenBackground`
+  cuando está declarado y, si no, **cae en el `windowBackground` del tema** — es
+  decir, en esto. Comprobado en un emulador API 36 poniendo aquí un magenta y
+  quitando `values-night-v31`: el arranque salió magenta, no negro del sistema.
+  Así que esto es la primera línea para ≤11 y la red de seguridad para 12+.
+  El camino explícito de 12+ vive en `values-v31/styles.xml` y
+  `values-night-v31/styles.xml`.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/brand_launch_background" />
+
+    <item>
         <bitmap
             android:gravity="center"
-            android:src="@mipmap/launch_image" />
-    </item> -->
+            android:src="@drawable/ic_launcher_foreground" />
+    </item>
 </layer-list>

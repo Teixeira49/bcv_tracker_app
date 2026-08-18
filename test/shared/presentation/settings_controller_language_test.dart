@@ -21,10 +21,13 @@ void main() {
 
   group('selectedLanguage', () {
     test('falls back to the default for a code this build does not know', () {
-      // The scenario the issue is about: `en_EN` is what today's build stores,
-      // and the day someone corrects it to `en_US` every install that had it
-      // saved would hit a `firstWhere` with no match.
-      controller.favLanguageCode.value = 'en_US';
+      // The scenario #54 was about, and it has now actually happened: #98
+      // corrected `en_EN` to `en_US`, so an install that stored the old code
+      // hits a `firstWhere` with no match here. `en_EN` itself no longer
+      // reaches this getter — `restoreLanguageCode` migrates it, covered in
+      // `settings_controller_device_language_test.dart` — so the case is
+      // exercised with a code that was never ours.
+      controller.favLanguageCode.value = 'xx_YY';
 
       expect(() => controller.selectedLanguage, returnsNormally);
       expect(
@@ -40,9 +43,10 @@ void main() {
     });
 
     test('returns the matching option for a known code', () {
-      controller.favLanguageCode.value = 'ja_JA';
+      // `ja_JP` since #98, matching the key `AppTranslations` registers.
+      controller.favLanguageCode.value = 'ja_JP';
 
-      expect(controller.selectedLanguage.code, 'ja_JA');
+      expect(controller.selectedLanguage.code, 'ja_JP');
       expect(controller.selectedLanguage.name, '日本語');
     });
 
@@ -114,7 +118,11 @@ void main() {
     });
 
     test('rejects a code outside the list', () {
-      expect(controller.isKnownLanguage('en_US'), isFalse);
+      // `en_EN` and `ja_JA` were rejected here until #98 renamed them; they are
+      // now handled as legacy codes rather than unknown ones.
+      expect(controller.isKnownLanguage('en_EN'), isFalse);
+      expect(controller.isKnownLanguage('ja_JA'), isFalse);
+      expect(controller.isKnownLanguage('xx_YY'), isFalse);
       expect(controller.isKnownLanguage(''), isFalse);
     });
   });
