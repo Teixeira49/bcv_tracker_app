@@ -72,6 +72,7 @@ const Map<String, String> deDe = {
   'officialRate': 'Offiziell',
   'parallelRate': 'Parallel',
   'quickConverterSection': 'Umrechner',
+  'openInConverterAction': 'Im Umrechner öffnen',
   'amountLabel': 'Betrag',
   'invertConversionAction': 'Umrechnung umkehren',
   'searchCurrencyHint': 'Währung oder Markt suchen',

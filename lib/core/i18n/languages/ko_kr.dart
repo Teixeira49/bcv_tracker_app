@@ -72,6 +72,7 @@ const Map<String, String> koKr = {
   'officialRate': '공식',
   'parallelRate': '병행',
   'quickConverterSection': '환전',
+  'openInConverterAction': '환전 화면에서 열기',
   'amountLabel': '금액',
   'invertConversionAction': '환전 방향 바꾸기',
   'searchCurrencyHint': '통화 또는 시장 검색',

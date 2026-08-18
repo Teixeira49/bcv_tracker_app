@@ -152,6 +152,10 @@ class AppMessages {
 
   static String get quickConverterSection => 'quickConverterSection'.tr;
 
+  /// Hands the detailed rate over to the full converter (#103), carrying the
+  /// amount and the direction with it.
+  static String get openInConverterAction => 'openInConverterAction'.tr;
+
   static String get amountLabel => 'amountLabel'.tr;
 
   static String get invertConversionAction => 'invertConversionAction'.tr;

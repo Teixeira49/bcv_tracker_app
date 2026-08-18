@@ -71,6 +71,7 @@ const Map<String, String> enUs = {
   'officialRate': 'Official',
   'parallelRate': 'Parallel',
   'quickConverterSection': 'Converter',
+  'openInConverterAction': 'Open in the converter',
   'amountLabel': 'Amount',
   'invertConversionAction': 'Reverse the conversion',
   'searchCurrencyHint': 'Search currency or market',

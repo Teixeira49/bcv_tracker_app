@@ -72,6 +72,7 @@ const Map<String, String> jaJp = {
   'officialRate': '公定',
   'parallelRate': '並行',
   'quickConverterSection': '換算',
+  'openInConverterAction': '換算画面で開く',
   'amountLabel': '金額',
   'invertConversionAction': '換算の向きを反転',
   'searchCurrencyHint': '通貨または市場を検索',

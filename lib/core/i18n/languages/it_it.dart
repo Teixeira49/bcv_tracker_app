@@ -73,6 +73,7 @@ const Map<String, String> itIt = {
   'officialRate': 'Ufficiale',
   'parallelRate': 'Parallelo',
   'quickConverterSection': 'Convertitore',
+  'openInConverterAction': 'Apri nel convertitore',
   'amountLabel': 'Importo',
   'invertConversionAction': 'Inverti la conversione',
   'searchCurrencyHint': 'Cerca valuta o mercato',

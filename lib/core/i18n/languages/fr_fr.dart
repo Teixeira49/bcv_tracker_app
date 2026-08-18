@@ -73,6 +73,7 @@ const Map<String, String> frFr = {
   'officialRate': 'Officiel',
   'parallelRate': 'Parallèle',
   'quickConverterSection': 'Convertisseur',
+  'openInConverterAction': 'Ouvrir dans le convertisseur',
   'amountLabel': 'Montant',
   'invertConversionAction': 'Inverser la conversion',
   'searchCurrencyHint': 'Rechercher une devise ou un marché',

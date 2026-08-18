@@ -71,6 +71,7 @@ const Map<String, String> ruRu = {
   'officialRate': 'Официальный',
   'parallelRate': 'Параллельный',
   'quickConverterSection': 'Конвертер',
+  'openInConverterAction': 'Открыть в конвертере',
   'amountLabel': 'Сумма',
   'invertConversionAction': 'Поменять направление',
   'searchCurrencyHint': 'Поиск валюты или рынка',

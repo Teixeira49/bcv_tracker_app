@@ -77,6 +77,11 @@ class CurrencyDetailChartSlot extends StatelessWidget {
 /// Placed under the facts so the sheet reads as *information first, actions
 /// after*.
 ///
+/// **Still empty after [#103].** That issue's one action —hand the rate to the
+/// full converter— is not an action *on the rate*, it is a continuation of the
+/// quick converter, so it lives in that section's heading row instead of here.
+/// See [_OpenInConverterButton].
+///
 /// See the contract at the top of this file before filling it in.
 class CurrencyDetailActionsSlot extends StatelessWidget {
   const CurrencyDetailActionsSlot({super.key, required this.currency});
@@ -86,6 +91,62 @@ class CurrencyDetailActionsSlot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _noSection;
+}
+
+/// Sends the detailed rate to the full converter (#103).
+///
+/// **Sits in the heading row of the converter section, opposite its title.**
+/// That is what `CurrencyDetailSection.trailing` is for — a control *of* the
+/// section rather than content *in* it — and it puts the button where the thing
+/// it continues already is: finish the quick sum, then carry it over. A row of
+/// its own above the converter said the same thing further from it, and cost a
+/// section heading of its own to say it.
+class _OpenInConverterButton extends StatelessWidget {
+  const _OpenInConverterButton({required this.rate});
+
+  final Currency rate;
+
+  /// Index of the converter tab in `DashboardPage.pages`.
+  ///
+  /// Tabs are **not routes** (`navigation-convention.md`): getting to the
+  /// converter is moving `NavigationController.selectedIndex`, never
+  /// `Get.toNamed`.
+  static const int _converterTabIndex = 1;
+
+  /// Carries the rate, the amount and the direction to the full converter, then
+  /// gets out of the way.
+  ///
+  /// **The order of the three steps is load, close, switch, and it matters.**
+  /// Closing the sheet runs `CurrencyDetailController.dismiss`, which wipes the
+  /// amount — so the handoff has to read it first or it arrives empty. And the
+  /// tab changes last because the sheet is a route on top of the dashboard:
+  /// switching underneath it would happen behind a panel the user is still
+  /// looking at.
+  ///
+  /// This widget resolves both controllers, which is the presentation layer
+  /// wiring two features together — the place wiring belongs. Neither
+  /// controller learns about the other, and the arithmetic stays where it
+  /// already was: `CurrencyConversion` is shared, so what crosses here is a
+  /// **selection**, not a calculation.
+  void _openInConverter() {
+    final CurrencyDetailController detail =
+        Get.find<CurrencyDetailController>();
+
+    Get.find<ConverterController>().preloadFromDetail(
+      rate: rate,
+      amount: detail.amountInput,
+      reversed: detail.isReversed,
+    );
+
+    Get.back<void>();
+    Get.find<NavigationController>().changeIndex(_converterTabIndex);
+  }
+
+  @override
+  Widget build(BuildContext context) => TextButton(
+    onPressed: _openInConverter,
+    child: Text(AppMessages.openInConverterAction),
+  );
 }
 
 /// Converter dedicated to this rate — **filled by [#39]**.
@@ -113,6 +174,9 @@ class CurrencyDetailConverterSlot extends StatelessWidget {
     child: GetBuilder<CurrencyDetailController>(
       builder: (CurrencyDetailController controller) => CurrencyDetailSection(
         title: AppMessages.quickConverterSection,
+        // Opposite the title, in the heading row: the way out to the full
+        // converter, carrying whatever was typed here (#103).
+        trailing: _OpenInConverterButton(rate: currency),
         child: _CurrencyDetailConverterBody(
           controller: controller,
           rate: currency,

@@ -195,6 +195,50 @@ class ConverterController extends GetxController {
     return true;
   }
 
+  /// Loads the pair, the amount and the direction a caller hands over, and
+  /// converts (#103).
+  ///
+  /// **The decision this method is, written down.** #39 left open whether
+  /// arriving from the rate detail should preload the full converter, and #103
+  /// chose the strongest of the three options on the table: preload the
+  /// currency **and carry the amount and the direction across**. The user story
+  /// is about continuing a calculation already in progress ("seguir donde
+  /// iba"), and a preload that dropped the number would make them type it again
+  /// — which is the thing the button exists to avoid.
+  ///
+  /// **Why overwriting the user's pair is acceptable here, and only here.** The
+  /// pair in this controller survives between visits to the tab, and it may
+  /// well have been chosen on purpose. This does not fire when the tab is
+  /// entered: it fires when the user taps a button that says it will open the
+  /// rate in the converter. Consent is the tap. Switching tabs without that tap
+  /// must leave the selection alone — there is a test for it, because it is the
+  /// half that a future change breaks silently.
+  ///
+  /// [reversed] mirrors the detail sheet's own flip: unreversed means "this rate
+  /// into bolívares", so the rate is the input side. The pivot rule the rest of
+  /// this controller enforces holds either way, since one side is always VES.
+  ///
+  /// The amount arrives as the **raw string** the user typed, not a parsed
+  /// number, for the same reason the detail keeps it that way: `1.` and `1.0`
+  /// are the same value and not the same text, and it is [calculator]'s job to
+  /// parse it — the one place that already handles an empty field and a comma.
+  void preloadFromDetail({
+    required Currency rate,
+    String amount = '',
+    bool reversed = false,
+  }) {
+    final Currency input = reversed ? pivotCurrency : rate;
+    final Currency output = reversed ? rate : pivotCurrency;
+
+    fromCurrency = ConvertibleCurrency(currency: input, convertedValue: 0.0);
+    toCurrency = ConvertibleCurrency(currency: output, convertedValue: 0.0);
+
+    // Through `calculator` rather than assigning a result, so the empty field,
+    // the decimal comma and the market with no rate all behave exactly as they
+    // do when the user types — no second implementation to keep in step.
+    calculator(amount);
+  }
+
   void swapCurrencies() {
     final ConvertibleCurrency temp = fromCurrency;
     fromCurrency = toCurrency;
