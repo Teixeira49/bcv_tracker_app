@@ -116,6 +116,11 @@ class CurrencyRepository extends GetxService {
     }
   }
 
+  /// Fetches the parallel rates, normalises them and publishes them.
+  ///
+  /// Public so [refreshData] can await the two sides independently and let one
+  /// succeed while the other fails. Throws whatever the repository throws — the
+  /// caller is what decides that a partial failure is still a usable state.
   Future<void> getAveragedCurrencies() async {
     final List<Currency> result = await _dollarRepository.getCurrentDollar();
     // saved-currencies answers with every market the backend knows, one row per
@@ -125,6 +130,10 @@ class CurrencyRepository extends GetxService {
     hasAverageData.value = true;
   }
 
+  /// Fetches the official rates and their effective date, and publishes both.
+  ///
+  /// The counterpart of [getAveragedCurrencies], with the same contract: it throws
+  /// rather than swallowing, so [refreshData] can report which side went down.
   Future<void> getBCVCurrencies() async {
     // The currentBCVDollar endpoint returns every official BCV rate plus the
     // effective date reported by the institution.

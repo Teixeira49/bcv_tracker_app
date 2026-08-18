@@ -82,6 +82,12 @@ class Currency {
     this.tendency,
   });
 
+  /// A copy with the given fields replaced.
+  ///
+  /// Used by the converter to move an amount onto a rate without rebuilding the
+  /// rate itself. Note it cannot **clear** an optional field — passing `null` keeps
+  /// the current value — which is the usual `copyWith` trade-off and has not been
+  /// a problem because nothing here needs to un-set a date or a tendency.
   Currency copyWith({
     String? name,
     String? keyName,
