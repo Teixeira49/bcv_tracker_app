@@ -159,6 +159,90 @@ flutter test
 
 ---
 
+## 📝 Documentación del Código
+
+Todo `lib/` se documenta con **dartdoc** (`///`). La norma del proyecto no es «describir lo que hace la línea» sino **explicar la decisión**: por qué el campo es opcional, qué contrato del backend se respeta, qué pasa si el dato no llega. La regla completa, con el checklist por tipo de cambio, está en [`documentation-convention.md`](.agents/rules/documentation-convention.md); esto es lo que hay que saber para escribir la primera.
+
+### Qué documentar
+
+| Elemento | Qué tiene que decir |
+|---|---|
+| **Clase** | Qué representa y **qué papel juega en su capa**. Una línea, y un párrafo más si encierra una decisión |
+| **Entidad de dominio** | Los campos cuyo significado no es evidente, y **por qué son opcionales** cuando lo son. Las constantes estáticas (`empty`, `emptySkeletonizer`, `pivotCurrency`) llevan la suya: sin eso, la siguiente persona añade una cuarta |
+| **Modelo / endpoint** | Qué campos son opcionales **en el contrato**, qué normalización se aplica y qué versión del backend lo introdujo |
+| **Controlador GetX** | Qué vista alimenta, de qué servicio observa, y **qué dispara cada `ever()`** — es control de flujo invisible desde la vista |
+| **Observable público** | Qué representa y cuándo cambia |
+| **Método público** | El contrato: qué devuelve, qué lanza, y qué pasa en el borde (lista vacía, tasa cero, campo ausente) |
+
+### Qué **no** documentar
+
+Esto es tan importante como lo anterior, y es la parte que se suele hacer mal:
+
+- **Lo que el nombre ya dice.** `/// Returns the name.` sobre `String get name` es ruido; oculta las líneas que sí importan.
+- **Getters y setters triviales**, `copyWith`, `toString`.
+- **Los registros mecánicos.** `AppMessages` (79 getters de i18n), `ColorValues` (78 accesores de color) y `AppIcons` (18 rutas de asset) llevan docstring **en la clase** —que explica el registro, la separación en dos capas, y la regla de los diez idiomas— y **ninguno en sus miembros**. Un `/// El color blanco del texto` sobre `textWhite` no informa a nadie. Los pocos miembros que sí lo llevan son los que tienen una razón: mira `AppMessages.officialRate` y `AppMessages.noSearchResultsMessage`.
+- **Bloques de código comentado**: se borran, para eso está git.
+
+### Estilo
+
+- Empieza por una **frase corta y afirmativa**, terminada en punto. Es lo que sale en el índice de `dart doc`.
+- Después de una línea en blanco, el porqué. Usa `**negrita**` para el hallazgo que alguien podría deshacer sin darse cuenta.
+- Referencia símbolos con `[Corchetes]` **solo si están importados en ese archivo**; si no, comillas simples de código, o `dart doc` avisa de una referencia que no resuelve.
+- Cita el issue que tomó la decisión (`(#59)`) — es lo que permite reconstruir el porqué un año después.
+- En inglés, como el resto del código y de los mensajes de commit.
+
+### Medir la cobertura
+
+El lint `public_member_api_docs` **no está activo**, y es deliberado: activarlo obligaría a escribir exactamente los comentarios que la sección anterior prohíbe. De los 303 avisos que reporta hoy, **170 caen en esos tres registros mecánicos** (`colors_values.dart` 77, `app_messages.dart` 76, `icons_constants.dart` 17).
+
+Para medir de todos modos, actívalo un momento. Ojo con el **cómo**: hay que insertarlo en el bloque `rules:` que ya existe, no añadir un `linter:` nuevo al final — dos claves `linter:` en el mismo YAML y el analizador se queda con una, así que el lint no se aplica y el comando responde `0` como si todo estuviera documentado.
+
+```bash
+cp analysis_options.yaml /tmp/ao.bak
+python3 -c "
+s = open('analysis_options.yaml').read()
+s = s.replace('  rules:', '  rules:\n    public_member_api_docs: true', 1)
+open('analysis_options.yaml', 'w').write(s)
+"
+flutter analyze 2>&1 | grep public_member_api_docs | sed -E 's#^.*(lib/[^:]+):.*#\1#' | sort | uniq -c | sort -rn
+
+cp /tmp/ao.bak analysis_options.yaml   # ← no olvides esto
+git diff --quiet analysis_options.yaml && echo 'restaurado'
+```
+
+Lo que **sí** debe estar al 100 % son las **clases**: cada tipo público de `lib/` lleva su docstring. Comprobarlo:
+
+```bash
+python3 - <<'EOF'
+import re, glob
+d = re.compile(r'^\s*(?:abstract\s+|sealed\s+|final\s+|base\s+|interface\s+)*(class|mixin|enum|extension|typedef)\s+([A-Za-z_]\w*)')
+tot = doc = 0
+for f in sorted(glob.glob('lib/**/*.dart', recursive=True)):
+    lines = open(f, encoding='utf-8').read().split('\n')
+    for i, ln in enumerate(lines):
+        m = d.match(ln)
+        if not m or m.group(2).startswith('_'):
+            continue
+        tot += 1
+        j = i - 1
+        while j >= 0 and (lines[j].strip().startswith('@') or not lines[j].strip()):
+            j -= 1
+        if j >= 0 and lines[j].strip().startswith('///'):
+            doc += 1
+        else:
+            print(f'sin docstring: {f}:{m.group(2)}')
+print(f'{doc}/{tot} tipos publicos documentados')
+EOF
+```
+
+Y para leerla como la leería alguien de fuera:
+
+```bash
+dart doc .          # genera doc/api/
+```
+
+---
+
 ## 🏷️ Versionado y Changelog
 
 El proyecto sigue **[Semantic Versioning](https://semver.org/lang/es/)** (`MAJOR.MINOR.PATCH`, con tags `vX.Y.Z`) y mantiene un historial formal en `CHANGELOG.md` con el formato **[Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/)**.

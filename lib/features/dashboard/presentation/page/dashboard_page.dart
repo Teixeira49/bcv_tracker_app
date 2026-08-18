@@ -7,6 +7,12 @@ import 'package:get/get.dart';
 import '../../../../config/theme/colors/colors_values.dart';
 import '../../../../shared/presentation/widgets/custom_bottom_navigator_bar.dart';
 
+/// The two tabs and the bar that switches them.
+///
+/// Uses an **`IndexedStack`**, so both pages stay mounted and each keeps its scroll
+/// position, its text field and its controller state while the other is showing.
+/// That is what makes leaving the converter and coming back to a half-finished
+/// calculation work, and it is the reason tabs are not routes.
 class DashboardPage extends GetView<NavigationController> {
   final List<Widget> pages = [const HomePage(), const ConverterPage()];
 

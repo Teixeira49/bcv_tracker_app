@@ -12,8 +12,26 @@ import 'http_operation.dart';
 
 // Project imports:
 
-enum HttpManagerUtilError { error }
+/// Placeholder discriminator kept for the transport's own error path.
+///
+/// A single-value enum, which is as much as it needs to be: callers never see it,
+/// because failures leave this layer as `ApiException`.
+enum HttpManagerUtilError {
+  /// The transport failed. The cause travels in the exception, not here.
+  error,
+}
 
+/// The app's HTTP client — Dio, configured once.
+///
+/// Every request goes through here so the timeout, the headers and the logging
+/// are one decision rather than a per-datasource habit. `DollarApiRest` takes an
+/// instance, which is what lets a test hand it a fake and assert **the outgoing
+/// contract** (the path and the method actually sent) without a network.
+///
+/// It **maps transport failures to `ApiException`**. A `DioException` must not
+/// escape this file: the layers above have no business knowing which client
+/// fetched the data, and `.agents/rules/test-coverage.md` requires a test for each
+/// of non-2xx, timeout and empty body.
 class HttpManager {
   BaseOptions _dioOptions(
     String endpoint,

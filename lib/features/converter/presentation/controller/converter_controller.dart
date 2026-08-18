@@ -4,25 +4,55 @@ import '../../../../shared/domain/conversion.dart';
 import '../../../../shared/domain/entities/currency.dart';
 import '../../domain/entities/convertible_currency.dart';
 
+/// Drives the full converter: which pair, how much, and the result.
+///
+/// **The pivot rule is the thing to understand here.** Every rate the backend
+/// publishes is quoted in bolívares, so there is no cross-rate for `USD → EUR`;
+/// the converter therefore keeps [Currency.pivotCurrency] on **one side at all
+/// times** and reads `USD → EUR` as `USD → VES → EUR`. [selectCurrency] enforces
+/// that invariant rather than trusting callers, which is why picking a second
+/// non-VES currency moves the other side to VES instead of refusing.
+///
+/// Unlike `HomeController` this holds state of its own — the pair and the amount
+/// — and that state **survives between visits to the tab**, deliberately: a user
+/// coming back to a calculation finds it where they left it. Which is also why
+/// [preloadFromDetail] is the only thing allowed to overwrite it, and only on an
+/// explicit tap.
+///
+/// The arithmetic is **not** here: `CurrencyConversion` in `shared/domain/` owns
+/// it, and the detail sheet's quick converter calls the same functions. That is
+/// what makes "both converters agree" a test rather than a hope.
 class ConverterController extends GetxController {
   final CurrencyRepository _repository = Get.find<CurrencyRepository>();
 
+  /// Whether a refresh is in flight — the same one Home shows, so the two
+  /// screens never disagree about whether the app is busy.
   bool get isLoading => _repository.isLoading.value;
 
   /// Detail of the last failed refresh, or `null` when the last one succeeded —
   /// the same failure the Home shows, so the converter states stay consistent.
   String? get errorMessage => _repository.errorMessage.value;
 
-  // Single consolidated list of currencies
+  /// Every rate the user can pick from, official and parallel in one list.
+  ///
+  /// Consolidated because the converter asks "which rate", not "which tab": the
+  /// selector shows them together. Deduplicated on `keyName + platform + name` by
+  /// [_updateCurrenciesAndInit], since the BCV dollar and a parallel dollar are
+  /// different rates that share a code.
+  ///
+  /// Starts as skeleton placeholders, like the service's own lists.
   final RxList<Currency> currencies = List.generate(
     5,
     (e) => Currency.emptySkeletonizer,
   ).obs;
 
+  /// Refetches the rates. Bound to the converter's pull-to-refresh and to retry.
   Future<void> refreshConverterData() async {
     await _repository.refreshData();
   }
 
+  /// The bolívar, held as a field so the pivot rule reads as a comparison rather
+  /// than a literal. See [Currency.pivotCurrency].
   Currency pivotCurrency = Currency.pivotCurrency;
 
   final Rx<ConvertibleCurrency> _fromCurrency = ConvertibleCurrency(
@@ -30,8 +60,11 @@ class ConverterController extends GetxController {
     convertedValue: 0.0,
   ).obs;
 
+  /// The side the user types into, with the amount they typed.
   ConvertibleCurrency get fromCurrency => _fromCurrency.value;
 
+  /// Replaces the input side. Setting it does **not** recalculate — call
+  /// [calculator] after, which is what every path here does.
   set fromCurrency(ConvertibleCurrency value) => _fromCurrency.value = value;
 
   final Rx<ConvertibleCurrency> _toCurrency = ConvertibleCurrency(
@@ -39,8 +72,11 @@ class ConverterController extends GetxController {
     convertedValue: 0.0,
   ).obs;
 
+  /// The side the result is expressed in, with that result.
   ConvertibleCurrency get toCurrency => _toCurrency.value;
 
+  /// Replaces the output side. Like [fromCurrency], does not recalculate on its
+  /// own.
   set toCurrency(ConvertibleCurrency value) => _toCurrency.value = value;
 
   @override
@@ -116,6 +152,7 @@ class ConverterController extends GetxController {
     }
   }
 
+  /// The rate line under each card — `1.0 ≈ 826.84`, in the pair's own units.
   String getRoundedCurrency() =>
       '${fromCurrency.originalValue} ≈ ${toCurrency.originalValue}';
 
@@ -131,6 +168,14 @@ class ConverterController extends GetxController {
     toRate: toCurrency.currency.value,
   );
 
+  /// Picks [selected] for the input side when [isInput], the output side
+  /// otherwise, keeping the pivot rule.
+  ///
+  /// Returns `null` when nothing changed (the same rate was already there),
+  /// `true` when the pair moved. The four branches in the body are the rule made
+  /// explicit: same rate, the other side's rate (so swap), a new rate, and the
+  /// case where neither side would be VES — which moves the *other* side to the
+  /// pivot rather than rejecting the choice the user just made.
   bool? selectCurrency(Currency selected, {required bool isInput}) {
     final Currency current = isInput
         ? fromCurrency.currency
@@ -239,6 +284,14 @@ class ConverterController extends GetxController {
     calculator(amount);
   }
 
+  /// Flips the pair, **carrying each figure with its currency**.
+  ///
+  /// The figure belongs to its currency, so `USD 2 | VES 1653` inverts to
+  /// `VES 1653 | USD 2`, not to `VES 2`. Leaving the amount behind would silently
+  /// change the question — it would ask what two bolívares are worth and answer
+  /// `0.00`, which reads as a broken converter rather than a correct answer to a
+  /// question nobody asked. The detail sheet's quick converter follows the same
+  /// model.
   void swapCurrencies() {
     final ConvertibleCurrency temp = fromCurrency;
     fromCurrency = toCurrency;
@@ -246,6 +299,17 @@ class ConverterController extends GetxController {
     calculator(fromCurrency.convertedValue.toString());
   }
 
+  /// Parses what the user typed and publishes the converted result.
+  ///
+  /// Takes the **raw string**, not a number: `1.` and `1.0` are the same value
+  /// and not the same text, and writing a parsed value back would move the caret.
+  /// It is also the single place that decides what a string means — empty field,
+  /// lone separator, decimal comma — which is why [preloadFromDetail] routes
+  /// through here instead of parsing the handed-over amount itself.
+  ///
+  /// The full precision is kept in state; rounding happens only at display, in
+  /// `CurrencyHelpers.castAmount`. That order is the fix for the converter's
+  /// original rounding bug and must not be inverted.
   void calculator(String value) {
     if (value.isEmpty) {
       fromCurrency = fromCurrency.copyWith(convertedValue: 0.0);

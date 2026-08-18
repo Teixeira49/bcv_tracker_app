@@ -1,5 +1,18 @@
 part 'width_constants.dart';
 
+/// The 8-point spacing and radius scale.
+///
+/// Sizes come from this scale rather than from bare numbers in an `EdgeInsets`, so
+/// the app's rhythm is one set of decisions. If a design needs a value that is not
+/// on the scale, the question to ask first is whether it should use one that is.
+///
+/// **Adoption is partial, and knowingly so.** `features/currency_detail/` was built
+/// on the scale; older widgets still carry loose numbers. New UI uses these, and
+/// touching an old widget is the moment to migrate its paddings — the boy-scout
+/// rule in `.agents/rules/constants-centralization.md`.
+///
+/// `final` rather than `const` because the values are computed from the base unit;
+/// that is also why they cannot appear in a `const` constructor.
 class WidthValues {
   // ---------------------------------------------------
   // <---------------- Radius values ------------------>

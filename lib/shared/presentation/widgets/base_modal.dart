@@ -3,7 +3,15 @@ import 'package:get/get.dart';
 
 import '../../../config/theme/colors/colors_values.dart';
 
+/// A centred dialog in the app's dressing.
+///
+/// The **centred** half of the modal story: use this for a short, self-contained
+/// choice like Settings, and `BaseBottomSheet` for anything that scrolls or that
+/// belongs to something the user tapped. `DESIGN.md` states which applies where.
+/// Opened through `showBlurredDialog`, never `Get.dialog` by hand, and closed
+/// with `Get.back()`.
 class BaseModal extends StatelessWidget {
+  /// Builds the dialog around [child].
   const BaseModal({
     super.key,
     required this.title,

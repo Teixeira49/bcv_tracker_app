@@ -3,9 +3,21 @@ import 'package:flutter/material.dart';
 
 import 'custom_badged.dart';
 
+/// The signed percentage badge on a rate — an arrow, a figure and a colour.
+///
+/// Only rendered when the source actually reported a change: a rate whose
+/// `tendency` is `null` shows **no badge at all**, because `0%` reads as "the rate
+/// held" and that is a claim the source did not make. Callers decide; this widget
+/// takes a non-null [value].
+///
+/// Guarded by a golden test in light and dark, since the three states are colour
+/// decisions.
 class PerformanceIndicatorWidget extends StatelessWidget {
+  /// The change to show, as a percentage. Zero renders the neutral state, which is
+  /// a real answer — not the same as an absent one.
   final double value;
 
+  /// Shows [value] as a badge.
   const PerformanceIndicatorWidget({super.key, required this.value});
 
   @override

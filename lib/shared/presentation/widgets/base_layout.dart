@@ -7,11 +7,30 @@ import '../../../config/theme/colors/colors_values.dart';
 import '../../../config/theme/icons/icons_constants.dart';
 import '../../../features/settings/presentation/page/settings_modal.dart';
 
+/// The branded frame every top-level screen sits in.
+///
+/// Draws the dark strip with the logo, the title and the settings button, and
+/// hosts [child] underneath. Screens compose this rather than each building their
+/// own `Scaffold`, which is what keeps the strip identical between Home and the
+/// converter.
+///
+/// It measures against its own **box**, not the screen. That is not incidental:
+/// against `MediaQuery` the title kept its absolute offset while the body shrank
+/// under the keyboard, and ended up clipped behind the panel.
 class BaseLayout extends StatelessWidget {
+  /// Content below the branded strip. Null renders the frame alone, which is what
+  /// the splash and the error page want.
   final Widget? child;
+
+  /// Heading inside the strip. Must come from `AppMessages`
+  /// (`.agents/rules/i18n-convention.md`).
   final String? title;
+
+  /// Insets applied to [child], so each screen decides its own gutter without
+  /// touching the frame.
   final EdgeInsetsGeometry margins;
 
+  /// Wraps [child] in the branded frame.
   const BaseLayout({super.key, this.child, required this.margins, this.title});
 
   /// Where the title sits inside the branded strip, as a share of the height.

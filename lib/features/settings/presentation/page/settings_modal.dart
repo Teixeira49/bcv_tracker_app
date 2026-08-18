@@ -16,6 +16,14 @@ part '../widgets/settings_inputs.dart';
 
 part '../widgets/settings_widgets.dart';
 
+/// Language, theme and default market, in a centred dialog.
+///
+/// A **modal, not a route**: opened with `showBlurredDialog` and closed with
+/// `Get.back()`, so it is not registered in `AppPages`. Its selectors read
+/// `SettingsController` with `Obx` rather than `GetBuilder` — the controller is a
+/// `GetxService` since
+/// [#59](https://github.com/Teixeira49/bcv_tracker_app/issues/59) and `GetBuilder`
+/// is bound to `GetxController`.
 class SettingsModal extends StatelessWidget {
   const SettingsModal({super.key});
 

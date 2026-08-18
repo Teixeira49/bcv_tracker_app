@@ -22,6 +22,12 @@ part '../widgets/home_tab_bar.dart';
 
 part '../widgets/home_widgets.dart';
 
+/// The rate list, in two tabs: the parallel average and the official BCV rates.
+///
+/// The app's landing screen. Which tab opens first is the user's saved preference
+/// (`SettingsController.favMarketIndex`), and tapping a card opens the detail sheet
+/// with a **snapshot** of that rate — this list already holds the freshest copy the
+/// app has, so the sheet does not re-fetch.
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 

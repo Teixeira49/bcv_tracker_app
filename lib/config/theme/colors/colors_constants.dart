@@ -1,5 +1,19 @@
 import 'package:flutter/material.dart';
 
+/// The brand palette, as raw `MaterialColor` swatches.
+///
+/// The **lowest** layer of colour: literal values and nothing else. Widgets do not
+/// read this — they read `ColorValues`, which picks a shade per theme. That split
+/// is what makes light and dark a single decision per token instead of a
+/// conditional at every call site.
+///
+/// No `Color(0xFF...)` exists outside `lib/config/theme/`; the 137 uses in the app
+/// all resolve through here. `DESIGN.md` declares these tokens first and this file
+/// implements them — see `.agents/rules/design-system.md`.
+///
+/// The launch-screen navy `#08253A` is deliberately **not** here: it belongs to the
+/// brand's artwork rather than to the interface palette, and lives in
+/// `assets/brand/`.
 class AppColors {
   AppColors._();
 

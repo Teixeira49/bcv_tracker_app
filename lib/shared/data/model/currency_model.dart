@@ -1,6 +1,18 @@
 import 'package:bcv_tracker_app/core/helpers/backend_date.dart';
 import 'package:bcv_tracker_app/shared/domain/entities/entities.dart';
 
+/// Wire format of one rate, and the seam back to [Currency].
+///
+/// Where the backend's shape is dealt with and then left behind: optional fields
+/// read with a fallback, `platform_img` empty strings turned into `null`, `num`
+/// widened to `double`, and dates normalised **once**. Nothing above the data layer
+/// should ever normalise something that came off the network.
+///
+/// It **extends the entity**, so a `CurrencyModel` satisfies every signature that
+/// asks for a `Currency` and the compiler cannot tell you when one leaks upward.
+/// `.toEntity()` is therefore mandatory even though returning `this` would compile
+/// — see `.agents/rules/entities-vs-models.md`, and the four places a new field has
+/// to touch.
 class CurrencyModel extends Currency {
   CurrencyModel({
     required super.name,

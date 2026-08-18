@@ -64,6 +64,14 @@ class ConfigurationErrorApp extends StatelessWidget {
   }
 }
 
+/// The app itself, once the configuration is known to be usable.
+///
+/// Wires the routing table, the ten translations and the two themes. The theme and
+/// the locale come **from `SettingsController`, already loaded** — `main` awaits
+/// `InitialBinding.initServices()` before this can exist — and they are *passed*
+/// rather than applied, because `GetMaterialApp.initState` assigns `Get.locale`
+/// from its own argument and would overwrite anything set earlier
+/// ([#59](https://github.com/Teixeira49/bcv_tracker_app/issues/59)).
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 

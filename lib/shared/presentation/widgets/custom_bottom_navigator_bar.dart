@@ -6,7 +6,19 @@ import 'package:get/get.dart';
 import '../../../config/theme/colors/colors_values.dart';
 import '../../../navigation/navigation_controller.dart';
 
+/// The app's bottom tab bar.
+///
+/// **Kept as a custom component on purpose.** It is not a `BottomNavigationBar`,
+/// so the Material 3 migration
+/// ([#44](https://github.com/Teixeira49/bcv_tracker_app/issues/44)) left it alone
+/// and its colours still come from `ColorValues` rather than from
+/// `Theme.of(context).colorScheme`.
+///
+/// It **switches tabs, it does not navigate**: tapping moves
+/// `NavigationController.selectedIndex`, and `DashboardPage` keeps both pages
+/// alive in an `IndexedStack`. See `.agents/rules/navigation-convention.md`.
 class CustomBottomNavigatorBar extends StatelessWidget {
+  /// Builds the bar for [pageButtons], driven by [navigationController].
   const CustomBottomNavigatorBar({
     super.key,
     required this.navigationController,
@@ -109,9 +121,15 @@ class _CustomBottomNavigatorItem extends StatelessWidget {
   );
 }
 
+/// The sliding indicator above the selected tab.
+///
+/// Public only because it is built from the item widget; nothing outside this file
+/// should need it.
 class AnimatedBar extends StatelessWidget {
+  /// Draws the indicator, expanded when [isActive].
   const AnimatedBar({super.key, required this.isActive});
 
+  /// Whether this is the selected tab.
   final bool isActive;
 
   @override

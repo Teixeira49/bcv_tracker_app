@@ -56,6 +56,17 @@ class EnvironmentError {
   String toString() => 'EnvironmentError($variable, ${issue.name})';
 }
 
+/// The only place the app reads `.env`.
+///
+/// Every `dotenv.env[...]` lookup lives here, so the configuration contract is one
+/// file rather than a habit spread across datasources. A variable added to `.env`
+/// has to be added here, to `.env.example` **with a placeholder value**, to the
+/// README, and to the `Crear .env` step of all three Codemagic workflows — see
+/// `.agents/rules/environment-variables.md`, and note that a missing CI variable
+/// builds fine and ships an app with no configuration.
+///
+/// [load] never throws and [validate] reports instead: a bad `.env` is a problem to
+/// show the user on a real screen, not a crash before the first frame.
 class Environment {
   /// Key of the backend URL in `.env`. Kept as a constant because both the
   /// getter and the validation name it, and a typo in either would be silent.
