@@ -8,6 +8,11 @@ import 'currency_model.dart';
 /// tell you when one leaks upwards. [currencyModels] and [toEntity] exist
 /// precisely to make that conversion checkable — see their own comments.
 class BcvCurrenciesModel extends BcvCurrencies {
+  /// Takes the deserialised rows at their real type.
+  ///
+  /// [currencies] is a `List<CurrencyModel>` on purpose: the inherited field is
+  /// declared `List<Currency>`, and accepting that type here is what let models
+  /// travel upward unnoticed. See [currencyModels].
   BcvCurrenciesModel({
     required super.date,
     required List<CurrencyModel> currencies,

@@ -161,7 +161,14 @@ flutter test
 
 ## 📝 Documentación del Código
 
-Todo `lib/` se documenta con **dartdoc** (`///`). La norma del proyecto no es «describir lo que hace la línea» sino **explicar la decisión**: por qué el campo es opcional, qué contrato del backend se respeta, qué pasa si el dato no llega. La regla completa, con el checklist por tipo de cambio, está en [`documentation-convention.md`](.agents/rules/documentation-convention.md); esto es lo que hay que saber para escribir la primera.
+Todo `lib/` se documenta con **dartdoc** (`///`). La norma del proyecto no es «describir lo que hace la línea» sino **explicar la decisión**: por qué el campo es opcional, qué contrato del backend se respeta, qué pasa si el dato no llega. Esto es lo que hay que saber para escribir la primera; las dos reglas completas son:
+
+| Regla | Responde a |
+|---|---|
+| [`documentation-convention.md`](.agents/rules/documentation-convention.md) | **Cómo** se escribe, con el checklist por tipo de cambio |
+| [`documentation-coverage.md`](.agents/rules/documentation-coverage.md) | **Qué no se puede perder**: el invariante, dónde es más estricto, y las exenciones |
+
+El invariante, en una línea: **cada tipo público de `lib/` lleva docstring** (75/75 hoy), en `shared/domain/` y `shared/data/` **cada miembro público también**, y `dart doc` no reporta avisos. Si tu cambio baja cualquiera de esas tres cifras, está incompleto — y si cambias lo que hace un símbolo ya documentado, **su docstring entra en el mismo diff**: un comentario que describe el comportamiento anterior miente con autoridad, y es peor que ninguno.
 
 ### Qué documentar
 

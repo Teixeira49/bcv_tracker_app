@@ -14,6 +14,8 @@ import 'package:bcv_tracker_app/shared/domain/entities/entities.dart';
 /// — see `.agents/rules/entities-vs-models.md`, and the four places a new field has
 /// to touch.
 class CurrencyModel extends Currency {
+  /// Builds a model directly. Normally reached through [fromJson]; the explicit
+  /// constructor is what the mapping tests construct expectations with.
   CurrencyModel({
     required super.name,
     required super.keyName,
@@ -53,6 +55,13 @@ class CurrencyModel extends Currency {
     return url.isEmpty ? null : url;
   }
 
+  /// Returns a plain [Currency] with the same values.
+  ///
+  /// **Mandatory even though `return this` would compile.** The model extends the
+  /// entity, so returning itself type-checks and leaves an object of the data
+  /// layer alive in the domain — where nothing would fail until this class grew
+  /// state of its own. Constructing a new [Currency] is what makes the boundary
+  /// real instead of nominal.
   Currency toEntity() {
     return Currency(
       name: name,

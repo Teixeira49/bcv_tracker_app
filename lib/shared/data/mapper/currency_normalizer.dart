@@ -18,6 +18,13 @@ class CurrencyNormalizer {
   static const String _buySuffix = '-buy';
   static const String _sellSuffix = '-sell';
 
+  /// The rows the average tab should show, from what the backend actually sent.
+  ///
+  /// Three problems in one pass, all of them real rather than defensive: markets
+  /// the app does not list are dropped, the `-buy`/`-sell` pair each P2P market
+  /// publishes is merged into one row, and duplicates the database occasionally
+  /// repeats are removed. Without this the tab shows Binance three times and the
+  /// average is dragged by whichever side repeated.
   static List<Currency> forAverageTab(List<Currency> currencies) {
     final allowed = currencies.where(
       (currency) => Markets.averageTab.contains(currency.platform),
