@@ -70,6 +70,7 @@ const Map<String, String> zhCn = {
   'officialRate': '官方',
   'parallelRate': '平行',
   'quickConverterSection': '换算',
+  'openInConverterAction': '在换算器中打开',
   'amountLabel': '金额',
   'invertConversionAction': '反转换算方向',
   'searchCurrencyHint': '搜索货币或市场',

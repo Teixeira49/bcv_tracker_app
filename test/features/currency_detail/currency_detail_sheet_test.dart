@@ -192,10 +192,17 @@ void main() {
 
     // Two sections on screen: the detail table and the converter #39 filled.
     // The chart (#5) and the actions (#7) still paint nothing, so the sheet
-    // stays complete without them — which is what #38 asked for.
+    // stays complete without them — which is what #38 asked for. #103 added no
+    // third section: its one action rides in the converter's heading row.
     expect(
       find.byType(CurrencyDetailSection, skipOffstage: false),
       findsNWidgets(2),
+    );
+    // And it is there, opposite the converter's title. `skipOffstage: false`
+    // because at this height that heading sits past the fold.
+    expect(
+      find.text(AppMessages.openInConverterAction, skipOffstage: false),
+      findsOneWidget,
     );
     expect(find.text(AppMessages.currencyDetailsSection), findsOneWidget);
     // `skipOffstage: false`: the converter is the last section, so in this

@@ -71,6 +71,7 @@ const Map<String, String> ptPt = {
   'officialRate': 'Oficial',
   'parallelRate': 'Paralelo',
   'quickConverterSection': 'Conversor',
+  'openInConverterAction': 'Abrir no conversor',
   'amountLabel': 'Montante',
   'invertConversionAction': 'Inverter a conversão',
   'searchCurrencyHint': 'Procurar moeda ou mercado',

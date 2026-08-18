@@ -2,7 +2,7 @@
 
 Este documento es el **inventario de la suite**: primero lo que ya está cubierto, después lo que queda por hacer (roadmap). Mantenlo al día al agregar tests — la regla [`test-coverage.md`](../.agents/rules/test-coverage.md) exige que toda fuente, endpoint, controlador o helper de cálculo nuevo nazca con sus tests, y el check de PR de #27 (`flutter test` en GitHub Actions) lo hace cumplir en cada PR.
 
-## Cobertura actual (46 archivos, 320 tests)
+## Cobertura actual (48 archivos, 337 tests)
 
 | Área | Archivo | Qué cubre |
 |---|---|---|
@@ -34,6 +34,8 @@ Este documento es el **inventario de la suite**: primero lo que ya está cubiert
 | | `test/features/converter/currency_selector_sheet_test.dart` | **(#40, #41)** El selector como hoja inferior: altura, categorías, scroll, selección de origen y destino, texto ampliado — y el buscador: filtrado en vivo, acentos (también contra la copy real de `AppMessages`, #104), sin resultados, borrado y elegir un resultado |
 | | `test/features/converter/converter_keyboard_test.dart` | **(#40)** El conversor con el teclado abierto: sin desbordes y encogiendo con el body; el campo filtra lo que un teclado físico puede mandar |
 | | `test/features/converter/converter_swap_button_test.dart` | **(#40)** El botón de intercambio no se despega de la costura aunque la tarjeta de salida crezca; el resultado se redondea al mostrar, no al calcular |
+| | `test/features/converter/converter_preload_from_detail_test.dart` | **(#103)** El traspaso del detalle al conversor completo: la tasa llega seleccionada con su mercado, el sentido y el monto cruzan tal cual, la regla pivote se mantiene, y —la mitad que importa— cambiar de pestaña o abrir y cerrar el detalle **no** toca la selección del usuario |
+| | `test/features/currency_detail/currency_detail_open_in_converter_test.dart` | **(#103)** El botón: los tres pasos y su orden (cargar, cerrar, cambiar de pestaña), que el monto tecleado sobrevive al cierre, y que un detalle invertido traslada también el sentido |
 | **Goldens** | `test/shared/presentation/widgets/app_state_view_golden_test.dart` | **(#35)** Estados de error y vacío, claro y oscuro |
 | | `test/shared/presentation/widgets/performance_indicator_widget_golden_test.dart` | **(#35)** Indicador de variación, claro y oscuro |
 | | `test/features/home/home_page_golden_test.dart` | **(#35)** Home, pestañas promedio y BCV, claro y oscuro |

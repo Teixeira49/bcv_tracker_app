@@ -72,6 +72,7 @@ const Map<String, String> esEs = {
   'officialRate': 'Oficial',
   'parallelRate': 'Paralelo',
   'quickConverterSection': 'Conversor',
+  'openInConverterAction': 'Abrir en el conversor',
   'amountLabel': 'Monto',
   'invertConversionAction': 'Invertir la conversión',
   'searchCurrencyHint': 'Buscar moneda o mercado',

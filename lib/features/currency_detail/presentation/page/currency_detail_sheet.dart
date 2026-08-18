@@ -8,9 +8,14 @@ import '../../../../config/theme/width/width_values.dart';
 import '../../../../core/helpers/amount_input_formatter.dart';
 import '../../../../core/helpers/currency_helpers.dart';
 import '../../../../core/i18n/app_messages.dart';
+// #103's action hands the rate to the full converter and switches tab. Both
+// controllers are resolved from the container, never constructed — see
+// `dependency-injection.md`.
+import '../../../../navigation/navigation_controller.dart';
 import '../../../../shared/domain/entities/currency.dart';
 import '../../../../shared/presentation/widgets/base_bottom_sheet.dart';
 import '../../../../shared/presentation/widgets/performance_indicator_widget.dart';
+import '../../../converter/presentation/controller/converter_controller.dart';
 import '../controller/currency_detail_controller.dart';
 import '../widgets/currency_detail_section.dart';
 
