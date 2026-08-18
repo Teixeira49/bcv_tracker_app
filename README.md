@@ -142,5 +142,5 @@ Las convenciones de flujo de trabajo son **idénticas a las del backend** (mismo
 
 ---
 
-**Versión actual del proyecto:** 1.0.1+2
+**Versión actual del proyecto:** 1.1.0+3
 **SDK de Dart compatible:** ^3.9.0

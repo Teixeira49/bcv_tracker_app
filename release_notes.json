@@ -1,10 +1,10 @@
 [
   {
     "language": "en-US",
-    "text": "The average-market rates load again, and the app now shows a clear message with a retry button when something fails or you're offline, instead of a blank screen.\n\n• Redesigned error and empty states\n• The converter no longer shows wrong results\n• Stability, security and translation fixes"
+    "text": "Tap any rate to open its full detail, convert right there, and carry the amount over to the full converter to keep going.\n\n• Rate detail: market, pair, type, change and dates\n• Quick converter inside the detail, with a direction switch\n• Search the currency list by name or market\n• Branded start-up: no more white flash before the logo\n• The language selector now matches the language you see\n• Converted amounts no longer show fourteen decimals"
   },
   {
     "language": "es-ES",
-    "text": "Vuelven a cargar las tasas del mercado promedio, y ahora la app te muestra un mensaje claro con un botón para reintentar cuando algo falla o no hay conexión, en vez de quedarse en blanco.\n\n• Estados de error y vacío rediseñados\n• El conversor ya no muestra resultados erróneos\n• Correcciones de estabilidad, seguridad y traducciones"
+    "text": "Toca cualquier tasa para ver su detalle completo, convertir ahí mismo y llevarte el monto al conversor completo para seguir la cuenta.\n\n• Detalle de la tasa: mercado, par, tipo, variación y fechas\n• Conversor rápido en el detalle, con cambio de sentido\n• Busca en la lista de monedas por nombre o mercado\n• Arranque con la marca: se acabó el destello blanco\n• El selector de idioma ya coincide con el que ves\n• Los montos convertidos ya no salen con catorce decimales"
   }
 ]
