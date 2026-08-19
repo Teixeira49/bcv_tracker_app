@@ -5,11 +5,20 @@ import '../../../config/theme/colors/colors_values.dart';
 
 /// A centred dialog in the app's dressing.
 ///
-/// The **centred** half of the modal story: use this for a short, self-contained
-/// choice like Settings, and `BaseBottomSheet` for anything that scrolls or that
-/// belongs to something the user tapped. `DESIGN.md` states which applies where.
-/// Opened through `showBlurredDialog`, never `Get.dialog` by hand, and closed
-/// with `Get.back()`.
+/// The **centred** half of the modal story: use this for a short decision that
+/// interrupts, and `BaseBottomSheet` for anything that scrolls or that belongs
+/// to something the user tapped. `DESIGN.md` states which applies where. Opened
+/// through `showBlurredDialog`, never `Get.dialog` by hand, and closed with
+/// `Get.back()`.
+///
+/// **Nothing in the app builds one today, and it is kept on purpose.** It held
+/// the settings dialog until
+/// [#37](https://github.com/Teixeira49/bcv_tracker_app/issues/37) turned that
+/// into a screen — for reasons that were about settings, not about dialogs: ten
+/// languages and a menu that has to keep growing were never a short,
+/// interrupting decision. The next one that genuinely is (a destructive
+/// confirmation, a consent prompt) belongs here rather than in a second dialog
+/// written from scratch, which is why deleting this was not part of #37.
 class BaseModal extends StatelessWidget {
   /// Builds the dialog around [child].
   const BaseModal({

@@ -13,10 +13,10 @@ import 'currency_detail_sheet.dart';
 /// sheet widget. Today that is the two Home cards; #38 leaves open whether the
 /// converter offers it too, and adding it there is this one call.
 ///
-/// A modal, not a named route, matching how `SettingsModal` and the converter's
-/// currency selector are presented — see the note on [CurrencyDetailSheet] about
-/// what that costs for deep links. The route settings live in
-/// [showAppBottomSheet], shared with every other sheet.
+/// A modal, not a named route, matching how the converter's currency selector
+/// is presented — see the note on [CurrencyDetailSheet] about what that costs
+/// for deep links. The route settings live in [showAppBottomSheet], shared with
+/// every other sheet.
 ///
 /// The list behind keeps its scroll position because this stacks a route over
 /// the Home instead of rebuilding it.

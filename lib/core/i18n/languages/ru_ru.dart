@@ -79,4 +79,12 @@ const Map<String, String> ruRu = {
   'noSearchResultsMessage': 'Нет валют, соответствующих «@query».',
   'clearSearchAction': 'Очистить поиск',
   'closeAction': 'Закрыть',
+
+  // --- Settings screen (#37) ---
+  'preferencesSection': 'Предпочтения',
+  'appearanceSection': 'Оформление',
+  'defaultMarketDescription': 'Вкладка при запуске',
+  'languageDescription': 'Язык интерфейса',
+  'themeDescription': 'Светлая, тёмная или системная',
+  'backAction': 'Назад',
 };

@@ -80,4 +80,12 @@ const Map<String, String> jaJp = {
   'noSearchResultsMessage': '「@query」に一致する通貨はありません。',
   'clearSearchAction': '検索をクリア',
   'closeAction': '閉じる',
+
+  // --- Settings screen (#37) ---
+  'preferencesSection': '基本設定',
+  'appearanceSection': '外観',
+  'defaultMarketDescription': '起動時に開くタブ',
+  'languageDescription': '表示言語',
+  'themeDescription': 'ライト、ダーク、システム',
+  'backAction': '戻る',
 };

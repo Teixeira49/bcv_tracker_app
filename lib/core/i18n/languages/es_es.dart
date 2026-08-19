@@ -80,4 +80,12 @@ const Map<String, String> esEs = {
   'noSearchResultsMessage': 'Ninguna moneda coincide con «@query».',
   'clearSearchAction': 'Borrar búsqueda',
   'closeAction': 'Cerrar',
+
+  // --- Settings screen (#37) ---
+  'preferencesSection': 'Preferencias',
+  'appearanceSection': 'Apariencia',
+  'defaultMarketDescription': 'Pestaña que se abre al iniciar',
+  'languageDescription': 'Idioma de la interfaz',
+  'themeDescription': 'Claro, oscuro o el del sistema',
+  'backAction': 'Volver',
 };

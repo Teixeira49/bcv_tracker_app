@@ -80,4 +80,12 @@ const Map<String, String> deDe = {
   'noSearchResultsMessage': 'Keine Währung passt zu „@query“.',
   'clearSearchAction': 'Suche löschen',
   'closeAction': 'Schließen',
+
+  // --- Settings screen (#37) ---
+  'preferencesSection': 'Präferenzen',
+  'appearanceSection': 'Erscheinungsbild',
+  'defaultMarketDescription': 'Tab beim Start',
+  'languageDescription': 'Sprache der Oberfläche',
+  'themeDescription': 'Hell, dunkel oder System',
+  'backAction': 'Zurück',
 };

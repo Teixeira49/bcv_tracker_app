@@ -81,4 +81,12 @@ const Map<String, String> frFr = {
   'noSearchResultsMessage': 'Aucune devise ne correspond à « @query ».',
   'clearSearchAction': 'Effacer la recherche',
   'closeAction': 'Fermer',
+
+  // --- Settings screen (#37) ---
+  'preferencesSection': 'Préférences',
+  'appearanceSection': 'Apparence',
+  'defaultMarketDescription': 'Onglet ouvert au démarrage',
+  'languageDescription': 'Langue de l\'interface',
+  'themeDescription': 'Clair, sombre ou système',
+  'backAction': 'Retour',
 };

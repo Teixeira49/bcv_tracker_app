@@ -81,4 +81,12 @@ const Map<String, String> itIt = {
   'noSearchResultsMessage': 'Nessuna valuta corrisponde a «@query».',
   'clearSearchAction': 'Cancella ricerca',
   'closeAction': 'Chiudi',
+
+  // --- Settings screen (#37) ---
+  'preferencesSection': 'Preferenze',
+  'appearanceSection': 'Aspetto',
+  'defaultMarketDescription': 'Scheda aperta all\'avvio',
+  'languageDescription': 'Lingua dell\'interfaccia',
+  'themeDescription': 'Chiaro, scuro o di sistema',
+  'backAction': 'Indietro',
 };

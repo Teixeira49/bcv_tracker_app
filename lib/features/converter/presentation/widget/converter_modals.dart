@@ -30,8 +30,9 @@ Future<void> showCurrencySelectorSheet({
 /// outside or on the cross. As a bottom sheet it rises from the edge, takes the
 /// height it needs and closes with a drag.
 ///
-/// `BaseModal` is untouched and still serves the settings dialog — this changed
-/// the selector's container, not the widget.
+/// `BaseModal` is untouched — this changed the selector's container, not the
+/// widget. It served the settings dialog until #37 turned that into a screen,
+/// and now waits for the next short, interrupting decision the app needs.
 class CurrencySelectorSheet extends StatefulWidget {
   const CurrencySelectorSheet({super.key, required this.isInput});
 

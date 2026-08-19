@@ -78,4 +78,12 @@ const Map<String, String> zhCn = {
   'noSearchResultsMessage': '没有与“@query”匹配的货币。',
   'clearSearchAction': '清除搜索',
   'closeAction': '关闭',
+
+  // --- Settings screen (#37) ---
+  'preferencesSection': '偏好设置',
+  'appearanceSection': '外观',
+  'defaultMarketDescription': '启动时打开的标签页',
+  'languageDescription': '界面语言',
+  'themeDescription': '浅色、深色或跟随系统',
+  'backAction': '返回',
 };

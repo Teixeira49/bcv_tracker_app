@@ -79,4 +79,12 @@ const Map<String, String> enUs = {
   'noSearchResultsMessage': 'No currency matches “@query”.',
   'clearSearchAction': 'Clear search',
   'closeAction': 'Close',
+
+  // --- Settings screen (#37) ---
+  'preferencesSection': 'Preferences',
+  'appearanceSection': 'Appearance',
+  'defaultMarketDescription': 'Tab the app opens on',
+  'languageDescription': 'Interface language',
+  'themeDescription': 'Light, dark or system',
+  'backAction': 'Back',
 };

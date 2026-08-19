@@ -80,4 +80,12 @@ const Map<String, String> koKr = {
   'noSearchResultsMessage': '“@query”와 일치하는 통화가 없습니다.',
   'clearSearchAction': '검색 지우기',
   'closeAction': '닫기',
+
+  // --- Settings screen (#37) ---
+  'preferencesSection': '기본 설정',
+  'appearanceSection': '화면',
+  'defaultMarketDescription': '앱 시작 시 열리는 탭',
+  'languageDescription': '인터페이스 언어',
+  'themeDescription': '밝게, 어둡게 또는 시스템',
+  'backAction': '뒤로',
 };

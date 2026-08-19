@@ -79,4 +79,12 @@ const Map<String, String> ptPt = {
   'noSearchResultsMessage': 'Nenhuma moeda corresponde a «@query».',
   'clearSearchAction': 'Limpar procura',
   'closeAction': 'Fechar',
+
+  // --- Settings screen (#37) ---
+  'preferencesSection': 'Preferências',
+  'appearanceSection': 'Aparência',
+  'defaultMarketDescription': 'Separador aberto ao iniciar',
+  'languageDescription': 'Idioma da interface',
+  'themeDescription': 'Claro, escuro ou o do sistema',
+  'backAction': 'Voltar',
 };
