@@ -168,7 +168,7 @@ Todo `lib/` se documenta con **dartdoc** (`///`). La norma del proyecto no es «
 | [`documentation-convention.md`](.agents/rules/documentation-convention.md) | **Cómo** se escribe, con el checklist por tipo de cambio |
 | [`documentation-coverage.md`](.agents/rules/documentation-coverage.md) | **Qué no se puede perder**: el invariante, dónde es más estricto, y las exenciones |
 
-El invariante, en una línea: **cada tipo público de `lib/` lleva docstring** (75/75 hoy), en `shared/domain/` y `shared/data/` **cada miembro público también**, y `dart doc` no reporta avisos. Si tu cambio baja cualquiera de esas tres cifras, está incompleto — y si cambias lo que hace un símbolo ya documentado, **su docstring entra en el mismo diff**: un comentario que describe el comportamiento anterior miente con autoridad, y es peor que ninguno.
+El invariante, en una línea: **cada tipo público de `lib/` lleva docstring** (84/84 hoy), en `shared/domain/` y `shared/data/` **cada miembro público también**, y `dart doc` no reporta avisos. Si tu cambio baja cualquiera de esas tres cifras, está incompleto — y si cambias lo que hace un símbolo ya documentado, **su docstring entra en el mismo diff**: un comentario que describe el comportamiento anterior miente con autoridad, y es peor que ninguno.
 
 ### Qué documentar
 
@@ -187,7 +187,7 @@ Esto es tan importante como lo anterior, y es la parte que se suele hacer mal:
 
 - **Lo que el nombre ya dice.** `/// Returns the name.` sobre `String get name` es ruido; oculta las líneas que sí importan.
 - **Getters y setters triviales**, `copyWith`, `toString`.
-- **Los registros mecánicos.** `AppMessages` (79 getters de i18n), `ColorValues` (78 accesores de color) y `AppIcons` (18 rutas de asset) llevan docstring **en la clase** —que explica el registro, la separación en dos capas, y la regla de los diez idiomas— y **ninguno en sus miembros**. Un `/// El color blanco del texto` sobre `textWhite` no informa a nadie. Los pocos miembros que sí lo llevan son los que tienen una razón: mira `AppMessages.officialRate` y `AppMessages.noSearchResultsMessage`.
+- **Los registros mecánicos.** `AppMessages` (85 claves de i18n), `ColorValues` (78 accesores de color) y `AppIcons` (18 rutas de asset) llevan docstring **en la clase** —que explica el registro, la separación en dos capas, y la regla de los diez idiomas— y **ninguno en sus miembros**. Un `/// El color blanco del texto` sobre `textWhite` no informa a nadie. Los pocos miembros que sí lo llevan son los que tienen una razón: mira `AppMessages.officialRate` y `AppMessages.noSearchResultsMessage`.
 - **Bloques de código comentado**: se borran, para eso está git.
 
 ### Estilo
@@ -200,7 +200,7 @@ Esto es tan importante como lo anterior, y es la parte que se suele hacer mal:
 
 ### Medir la cobertura
 
-El lint `public_member_api_docs` **no está activo**, y es deliberado: activarlo obligaría a escribir exactamente los comentarios que la sección anterior prohíbe. De los 303 avisos que reporta hoy, **170 caen en esos tres registros mecánicos** (`colors_values.dart` 77, `app_messages.dart` 76, `icons_constants.dart` 17).
+El lint `public_member_api_docs` **no está activo**, y es deliberado: activarlo obligaría a escribir exactamente los comentarios que la sección anterior prohíbe. De los 307 avisos que reporta hoy, **173 caen en esos tres registros mecánicos** (`app_messages.dart` 79, `colors_values.dart` 77, `icons_constants.dart` 17).
 
 Para medir de todos modos, actívalo un momento. Ojo con el **cómo**: hay que insertarlo en el bloque `rules:` que ya existe, no añadir un `linter:` nuevo al final — dos claves `linter:` en el mismo YAML y el analizador se queda con una, así que el lint no se aplica y el comando responde `0` como si todo estuviera documentado.
 

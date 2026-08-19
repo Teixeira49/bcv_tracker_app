@@ -94,6 +94,11 @@ components:
     borderColor: "{colors.info}"
     rounded: "{rounded.xl}"
     padding: "{spacing.md}"
+  settingsTile:
+    backgroundColor: "{colors.neutral}"
+    textColor: "{colors.secondary}"
+    rounded: "{rounded.md}"
+    padding: "{spacing.md}"
   errorState:
     textColor: "{colors.error}"
     rounded: "{rounded.sm}"
@@ -202,6 +207,10 @@ Los tokens de `components` fijan las relaciones color→rol de los componentes r
 - **bottomSheet:** panel que sube desde el borde inferior, arrastrable. Radio `xl` (24) —mayor que el `md` de las tarjetas, porque es una superficie amplia y el gesto pide una esquina más suave—, borde `info` de 1.25 px y un halo suave del mismo tono, la misma profundidad por borde que el resto. Lleva una barra fija con el asa y el botón de cerrar, **sin texto**: su alto es fijo y no podría crecer con la escala tipográfica del sistema. Implementado en `shared/presentation/widgets/base_bottom_sheet.dart` y usado por el detalle de moneda (#38) y el selector del conversor (#40).
 
   **Cuándo hoja inferior y cuándo diálogo:** una hoja inferior para contenido que se recorre —una lista, una ficha con secciones— porque queda al alcance del pulgar y aprovecha la altura; un diálogo centrado (`BaseModal`) para una decisión corta que interrumpe. El selector de divisas era lo primero dentro de lo segundo, y por eso cambió en #40.
+
+  **Y cuándo ninguna de las dos.** Los ajustes eran un diálogo hasta #37. Lo que los sacó de ahí no fue el alcance del pulgar sino el techo: un diálogo no crece, y lo que se recorre *y* se agrupa *y* tiene que admitir opciones nuevas —notificaciones, accesibilidad, consentimiento, «acerca de»— ya no es un modal de ningún tipo, es una pantalla con su ruta. La pregunta a hacerse antes de elegir contenedor: ¿esto va a listar más cosas dentro de seis meses? Si la respuesta es sí, empieza por la pantalla.
+
+- **settingsTile:** la fila del menú de ajustes (#37). Tarjeta neutra de radio `md` agrupada por sección, icono de marca en un cuadro teñido a la izquierda, título y una línea de descripción, y **el valor actual en `secondary` alineado a la derecha** — ese valor es el componente: un menú que no dice a qué está puesta cada opción obliga a entrar en las tres para saberlo. La misma tarjeta, sin icono ni descripción y con una marca de verificación, es la fila de las subpantallas de elección.
 - **errorState / emptyState:** acento `error` vs. `warning`, radio `sm`. Hoy son tarjetas mínimas (`_ErrorAdvisorCard`); #11 los rediseña como componentes compartidos con branding, e #18 define qué dice cada uno según la causa.
 
 ## Do's and Don'ts
