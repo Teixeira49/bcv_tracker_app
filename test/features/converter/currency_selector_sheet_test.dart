@@ -130,9 +130,10 @@ void main() {
     await _openSelector(tester, isInput: true);
 
     expect(find.byType(BaseBottomSheet), findsOneWidget);
-    // The centred dialog it replaced. `BaseModal` still serves the settings
-    // modal, so this asserts the selector stopped using it — not that the
-    // widget is gone.
+    // The centred dialog it replaced. `BaseModal` is still in the codebase —
+    // #37 took its last caller away when settings became a screen, and kept the
+    // widget for the next short, interrupting decision — so this asserts the
+    // selector stopped using it, not that the widget is gone.
     expect(find.byType(BaseModal), findsNothing);
     expect(find.byType(AlertDialog), findsNothing);
   });
