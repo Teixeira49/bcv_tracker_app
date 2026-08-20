@@ -165,7 +165,12 @@ class SettingsMenuTile extends StatelessWidget {
             ),
           ),
           SizedBox(width: WidthValues.spacingXs),
-          Flexible(
+          // `Expanded`, not `Flexible`: a loose child takes only what it needs
+          // and leaves the rest of its share as slack at the end of the row,
+          // which pulled the value and the chevron away from the right edge.
+          // Tight, its box reaches the chevron and `TextAlign.end` puts the
+          // text against it.
+          Expanded(
             flex: 5,
             child: Text(
               value,

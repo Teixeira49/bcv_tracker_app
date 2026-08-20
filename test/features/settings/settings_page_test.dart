@@ -5,6 +5,7 @@ import 'package:bcv_tracker_app/core/i18n/app_translations.dart';
 import 'package:bcv_tracker_app/features/settings/presentation/page/settings_options_page.dart';
 import 'package:bcv_tracker_app/features/settings/presentation/page/settings_page.dart';
 import 'package:bcv_tracker_app/features/settings/presentation/widgets/settings_option_tile.dart';
+import 'package:bcv_tracker_app/features/settings/presentation/widgets/settings_section.dart';
 import 'package:bcv_tracker_app/shared/presentation/controller/settings_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -121,6 +122,47 @@ void main() {
       expect(find.byIcon(Icons.settings), findsNothing);
       // ...and the strip offers the way back instead.
       expect(find.byIcon(Icons.arrow_back_rounded), findsOneWidget);
+    });
+
+    // The same defect the branded strip had, in the same shipped build: a
+    // `Flexible` value next to an `Expanded` title. `Row` allots each flexible
+    // child its share by flex factor before asking how much it wants, and what
+    // a loose child declines strands at the end of the row instead of returning
+    // to its neighbours — so the value and the chevron floated inward, away
+    // from the card's edge. Measured rather than left to the goldens, which
+    // obscure text as blocks and cannot show a few points of drift.
+    testWidgets('aligns each current value against the end of its row', (
+      WidgetTester tester,
+    ) async {
+      await _pumpSettings(
+        tester,
+        prefs: <String, Object>{_favMarketKey: 1, _themeKey: 'dark'},
+      );
+
+      for (final String value in <String>[
+        AppMessages.officialSection,
+        AppMessages.darkTheme,
+      ]) {
+        final Finder tile = find.ancestor(
+          of: find.text(value),
+          matching: find.byType(SettingsMenuTile),
+        );
+        final Rect text = tester.getRect(find.text(value));
+        final Rect chevron = tester.getRect(
+          find.descendant(
+            of: tile,
+            matching: find.byIcon(Icons.chevron_right_rounded),
+          ),
+        );
+
+        // Flush against the chevron: `TextAlign.end` only reaches the edge of
+        // a box that itself reaches the edge of the row.
+        expect(
+          text.right,
+          moreOrLessEquals(chevron.left, epsilon: 1),
+          reason: 'The value "$value" is not aligned with its chevron.',
+        );
+      }
     });
   });
 

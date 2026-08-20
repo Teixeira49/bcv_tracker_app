@@ -111,12 +111,23 @@ class BaseLayout extends StatelessWidget {
                 ),
                 height: 24,
               ),
-            // `Flexible`, not a bare `Text`: "Configuración" is one of the
-            // shortest titles this strip carries — Russian and German settings
-            // sub-screens are far longer, and unconstrained they push the
-            // action off the row instead of wrapping (`i18n-convention.md`,
-            // rule 6).
-            Flexible(
+            // `Expanded`, and it is doing two jobs at once — which is why it is
+            // not a bare `Text` and not a `Flexible` either.
+            //
+            // Bounding it is what keeps a long title wrapping instead of
+            // pushing the action off the row: "Configuración" is one of the
+            // shortest headings this strip carries, and the Russian and German
+            // settings sub-screens are far longer (`i18n-convention.md`, rule
+            // 6).
+            //
+            // Taking **all** the leftover width is what keeps the action flush
+            // right. A `Flexible` with a `Spacer` after it looked equivalent and
+            // was not: `Row` splits the free space by flex factor *before* a
+            // loose child decides how much of its share it wants, and what it
+            // declines does not go back to the `Spacer` — it lands as slack at
+            // the end of the row, dragging the gear inward. One tight child and
+            // no `Spacer` leaves nothing to strand.
+            Expanded(
               child: Text(
                 title ?? Constants.appTitle,
                 maxLines: 2,
@@ -128,7 +139,6 @@ class BaseLayout extends StatelessWidget {
                 ),
               ),
             ),
-            Spacer(),
             if (showSettingsAction)
               IconButton(
                 // A route since #37, not a dialog: the menu grows with the

@@ -23,6 +23,7 @@ Future<void> _pumpLayout(
   WidgetTester tester, {
   bool showBackButton = false,
   bool showSettingsAction = true,
+  String title = 'Test',
 }) async {
   Get.testMode = true;
   SharedPreferences.setMockInitialValues(<String, Object>{});
@@ -36,7 +37,7 @@ Future<void> _pumpLayout(
       getPages: AppPages.routes,
       home: Scaffold(
         body: BaseLayout(
-          title: 'Test',
+          title: title,
           margins: EdgeInsets.zero,
           showBackButton: showBackButton,
           showSettingsAction: showSettingsAction,
@@ -84,5 +85,49 @@ void main() {
     expect(find.byType(SvgPicture), findsOneWidget);
     expect(find.byIcon(Icons.settings), findsOneWidget);
     expect(find.byIcon(Icons.arrow_back_rounded), findsNothing);
+  });
+
+  // The regression this pins was shipped and spotted by eye on a device, not by
+  // the suite: the goldens obscure text as blocks, so a control drifting a few
+  // points inward reads as noise in a diff. A measurement does not.
+  //
+  // The cause was a `Flexible` title followed by a `Spacer`. `Row` hands each
+  // flexible child its share of the free space by flex factor *before* asking
+  // how much it wants, and a loose child's leftover does not return to the
+  // `Spacer` — it strands at the end of the row and pushes the gear off the
+  // edge. Both titles below are checked because the short one is what makes the
+  // slack largest.
+  group('the gear stays flush against the end of the strip', () {
+    /// Where the strip ends: `_buildFrame` positions its row with `right: 8`.
+    double stripEnd(WidgetTester tester) =>
+        tester.getRect(find.byType(Scaffold)).right - 8;
+
+    Rect gearRect(WidgetTester tester) => tester.getRect(
+      find
+          .ancestor(
+            of: find.byIcon(Icons.settings),
+            matching: find.byType(IconButton),
+          )
+          .first,
+    );
+
+    testWidgets('with a short title', (WidgetTester tester) async {
+      await _pumpLayout(tester, title: 'Inicio');
+
+      expect(gearRect(tester).right, moreOrLessEquals(stripEnd(tester)));
+    });
+
+    testWidgets('with a title long enough to wrap', (
+      WidgetTester tester,
+    ) async {
+      // Longer than any of the ten translations of a screen heading, which is
+      // the case rule 6 of `i18n-convention.md` is about.
+      await _pumpLayout(
+        tester,
+        title: 'Конвертер валют Центрального банка Венесуэлы',
+      );
+
+      expect(gearRect(tester).right, moreOrLessEquals(stripEnd(tester)));
+    });
   });
 }
