@@ -42,6 +42,7 @@ class SettingsOptionsPage<T> extends StatelessWidget {
   const SettingsOptionsPage({
     super.key,
     required this.title,
+    required this.intro,
     required this.options,
     required this.selected,
     required this.onSelected,
@@ -50,6 +51,16 @@ class SettingsOptionsPage<T> extends StatelessWidget {
 
   /// Screen heading, shown in the branded strip. From `AppMessages`.
   final String title;
+
+  /// One sentence above the options, saying what choosing one will do.
+  ///
+  /// **Required, not optional.** A choice screen that cannot say what its
+  /// setting is for is a list of words the user has to infer from — and the
+  /// screens still queued behind this one (notifications #13, accessibility
+  /// #33, analytics consent #34) are exactly the ones where guessing is worst.
+  /// Making it part of the constructor means the next screen cannot ship
+  /// without an answer.
+  final String intro;
 
   /// The choices, in display order.
   final List<SettingsOption<T>> options;
@@ -90,10 +101,30 @@ class SettingsOptionsPage<T> extends StatelessWidget {
         // Room under the last row: the panel ends at the screen edge and a list
         // that stops flush against it reads as cut off.
         padding: EdgeInsets.only(bottom: WidthValues.spacing4xl),
-        children: switch (layout) {
-          SettingsOptionsLayout.list => <Widget>[_buildList(context)],
-          SettingsOptionsLayout.grid => _buildGrid(context),
-        },
+        children: <Widget>[
+          // Inside the scroll view rather than pinned above it: on a short
+          // screen at a large font scale the sentence should be able to leave
+          // to make room for the options, which is the reason the user came.
+          Padding(
+            padding: EdgeInsets.only(
+              left: WidthValues.spacingXs,
+              right: WidthValues.spacingXs,
+              bottom: WidthValues.spacingMd,
+            ),
+            child: Text(
+              intro,
+              style: TextStyle(
+                fontSize: 14,
+                height: 1.4,
+                color: ColorValues.textTertiary(context),
+              ),
+            ),
+          ),
+          ...switch (layout) {
+            SettingsOptionsLayout.list => <Widget>[_buildList(context)],
+            SettingsOptionsLayout.grid => _buildGrid(context),
+          },
+        ],
       ),
     ),
   );

@@ -37,10 +37,10 @@ Tres clases están **exentas a nivel de miembro**, a propósito:
 | Clase | Miembros | Por qué |
 |---|---|---|
 | `ColorValues` | 77 accesores de color | El nombre *es* la documentación |
-| `AppMessages` | 79 getters de i18n | Idem: la clave y el getter son la misma palabra |
+| `AppMessages` | 81 getters de i18n | Idem: la clave y el getter son la misma palabra |
 | `AppIcons` | 17 rutas de asset | Idem |
 
-Son **173 de los 307** miembros públicos sin docstring del proyecto. Comentarlos uno a uno produciría exactamente el ruido que `documentation-convention.md` prohíbe (`/// El color blanco del texto` sobre `textWhite`), y ese ruido tapa las líneas que sí informan.
+Son **175 de los 312** miembros públicos sin docstring del proyecto. Comentarlos uno a uno produciría exactamente el ruido que `documentation-convention.md` prohíbe (`/// El color blanco del texto` sobre `textWhite`), y ese ruido tapa las líneas que sí informan.
 
 Lo que estas tres clases llevan es un docstring **de clase** que explica el registro completo: la separación en dos capas del color, la regla de los diez idiomas, por qué centralizar rutas de asset. Eso es lo que hay que mantener al día.
 
@@ -48,7 +48,7 @@ Lo que estas tres clases llevan es un docstring **de clase** que explica el regi
 
 ### Por eso `public_member_api_docs` está apagado
 
-Activar el lint forzaría esos 173 comentarios. Y como CI corre `flutter analyze` **sin** `--no-fatal-*`, no sería un aviso con el que se pueda convivir: sería el build roto hasta escribirlos todos. La decisión se tomó en #4 y se mantiene.
+Activar el lint forzaría esos 175 comentarios. Y como CI corre `flutter analyze` **sin** `--no-fatal-*`, no sería un aviso con el que se pueda convivir: sería el build roto hasta escribirlos todos. La decisión se tomó en #4 y se mantiene.
 
 El lint sigue siendo la mejor forma de **medir**. Cómo activarlo un momento sin dejarlo puesto, y la trampa del YAML que hace que reporte `0` cuando en realidad no se aplicó, está en [`CONTRIBUTING.md`](../../CONTRIBUTING.md#-documentación-del-código) — no se repite aquí para que haya un solo sitio que actualizar.
 

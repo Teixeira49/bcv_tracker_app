@@ -89,4 +89,7 @@ const Map<String, String> itIt = {
   'languageDescription': 'Lingua dell\'interfaccia',
   'themeDescription': 'Chiaro, scuro o di sistema',
   'backAction': 'Indietro',
+  'defaultMarketIntro': 'Scegli la scheda da mostrare all\'apertura dell\'app.',
+  'languageIntro': 'Scegli la lingua in cui preferisci leggere l\'app.',
+  'themeIntro': 'Imposta il tema dell\'app come ti risulta più comodo.',
 };

@@ -88,4 +88,7 @@ const Map<String, String> jaJp = {
   'languageDescription': '表示言語',
   'themeDescription': 'ライト、ダーク、システム',
   'backAction': '戻る',
+  'defaultMarketIntro': 'アプリを開いたときに表示するタブを選んでください。',
+  'languageIntro': 'アプリを表示する言語を選んでください。',
+  'themeIntro': '見やすいテーマに設定してください。',
 };

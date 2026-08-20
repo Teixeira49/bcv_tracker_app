@@ -87,4 +87,7 @@ const Map<String, String> enUs = {
   'languageDescription': 'Interface language',
   'themeDescription': 'Light, dark or system',
   'backAction': 'Back',
+  'defaultMarketIntro': 'Choose the tab you want to see when you open the app.',
+  'languageIntro': 'Choose the language you prefer to read the app in.',
+  'themeIntro': 'Set the theme to whatever is easiest on your eyes.',
 };

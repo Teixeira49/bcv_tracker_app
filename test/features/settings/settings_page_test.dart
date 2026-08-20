@@ -166,6 +166,53 @@ void main() {
     });
   });
 
+  group('every choice sub-screen', () {
+    testWidgets('opens with a sentence saying what the setting decides', (
+      WidgetTester tester,
+    ) async {
+      await _pumpSettings(tester);
+
+      const List<({String entry, String intro})> screens =
+          <({String entry, String intro})>[
+            (
+              entry: 'Mercado por defecto',
+              intro: 'Elige la pestaña que quieres ver al abrir la aplicación.',
+            ),
+            (
+              entry: 'Idioma',
+              intro: 'Elige el idioma en el que prefieres leer la aplicación.',
+            ),
+            (
+              entry: 'Tema',
+              intro: 'Ajusta el tema de la aplicación según tu comodidad.',
+            ),
+          ];
+
+      // The Spanish copy spelled out rather than read back from
+      // `AppMessages`: comparing a getter against itself would pass with the
+      // ten files empty. `translation_parity_test.dart` is what guards the
+      // other nine.
+      for (final ({String entry, String intro}) screen in screens) {
+        await _openEntry(tester, screen.entry);
+
+        expect(
+          find.text(screen.intro),
+          findsOneWidget,
+          reason: '"${screen.entry}" opens without its explanatory sentence.',
+        );
+        // Above the options, not below them: it is a lead-in, and underneath
+        // it would be a footnote nobody scrolls to.
+        expect(
+          tester.getRect(find.text(screen.intro)).bottom,
+          lessThan(tester.getRect(find.byType(Card).first).top),
+        );
+
+        await tester.tap(find.byIcon(Icons.arrow_back_rounded));
+        await tester.pumpAndSettle();
+      }
+    });
+  });
+
   group('the language sub-screen', () {
     testWidgets('lists the ten languages this build ships', (
       WidgetTester tester,

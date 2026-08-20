@@ -23,6 +23,7 @@ class SettingsMarketPage extends StatelessWidget {
     return Obx(
       () => SettingsOptionsPage<int>(
         title: AppMessages.defaultMarket,
+        intro: AppMessages.defaultMarketIntro,
         options: SettingsChoices.markets(),
         selected: controller.favMarketIndex.value,
         onSelected: controller.setFavMarket,

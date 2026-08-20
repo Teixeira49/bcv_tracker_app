@@ -88,4 +88,7 @@ const Map<String, String> koKr = {
   'languageDescription': '인터페이스 언어',
   'themeDescription': '밝게, 어둡게 또는 시스템',
   'backAction': '뒤로',
+  'defaultMarketIntro': '앱을 열 때 표시할 탭을 선택하세요.',
+  'languageIntro': '앱을 표시할 언어를 선택하세요.',
+  'themeIntro': '보기 편한 테마로 설정하세요.',
 };

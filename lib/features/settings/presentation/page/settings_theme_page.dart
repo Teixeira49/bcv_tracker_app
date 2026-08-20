@@ -29,6 +29,7 @@ class SettingsThemePage extends StatelessWidget {
     return Obx(
       () => SettingsOptionsPage<ThemeMode>(
         title: AppMessages.theme,
+        intro: AppMessages.themeIntro,
         options: SettingsChoices.themes(),
         selected: controller.favBrightness.value,
         onSelected: controller.setFavTheme,

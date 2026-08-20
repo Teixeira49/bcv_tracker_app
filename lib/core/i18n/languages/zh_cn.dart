@@ -86,4 +86,7 @@ const Map<String, String> zhCn = {
   'languageDescription': '界面语言',
   'themeDescription': '浅色、深色或跟随系统',
   'backAction': '返回',
+  'defaultMarketIntro': '选择打开应用时显示的标签页。',
+  'languageIntro': '选择阅读应用所使用的语言。',
+  'themeIntro': '按你的舒适度调整应用主题。',
 };

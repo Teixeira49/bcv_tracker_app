@@ -87,4 +87,8 @@ const Map<String, String> ruRu = {
   'languageDescription': 'Язык интерфейса',
   'themeDescription': 'Светлая, тёмная или системная',
   'backAction': 'Назад',
+  'defaultMarketIntro':
+      'Выберите вкладку, которая будет открываться при запуске.',
+  'languageIntro': 'Выберите язык, на котором вы хотите читать приложение.',
+  'themeIntro': 'Настройте тему приложения так, как вам удобно.',
 };

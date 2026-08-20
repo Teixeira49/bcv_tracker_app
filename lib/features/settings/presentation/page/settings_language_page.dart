@@ -29,6 +29,7 @@ class SettingsLanguagePage extends StatelessWidget {
     return Obx(
       () => SettingsOptionsPage<String>(
         title: AppMessages.language,
+        intro: AppMessages.languageIntro,
         options: SettingsChoices.languages(controller.languageOptions),
         // The stored code, not `selectedLanguage.code`: the two agree whenever
         // the stored value is one this build ships, and when they do not, this

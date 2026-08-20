@@ -88,4 +88,9 @@ const Map<String, String> deDe = {
   'languageDescription': 'Sprache der Oberfläche',
   'themeDescription': 'Hell, dunkel oder System',
   'backAction': 'Zurück',
+  'defaultMarketIntro':
+      'Wähle den Tab, der beim Öffnen der App angezeigt wird.',
+  'languageIntro': 'Wähle die Sprache, in der du die App lesen möchtest.',
+  'themeIntro':
+      'Stelle das Design der App so ein, wie es für dich angenehm ist.',
 };

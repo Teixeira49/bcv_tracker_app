@@ -88,4 +88,8 @@ const Map<String, String> esEs = {
   'languageDescription': 'Idioma de la interfaz',
   'themeDescription': 'Claro, oscuro o el del sistema',
   'backAction': 'Volver',
+  'defaultMarketIntro':
+      'Elige la pestaña que quieres ver al abrir la aplicación.',
+  'languageIntro': 'Elige el idioma en el que prefieres leer la aplicación.',
+  'themeIntro': 'Ajusta el tema de la aplicación según tu comodidad.',
 };

@@ -200,7 +200,7 @@ Esto es tan importante como lo anterior, y es la parte que se suele hacer mal:
 
 ### Medir la cobertura
 
-El lint `public_member_api_docs` **no está activo**, y es deliberado: activarlo obligaría a escribir exactamente los comentarios que la sección anterior prohíbe. De los 307 avisos que reporta hoy, **173 caen en esos tres registros mecánicos** (`app_messages.dart` 79, `colors_values.dart` 77, `icons_constants.dart` 17).
+El lint `public_member_api_docs` **no está activo**, y es deliberado: activarlo obligaría a escribir exactamente los comentarios que la sección anterior prohíbe. De los 312 avisos que reporta hoy, **175 caen en esos tres registros mecánicos** (`app_messages.dart` 81, `colors_values.dart` 77, `icons_constants.dart` 17).
 
 Para medir de todos modos, actívalo un momento. Ojo con el **cómo**: hay que insertarlo en el bloque `rules:` que ya existe, no añadir un `linter:` nuevo al final — dos claves `linter:` en el mismo YAML y el analizador se queda con una, así que el lint no se aplica y el comando responde `0` como si todo estuviera documentado.
 

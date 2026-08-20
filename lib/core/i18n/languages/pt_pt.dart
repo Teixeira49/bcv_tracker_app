@@ -87,4 +87,8 @@ const Map<String, String> ptPt = {
   'languageDescription': 'Idioma da interface',
   'themeDescription': 'Claro, escuro ou o do sistema',
   'backAction': 'Voltar',
+  'defaultMarketIntro':
+      'Escolha o separador que quer ver ao abrir a aplicação.',
+  'languageIntro': 'Escolha o idioma em que prefere ler a aplicação.',
+  'themeIntro': 'Ajuste o tema da aplicação ao seu conforto.',
 };

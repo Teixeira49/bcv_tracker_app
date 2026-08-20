@@ -89,4 +89,9 @@ const Map<String, String> frFr = {
   'languageDescription': 'Langue de l\'interface',
   'themeDescription': 'Clair, sombre ou système',
   'backAction': 'Retour',
+  'defaultMarketIntro':
+      'Choisissez l\'onglet à afficher à l\'ouverture de l\'application.',
+  'languageIntro':
+      'Choisissez la langue dans laquelle vous préférez lire l\'application.',
+  'themeIntro': 'Réglez le thème de l\'application selon votre confort.',
 };
