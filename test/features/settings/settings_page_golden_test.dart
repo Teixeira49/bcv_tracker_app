@@ -3,6 +3,7 @@ import 'package:bcv_tracker_app/config/theme/theme.dart';
 import 'package:bcv_tracker_app/core/i18n/app_translations.dart';
 import 'package:bcv_tracker_app/features/settings/presentation/page/settings_language_page.dart';
 import 'package:bcv_tracker_app/features/settings/presentation/page/settings_page.dart';
+import 'package:bcv_tracker_app/features/settings/presentation/page/settings_theme_page.dart';
 import 'package:bcv_tracker_app/shared/presentation/controller/settings_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -74,6 +75,18 @@ void main() {
               width: 420,
               height: 900,
               child: SettingsLanguagePage(),
+            ),
+          ),
+          // The grid layout, which is the one case the measurements in
+          // `settings_page_test.dart` cannot fully speak for: they pin the
+          // geometry of the cells, this pins that the selected card actually
+          // looks marked — border, tint and icon colour — in both modes.
+          GoldenTestScenario(
+            name: 'choosing a theme',
+            child: const SizedBox(
+              width: 420,
+              height: 900,
+              child: SettingsThemePage(),
             ),
           ),
         ],

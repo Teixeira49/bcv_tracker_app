@@ -55,23 +55,31 @@ abstract class SettingsChoices {
   /// Light, dark, and following the system.
   ///
   /// The icons are the ones the dialog used, kept on purpose: the screen is a
-  /// new container for a choice the user already recognises.
+  /// new container for a choice the user already recognises. They are also what
+  /// earns this set the grid layout — a sun, a moon and a half-lit dial are
+  /// read before their labels are.
+  ///
+  /// Declared with **no size and no colour**, deliberately: the catalogue says
+  /// *which* icon, the widget that draws it says how big and in what state. The
+  /// row wants 20 pt and the grid card 28, and an explicit `size:` here would
+  /// win over both — an `IconTheme` cannot override what the widget states
+  /// itself.
   static List<SettingsOption<ThemeMode>> themes() =>
       <SettingsOption<ThemeMode>>[
         SettingsOption<ThemeMode>(
           value: ThemeMode.light,
           label: AppMessages.lightTheme,
-          leading: const Icon(Icons.light_mode, size: 20),
+          leading: const Icon(Icons.light_mode),
         ),
         SettingsOption<ThemeMode>(
           value: ThemeMode.dark,
           label: AppMessages.darkTheme,
-          leading: const Icon(Icons.dark_mode, size: 20),
+          leading: const Icon(Icons.dark_mode),
         ),
         SettingsOption<ThemeMode>(
           value: ThemeMode.system,
           label: AppMessages.systemTheme,
-          leading: const Icon(Icons.settings_brightness, size: 20),
+          leading: const Icon(Icons.settings_brightness),
         ),
       ];
 

@@ -2,7 +2,7 @@
 
 Este documento es el **inventario de la suite**: primero lo que ya está cubierto, después lo que queda por hacer (roadmap). Mantenlo al día al agregar tests — la regla [`test-coverage.md`](../.agents/rules/test-coverage.md) exige que toda fuente, endpoint, controlador o helper de cálculo nuevo nazca con sus tests, y el check de PR de #27 (`flutter test` en GitHub Actions) lo hace cumplir en cada PR.
 
-## Cobertura actual (51 archivos, 353 tests)
+## Cobertura actual (51 archivos, 356 tests)
 
 | Área | Archivo | Qué cubre |
 |---|---|---|
@@ -35,7 +35,7 @@ Este documento es el **inventario de la suite**: primero lo que ya está cubiert
 | | `test/features/converter/converter_keyboard_test.dart` | **(#40)** El conversor con el teclado abierto: sin desbordes y encogiendo con el body; el campo filtra lo que un teclado físico puede mandar |
 | | `test/features/converter/converter_swap_button_test.dart` | **(#40)** El botón de intercambio no se despega de la costura aunque la tarjeta de salida crezca; el resultado se redondea al mostrar, no al calcular |
 | | `test/features/converter/converter_preload_from_detail_test.dart` | **(#103)** El traspaso del detalle al conversor completo: la tasa llega seleccionada con su mercado, el sentido y el monto cruzan tal cual, la regla pivote se mantiene, y —la mitad que importa— cambiar de pestaña o abrir y cerrar el detalle **no** toca la selección del usuario |
-| | `test/features/settings/settings_page_test.dart` | **(#37)** La pantalla de ajustes: el menú agrupado y el valor actual de cada opción, que no ofrece el engranaje que lleva a sí misma, que cada valor queda **pegado a su chevron** (regresión de `Flexible` vs `Expanded`), y las tres subpantallas de elección — los diez idiomas listados, aplicar y persistir idioma, mercado y tema, y que la subpantalla **no** se cierra al elegir (el repintado es la confirmación) |
+| | `test/features/settings/settings_page_test.dart` | **(#37)** La pantalla de ajustes: el menú agrupado y el valor actual de cada opción, que no ofrece el engranaje que lleva a sí misma, que cada valor queda **pegado a su chevron** (regresión de `Flexible` vs `Expanded`), y las tres subpantallas de elección — los diez idiomas listados, aplicar y persistir idioma, mercado y tema, que la subpantalla **no** se cierra al elegir (el repintado es la confirmación), y la **rejilla del tema**: dos tarjetas por fila en celdas iguales (la impar no se estira), borde de 2 px en la seleccionada y `Semantics(selected:)` para el lector de pantalla |
 | | `test/shared/presentation/widgets/base_layout_test.dart` | **(#37)** La franja de marca: el engranaje empuja la ruta de ajustes en vez de abrir un diálogo, una pantalla apilada cambia el logo por la flecha de volver y esconde el engranaje, y el engranaje queda **pegado al borde derecho** con título corto y con título que envuelve — la medición que los goldens no pueden dar, porque ocultan el texto como bloques |
 | | `test/features/currency_detail/currency_detail_open_in_converter_test.dart` | **(#103)** El botón: los tres pasos y su orden (cargar, cerrar, cambiar de pestaña), que el monto tecleado sobrevive al cierre, y que un detalle invertido traslada también el sentido |
 | **Goldens** | `test/shared/presentation/widgets/app_state_view_golden_test.dart` | **(#35)** Estados de error y vacío, claro y oscuro |
@@ -44,7 +44,7 @@ Este documento es el **inventario de la suite**: primero lo que ya está cubiert
 | | `test/features/converter/converter_page_golden_test.dart` | **(#35)** Cuerpo del conversor, claro y oscuro |
 | | `test/features/currency_detail/currency_detail_sheet_golden_test.dart` | **(#38)** Modal de detalle, tasa paralela y oficial, claro y oscuro |
 | | `test/features/converter/currency_selector_sheet_golden_test.dart` | **(#40)** Selector de divisas como hoja inferior, claro y oscuro |
-| | `test/features/settings/settings_page_golden_test.dart` | **(#37)** El menú de ajustes y la subpantalla de idioma, claro y oscuro |
+| | `test/features/settings/settings_page_golden_test.dart` | **(#37)** El menú de ajustes, la subpantalla de idioma y la **rejilla del tema**, claro y oscuro — esta última es la que cazó que las tarjetas se pintaban debajo del panel por usar `Ink` en vez de un `Material` propio |
 | **Config / i18n** | `test/config/enviroment/environment_test.dart` + `environment_empty_env_test.dart` | Validación de `CURRENCY_BACK`, `.env` ausente/vacío |
 | | `test/core/i18n/translation_parity_test.dart` | **(#36)** Paridad de claves en los 10 idiomas |
 | | `test/core/i18n/search_folds_published_names_test.dart` | **(#104, #41)** La tilde de «Dólar» en `es_ES`, que buscar sin tilde encuentra el nombre publicado, y que la tabla de plegado cubre los diacríticos que la app realmente envía |

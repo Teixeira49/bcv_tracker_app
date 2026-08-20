@@ -18,11 +18,11 @@ Nada del tooling lo impide. Una clase sin docstring compila, `flutter analyze` s
 
 ## El invariante
 
-[#4](https://github.com/Teixeira49/bcv_tracker_app/issues/4) llevó `lib/` de 31 de 75 tipos públicos documentados a **75 de 75**, y `dart doc` de 8 avisos a **0**. Eso es el suelo, no el techo — y el suelo sube: hoy son **84 de 84**, tras las diez clases que #37 añadió a `features/settings/`.
+[#4](https://github.com/Teixeira49/bcv_tracker_app/issues/4) llevó `lib/` de 31 de 75 tipos públicos documentados a **75 de 75**, y `dart doc` de 8 avisos a **0**. Eso es el suelo, no el techo — y el suelo sube: hoy son **86 de 86**, tras las doce clases que #37 añadió a `features/settings/`.
 
 | Ámbito | Exigencia | Estado |
 |---|---|---|
-| **Todo `lib/`** | Cada **tipo** público (`class`, `mixin`, `enum`, `extension`, `typedef`) con docstring | 84/84 |
+| **Todo `lib/`** | Cada **tipo** público (`class`, `mixin`, `enum`, `extension`, `typedef`) con docstring | 86/86 |
 | **`shared/domain/` y `shared/data/`** | Además, cada **miembro** público con docstring | 0 huecos |
 | **Todo `lib/`** | `dart doc` sin avisos ni errores | 0 avisos |
 
@@ -84,7 +84,7 @@ flutter test        # verde
 dart doc .          # "Found 0 warnings and 0 errors."
 ```
 
-Y la cobertura de tipos, que es el número que no puede bajar de 84/84 — el script está en [`CONTRIBUTING.md`](../../CONTRIBUTING.md#medir-la-cobertura), junto al de miembros.
+Y la cobertura de tipos, que es el número que no puede bajar de 86/86 — el script está en [`CONTRIBUTING.md`](../../CONTRIBUTING.md#medir-la-cobertura), junto al de miembros.
 
 `dart doc` escribe en `doc/api/`, que está gitignored: bórralo después si te molesta, pero no lo commitees.
 

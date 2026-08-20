@@ -5,6 +5,20 @@ import '../../../../config/theme/width/width_values.dart';
 import '../../../../shared/presentation/widgets/base_layout.dart';
 import '../widgets/settings_option_tile.dart';
 
+/// How a [SettingsOptionsPage] arranges its choices.
+///
+/// The decision is about the options, not the screen: see `DESIGN.md` →
+/// *settingsChoiceCard* for when each one applies.
+enum SettingsOptionsLayout {
+  /// One choice per row, in a single card. The default, and what a set that is
+  /// **read** wants — the ten languages.
+  list,
+
+  /// Two choices per row, each its own card with its icon above its label. For
+  /// a short set where the icon identifies the option faster than the word.
+  grid,
+}
+
 /// The screen where a single-choice setting is picked from a list.
 ///
 /// One widget for the three sub-screens
@@ -31,6 +45,7 @@ class SettingsOptionsPage<T> extends StatelessWidget {
     required this.options,
     required this.selected,
     required this.onSelected,
+    this.layout = SettingsOptionsLayout.list,
   });
 
   /// Screen heading, shown in the branded strip. From `AppMessages`.
@@ -47,6 +62,16 @@ class SettingsOptionsPage<T> extends StatelessWidget {
   /// Applies the choice. The setter that persists it lives on
   /// `SettingsController`; this page only reports the tap.
   final ValueChanged<T> onSelected;
+
+  /// How the choices are arranged. See [SettingsOptionsLayout].
+  final SettingsOptionsLayout layout;
+
+  /// Columns of the grid layout.
+  ///
+  /// Two, and fixed rather than derived from the available width: this is a
+  /// phone-first app and a third column would put the cards below the size at
+  /// which an icon and a wrapped German label still read.
+  static const int _gridColumns = 2;
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -65,32 +90,85 @@ class SettingsOptionsPage<T> extends StatelessWidget {
         // Room under the last row: the panel ends at the screen edge and a list
         // that stops flush against it reads as cut off.
         padding: EdgeInsets.only(bottom: WidthValues.spacing4xl),
-        children: <Widget>[
-          Card(
-            margin: EdgeInsets.zero,
-            color: ColorValues.utilityBrand50(context),
-            child: Column(
-              children: <Widget>[
-                for (int i = 0; i < options.length; i++) ...<Widget>[
-                  if (i > 0)
-                    Divider(
-                      height: 1,
-                      thickness: 1,
-                      indent: WidthValues.spacingMd,
-                      endIndent: WidthValues.spacingMd,
-                      color: ColorValues.borderPrimary(context),
-                    ),
-                  SettingsOptionTile<T>(
-                    option: options[i],
-                    isSelected: options[i].value == selected,
-                    onTap: () => onSelected(options[i].value),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ],
+        children: switch (layout) {
+          SettingsOptionsLayout.list => <Widget>[_buildList(context)],
+          SettingsOptionsLayout.grid => _buildGrid(context),
+        },
       ),
     ),
   );
+
+  /// Every choice as a row of one card, separated by dividers.
+  Widget _buildList(BuildContext context) => Card(
+    margin: EdgeInsets.zero,
+    color: ColorValues.utilityBrand50(context),
+    child: Column(
+      children: <Widget>[
+        for (int i = 0; i < options.length; i++) ...<Widget>[
+          if (i > 0)
+            Divider(
+              height: 1,
+              thickness: 1,
+              indent: WidthValues.spacingMd,
+              endIndent: WidthValues.spacingMd,
+              color: ColorValues.borderPrimary(context),
+            ),
+          SettingsOptionTile<T>(
+            option: options[i],
+            isSelected: options[i].value == selected,
+            onTap: () => onSelected(options[i].value),
+          ),
+        ],
+      ],
+    ),
+  );
+
+  /// The choices as cards, [_gridColumns] per row.
+  ///
+  /// Hand-chunked into `Row`s rather than built with a `GridView`: the page is
+  /// already a `ListView`, and a grid inside it would be a second scroll view
+  /// needing `shrinkWrap` — the arrangement here is a handful of rows, and rows
+  /// are what it actually is.
+  ///
+  /// **An odd count leaves the last cell empty on purpose.** The alternative,
+  /// stretching the lone card across the row, makes it a different size from
+  /// its siblings and the set stops reading as a grid — which matters with
+  /// exactly three themes, where the odd one out is the permanent state.
+  List<Widget> _buildGrid(BuildContext context) {
+    final List<Widget> rows = <Widget>[];
+
+    for (int start = 0; start < options.length; start += _gridColumns) {
+      final int end = (start + _gridColumns).clamp(0, options.length);
+
+      rows.add(
+        Padding(
+          padding: EdgeInsets.only(top: start == 0 ? 0 : WidthValues.spacingMd),
+          // `IntrinsicHeight` so both cards in a row match the taller of the
+          // two. Without it a label that wraps in German leaves its neighbour
+          // visibly short, and the pair stops looking like one row.
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: WidthValues.spacingMd,
+              children: <Widget>[
+                for (int i = start; i < end; i++)
+                  Expanded(
+                    child: SettingsOptionCard<T>(
+                      option: options[i],
+                      isSelected: options[i].value == selected,
+                      onTap: () => onSelected(options[i].value),
+                    ),
+                  ),
+                // Holds the cell width of the short last row.
+                for (int i = end; i < start + _gridColumns; i++)
+                  const Expanded(child: SizedBox.shrink()),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    return rows;
+  }
 }

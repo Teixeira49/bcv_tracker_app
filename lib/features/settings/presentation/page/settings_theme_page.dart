@@ -12,6 +12,13 @@ import 'settings_options_page.dart';
 /// `Get.changeThemeMode`, which rebuilds the app around this route. That is why
 /// the page stays open after a tap (see [SettingsOptionsPage]): the preview is
 /// the whole point, and popping would replace it with the menu.
+///
+/// **The one sub-screen laid out as a grid**, and the reason is what the three
+/// options are: a sun, a moon and a half-lit dial say *light*, *dark* and
+/// *system* before the label is read, so cards two per row put the whole choice
+/// on screen and let the icon carry it. The ten languages are the opposite case
+/// — a set that is read, which a grid makes sweep in zigzag — and stay a list.
+/// `DESIGN.md` → *settingsChoiceCard*.
 class SettingsThemePage extends StatelessWidget {
   const SettingsThemePage({super.key});
 
@@ -25,6 +32,7 @@ class SettingsThemePage extends StatelessWidget {
         options: SettingsChoices.themes(),
         selected: controller.favBrightness.value,
         onSelected: controller.setFavTheme,
+        layout: SettingsOptionsLayout.grid,
       ),
     );
   }

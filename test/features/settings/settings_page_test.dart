@@ -244,7 +244,10 @@ void main() {
       final SettingsController controller = await _pumpSettings(tester);
       await _openEntry(tester, AppMessages.theme);
 
-      expect(find.byType(SettingsOptionTile<ThemeMode>), findsNWidgets(3));
+      // Cards in a grid, not rows: the three themes are told apart by their
+      // icon before their label, which is what earns them the grid.
+      expect(find.byType(SettingsOptionCard<ThemeMode>), findsNWidgets(3));
+      expect(find.byType(SettingsOptionTile<ThemeMode>), findsNothing);
 
       await tester.tap(find.text(AppMessages.darkTheme));
       await tester.pumpAndSettle();
@@ -252,6 +255,91 @@ void main() {
       expect(controller.favBrightness.value, ThemeMode.dark);
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       expect(prefs.getString(_themeKey), ThemeMode.dark.name);
+    });
+
+    testWidgets('lays the three cards out two per row, in equal cells', (
+      WidgetTester tester,
+    ) async {
+      await _pumpSettings(tester);
+      await _openEntry(tester, AppMessages.theme);
+
+      Rect cardOf(String label) => tester.getRect(
+        find.ancestor(
+          of: find.text(label),
+          matching: find.byType(SettingsOptionCard<ThemeMode>),
+        ),
+      );
+
+      final Rect light = cardOf(AppMessages.lightTheme);
+      final Rect dark = cardOf(AppMessages.darkTheme);
+      final Rect system = cardOf(AppMessages.systemTheme);
+
+      // Two on the first row, side by side...
+      expect(light.top, moreOrLessEquals(dark.top));
+      expect(light.right, lessThan(dark.left));
+      // ...and the third below, starting where the first one does.
+      expect(system.top, greaterThan(light.bottom));
+      expect(system.left, moreOrLessEquals(light.left));
+
+      // Equal cells, including the odd one out: the lone card keeps the grid's
+      // width instead of stretching across the row, which is what stops the
+      // set from reading as three buttons of two different sizes.
+      expect(system.width, moreOrLessEquals(light.width));
+      expect(dark.width, moreOrLessEquals(light.width));
+    });
+
+    testWidgets('marks the selected card with a thicker brand border', (
+      WidgetTester tester,
+    ) async {
+      await _pumpSettings(tester, prefs: <String, Object>{_themeKey: 'dark'});
+      await _openEntry(tester, AppMessages.theme);
+
+      double borderOf(String label) {
+        final Card card = tester.widget<Card>(
+          find.descendant(
+            of: find.ancestor(
+              of: find.text(label),
+              matching: find.byType(SettingsOptionCard<ThemeMode>),
+            ),
+            matching: find.byType(Card),
+          ),
+        );
+        return (card.shape! as RoundedRectangleBorder).side.width;
+      }
+
+      // Not colour alone: thickness is what survives greyscale, a dimmed
+      // screen and a colour vision deficiency (`DESIGN.md`, Do's and Don'ts).
+      expect(borderOf(AppMessages.darkTheme), 2);
+      expect(borderOf(AppMessages.lightTheme), 1);
+    });
+
+    testWidgets('tells assistive tech which card is selected', (
+      WidgetTester tester,
+    ) async {
+      await _pumpSettings(tester, prefs: <String, Object>{_themeKey: 'dark'});
+      await _openEntry(tester, AppMessages.theme);
+
+      // The half of the selected state no pixel conveys.
+      // Read off the card's own `Semantics`, not off the merged node: the
+      // merged one also carries whatever `InkWell` contributes, and this test
+      // is about what the card declares.
+      bool? selectedOf(String label) => tester
+          .widget<Semantics>(
+            find
+                .descendant(
+                  of: find.ancestor(
+                    of: find.text(label),
+                    matching: find.byType(SettingsOptionCard<ThemeMode>),
+                  ),
+                  matching: find.byType(Semantics),
+                )
+                .first,
+          )
+          .properties
+          .selected;
+
+      expect(selectedOf(AppMessages.darkTheme), isTrue);
+      expect(selectedOf(AppMessages.lightTheme), isFalse);
     });
   });
 }
