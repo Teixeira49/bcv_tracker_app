@@ -18,11 +18,11 @@ Nada del tooling lo impide. Una clase sin docstring compila, `flutter analyze` s
 
 ## El invariante
 
-[#4](https://github.com/Teixeira49/bcv_tracker_app/issues/4) llevó `lib/` de 31 de 75 tipos públicos documentados a **75 de 75**, y `dart doc` de 8 avisos a **0**. Eso es el suelo, no el techo — y el suelo sube: hoy son **86 de 86**, tras las doce clases que #37 añadió a `features/settings/`.
+[#4](https://github.com/Teixeira49/bcv_tracker_app/issues/4) llevó `lib/` de 31 de 75 tipos públicos documentados a **75 de 75**, y `dart doc` de 8 avisos a **0**. Eso es el suelo, no el techo — y el suelo sube: hoy son **88 de 88**, tras las catorce clases que #37 y su incremental añadieron a `features/settings/`.
 
 | Ámbito | Exigencia | Estado |
 |---|---|---|
-| **Todo `lib/`** | Cada **tipo** público (`class`, `mixin`, `enum`, `extension`, `typedef`) con docstring | 86/86 |
+| **Todo `lib/`** | Cada **tipo** público (`class`, `mixin`, `enum`, `extension`, `typedef`) con docstring | 88/88 |
 | **`shared/domain/` y `shared/data/`** | Además, cada **miembro** público con docstring | 0 huecos |
 | **Todo `lib/`** | `dart doc` sin avisos ni errores | 0 avisos |
 
@@ -37,10 +37,10 @@ Tres clases están **exentas a nivel de miembro**, a propósito:
 | Clase | Miembros | Por qué |
 |---|---|---|
 | `ColorValues` | 77 accesores de color | El nombre *es* la documentación |
-| `AppMessages` | 81 getters de i18n | Idem: la clave y el getter son la misma palabra |
+| `AppMessages` | 85 getters de i18n | Idem: la clave y el getter son la misma palabra |
 | `AppIcons` | 17 rutas de asset | Idem |
 
-Son **175 de los 312** miembros públicos sin docstring del proyecto. Comentarlos uno a uno produciría exactamente el ruido que `documentation-convention.md` prohíbe (`/// El color blanco del texto` sobre `textWhite`), y ese ruido tapa las líneas que sí informan.
+Son **179 de los 319** miembros públicos sin docstring del proyecto. Comentarlos uno a uno produciría exactamente el ruido que `documentation-convention.md` prohíbe (`/// El color blanco del texto` sobre `textWhite`), y ese ruido tapa las líneas que sí informan.
 
 Lo que estas tres clases llevan es un docstring **de clase** que explica el registro completo: la separación en dos capas del color, la regla de los diez idiomas, por qué centralizar rutas de asset. Eso es lo que hay que mantener al día.
 
@@ -48,7 +48,7 @@ Lo que estas tres clases llevan es un docstring **de clase** que explica el regi
 
 ### Por eso `public_member_api_docs` está apagado
 
-Activar el lint forzaría esos 175 comentarios. Y como CI corre `flutter analyze` **sin** `--no-fatal-*`, no sería un aviso con el que se pueda convivir: sería el build roto hasta escribirlos todos. La decisión se tomó en #4 y se mantiene.
+Activar el lint forzaría esos 179 comentarios. Y como CI corre `flutter analyze` **sin** `--no-fatal-*`, no sería un aviso con el que se pueda convivir: sería el build roto hasta escribirlos todos. La decisión se tomó en #4 y se mantiene.
 
 El lint sigue siendo la mejor forma de **medir**. Cómo activarlo un momento sin dejarlo puesto, y la trampa del YAML que hace que reporte `0` cuando en realidad no se aplicó, está en [`CONTRIBUTING.md`](../../CONTRIBUTING.md#-documentación-del-código) — no se repite aquí para que haya un solo sitio que actualizar.
 
@@ -84,7 +84,7 @@ flutter test        # verde
 dart doc .          # "Found 0 warnings and 0 errors."
 ```
 
-Y la cobertura de tipos, que es el número que no puede bajar de 86/86 — el script está en [`CONTRIBUTING.md`](../../CONTRIBUTING.md#medir-la-cobertura), junto al de miembros.
+Y la cobertura de tipos, que es el número que no puede bajar de 88/88 — el script está en [`CONTRIBUTING.md`](../../CONTRIBUTING.md#medir-la-cobertura), junto al de miembros.
 
 `dart doc` escribe en `doc/api/`, que está gitignored: bórralo después si te molesta, pero no lo commitees.
 

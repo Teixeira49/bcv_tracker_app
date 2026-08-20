@@ -1,3 +1,4 @@
+import 'package:bcv_tracker_app/core/constants/constants.dart';
 import 'package:bcv_tracker_app/core/constants/market_constants.dart';
 import 'package:bcv_tracker_app/core/helpers/currency_helpers.dart';
 import 'package:bcv_tracker_app/shared/domain/entities/currency.dart';
@@ -135,7 +136,12 @@ void main() {
       // rounding, it is the figure gone — and the detail sheet then carries
       // that figure across when the direction is reversed.
       expect(CurrencyHelpers.castAmount(value: 0.0013137), '0.001314');
-      expect(CurrencyHelpers.castAmount(value: 0.0000040), '0.000004000');
+      // Was `0.000004000` before #37's decimals setting: the rescue still
+      // expands to four significant digits, and the padding zeros are then
+      // dropped by the same rule that keeps `152.3068` from becoming
+      // `152.3068000000`. The parsed value is identical, which is what the
+      // detail sheet's carry-across depends on.
+      expect(CurrencyHelpers.castAmount(value: 0.0000040), '0.000004');
     });
 
     test('only expands when the default would have shown nothing', () {
@@ -152,9 +158,92 @@ void main() {
       expect(CurrencyHelpers.castAmount(value: double.infinity), '0.00');
       expect(CurrencyHelpers.castAmount(value: double.nan), '0.00');
     });
+  });
 
-    test('the base precision stays a parameter, for a future setting', () {
-      expect(CurrencyHelpers.castAmount(value: 2.5, decimals: 4), '2.5000');
+  // #37's increment: the user picks a ceiling between 2 and 10, and the figure
+  // shows as many decimals as it genuinely has between the floor and it.
+  group('castAmount with a raised ceiling', () {
+    test('shows the decimals the figure actually has, up to the ceiling', () {
+      expect(
+        CurrencyHelpers.castAmount(value: 152.3068, maxDecimals: 6),
+        '152.3068',
+      );
+      expect(
+        CurrencyHelpers.castAmount(value: 864.0962999999999, maxDecimals: 6),
+        '864.0963',
+      );
+    });
+
+    test('rounds at the ceiling', () {
+      expect(
+        CurrencyHelpers.castAmount(value: 864.0962999999999, maxDecimals: 4),
+        '864.0963',
+      );
+      expect(
+        CurrencyHelpers.castAmount(value: 864.0962999999999, maxDecimals: 2),
+        '864.10',
+      );
+    });
+
+    test('never drops below the two-decimal floor', () {
+      // The whole point of the floor: a price with no decimals still has two.
+      expect(CurrencyHelpers.castAmount(value: 100, maxDecimals: 10), '100.00');
+      expect(CurrencyHelpers.castAmount(value: 2.5, maxDecimals: 10), '2.50');
+      expect(CurrencyHelpers.castAmount(value: 0, maxDecimals: 10), '0.00');
+    });
+
+    test('does not pad a figure that has no such precision', () {
+      // `152.3068000000` is ten decimals of nothing. Raising the setting must
+      // not add noise to a figure that does not carry it.
+      expect(
+        CurrencyHelpers.castAmount(value: 152.3068, maxDecimals: 10),
+        '152.3068',
+      );
+    });
+
+    test('raising the ceiling never shows fewer digits than lowering it', () {
+      // The trap the expansion is measured against the floor to avoid: with
+      // the rescue clamped to the ceiling, asking for five decimals on a tiny
+      // figure would have shown `0.00131` where two decimals showed
+      // `0.001314` — a setting called "more decimals" showing fewer.
+      final String atFloor = CurrencyHelpers.castAmount(value: 0.0013137);
+      expect(atFloor, '0.001314');
+      for (int ceiling = 2; ceiling <= 10; ceiling++) {
+        final String raised = CurrencyHelpers.castAmount(
+          value: 0.0013137,
+          maxDecimals: ceiling,
+        );
+        expect(
+          _decimalsOf(raised),
+          greaterThanOrEqualTo(_decimalsOf(atFloor)),
+          reason: 'ceiling $ceiling showed fewer decimals than the floor did.',
+        );
+      }
+      // ...and a ceiling above the rescue is honoured on its own terms.
+      expect(
+        CurrencyHelpers.castAmount(value: 0.0013137, maxDecimals: 8),
+        '0.0013137',
+      );
+    });
+
+    test('a ceiling outside the offered range is clamped, not obeyed', () {
+      // The setter clamps too, but a value written by a future build — or by a
+      // hand-edited preference — must not reach `toStringAsFixed`, which
+      // throws outside 0..20.
+      expect(CurrencyHelpers.castAmount(value: 2.5, maxDecimals: 0), '2.50');
+      expect(
+        CurrencyHelpers.castAmount(value: 864.0962999999999, maxDecimals: 99),
+        CurrencyHelpers.castAmount(
+          value: 864.0962999999999,
+          maxDecimals: Constants.converterMaxDecimals,
+        ),
+      );
     });
   });
+}
+
+/// Decimals in an already-formatted amount.
+int _decimalsOf(String amount) {
+  final int dot = amount.indexOf('.');
+  return dot < 0 ? 0 : amount.length - dot - 1;
 }

@@ -1,6 +1,7 @@
 import 'package:alchemist/alchemist.dart';
 import 'package:bcv_tracker_app/config/theme/theme.dart';
 import 'package:bcv_tracker_app/core/i18n/app_translations.dart';
+import 'package:bcv_tracker_app/features/settings/presentation/page/settings_decimals_page.dart';
 import 'package:bcv_tracker_app/features/settings/presentation/page/settings_language_page.dart';
 import 'package:bcv_tracker_app/features/settings/presentation/page/settings_page.dart';
 import 'package:bcv_tracker_app/features/settings/presentation/page/settings_theme_page.dart';
@@ -11,7 +12,8 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Golden references for the settings screen (#37), in light and dark: the menu
-/// and the language sub-screen that replaced the dialog's dropdown.
+/// and its sub-screens — the language list that replaced the dialog's dropdown,
+/// the theme grid, and the decimals counter the increment added.
 ///
 /// The pages are rendered directly rather than reached through their routes —
 /// Alchemist snapshots the render object of the scenario, and a pushed route
@@ -87,6 +89,16 @@ void main() {
               width: 420,
               height: 900,
               child: SettingsThemePage(),
+            ),
+          ),
+          // #37's increment: the third shape a setting takes here — a counter
+          // with a worked example, neither a row nor a card.
+          GoldenTestScenario(
+            name: 'setting the decimals',
+            child: const SizedBox(
+              width: 420,
+              height: 900,
+              child: SettingsDecimalsPage(),
             ),
           ),
         ],

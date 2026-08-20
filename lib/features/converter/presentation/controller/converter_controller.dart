@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import '../../../../shared/data/repositories/currency_repository.dart';
 import '../../../../shared/domain/conversion.dart';
 import '../../../../shared/domain/entities/currency.dart';
+import '../../../../shared/presentation/controller/settings_controller.dart';
 import '../../domain/entities/convertible_currency.dart';
 
 /// Drives the full converter: which pair, how much, and the result.
@@ -24,6 +25,24 @@ import '../../domain/entities/convertible_currency.dart';
 /// what makes "both converters agree" a test rather than a hope.
 class ConverterController extends GetxController {
   final CurrencyRepository _repository = Get.find<CurrencyRepository>();
+  final SettingsController _settings = Get.find<SettingsController>();
+
+  /// Workers bridging the two services to `update()`, kept so [onClose] can
+  /// dispose them.
+  ///
+  /// `get` 4.7.3 disposes no worker on its own, and both services are
+  /// `permanent`: without this every `fenix` recreation of this controller left
+  /// its listeners attached to objects that outlive it
+  /// ([#45](https://github.com/Teixeira49/bcv_tracker_app/issues/45)). Because
+  /// the app keeps the `ever → update()` bridge over granular `Obx` (#60),
+  /// owning the disposal is a permanent requirement, not a one-off fix.
+  final List<Worker> _workers = <Worker>[];
+
+  /// Most decimals a result may show, as the user set it (#37's increment).
+  ///
+  /// A plain `int`, not the `Rx`: the view never names the service's reactive
+  /// types — that boundary is the reason the bridge below exists at all.
+  int get amountDecimals => _settings.favDecimals.value;
 
   /// Whether a refresh is in flight — the same one Home shows, so the two
   /// screens never disagree about whether the app is busy.
@@ -84,13 +103,30 @@ class ConverterController extends GetxController {
     super.onInit();
 
     // Listen to repository changes to initialize
-    ever(_repository.averageCurrencies, (_) => _updateCurrenciesAndInit());
-    ever(_repository.bcvCurrencies, (_) => _updateCurrenciesAndInit());
+    _workers.add(
+      ever(_repository.averageCurrencies, (_) => _updateCurrenciesAndInit()),
+    );
+    _workers.add(
+      ever(_repository.bcvCurrencies, (_) => _updateCurrenciesAndInit()),
+    );
 
     _updateCurrenciesAndInit();
 
-    ever(_repository.isLoading, (_) => update());
-    ever(_repository.errorMessage, (_) => update());
+    _workers.add(ever(_repository.isLoading, (_) => update()));
+    _workers.add(ever(_repository.errorMessage, (_) => update()));
+    // The decimals ceiling is set on another screen, stacked over this one, so
+    // nothing rebuilds the converter when the user comes back. Without this
+    // bridge the new precision would only appear at the next keystroke.
+    _workers.add(ever(_settings.favDecimals, (_) => update()));
+  }
+
+  @override
+  void onClose() {
+    for (final Worker worker in _workers) {
+      worker.dispose();
+    }
+    _workers.clear();
+    super.onClose();
   }
 
   void _updateCurrenciesAndInit() {

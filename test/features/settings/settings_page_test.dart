@@ -1,9 +1,12 @@
 import 'package:bcv_tracker_app/config/routes/pages.dart';
 import 'package:bcv_tracker_app/config/routes/routes.dart';
+import 'package:bcv_tracker_app/core/constants/constants.dart';
+import 'package:bcv_tracker_app/core/helpers/currency_helpers.dart';
 import 'package:bcv_tracker_app/core/i18n/app_messages.dart';
 import 'package:bcv_tracker_app/core/i18n/app_translations.dart';
 import 'package:bcv_tracker_app/features/settings/presentation/page/settings_options_page.dart';
 import 'package:bcv_tracker_app/features/settings/presentation/page/settings_page.dart';
+import 'package:bcv_tracker_app/features/settings/presentation/widgets/settings_counter.dart';
 import 'package:bcv_tracker_app/features/settings/presentation/widgets/settings_option_tile.dart';
 import 'package:bcv_tracker_app/features/settings/presentation/widgets/settings_section.dart';
 import 'package:bcv_tracker_app/shared/presentation/controller/settings_controller.dart';
@@ -185,6 +188,13 @@ void main() {
             (
               entry: 'Tema',
               intro: 'Ajusta el tema de la aplicación según tu comodidad.',
+            ),
+            (
+              entry: 'Decimales del conversor',
+              intro:
+                  'Elige cuántos decimales puede mostrar el conversor. '
+                  'Siempre verás al menos dos; los demás aparecen solo '
+                  'cuando la cifra realmente los tiene.',
             ),
           ];
 
@@ -387,6 +397,141 @@ void main() {
 
       expect(selectedOf(AppMessages.darkTheme), isTrue);
       expect(selectedOf(AppMessages.lightTheme), isFalse);
+    });
+  });
+
+  // #37's increment. The setting itself is new; what these also check is the
+  // issue's last acceptance criterion — that absorbing one costs an entry and a
+  // page, with nothing on the menu rearranged.
+  group('the converter decimals sub-screen', () {
+    Future<void> openDecimals(WidgetTester tester) =>
+        _openEntry(tester, AppMessages.converterDecimals);
+
+    /// The number the counter is showing, read off the counter itself so a
+    /// figure that happens to appear in the example cannot satisfy the test.
+    String counterValue(WidgetTester tester) => tester
+        .widget<Text>(
+          find
+              .descendant(
+                of: find.byType(SettingsCounter),
+                matching: find.byType(Text),
+              )
+              .first,
+        )
+        .data!;
+
+    Future<void> tapStep(WidgetTester tester, IconData icon) async {
+      await tester.tap(find.byIcon(icon));
+      await tester.pumpAndSettle();
+    }
+
+    bool isEnabled(WidgetTester tester, IconData icon) =>
+        tester
+            .widget<IconButton>(
+              find
+                  .ancestor(
+                    of: find.byIcon(icon),
+                    matching: find.byType(IconButton),
+                  )
+                  .first,
+            )
+            .onPressed !=
+        null;
+
+    testWidgets('starts at two, the value the converter always showed', (
+      WidgetTester tester,
+    ) async {
+      await _pumpSettings(tester);
+      await openDecimals(tester);
+
+      expect(counterValue(tester), '${Constants.converterMinDecimals}');
+      expect(Constants.converterMinDecimals, 2);
+    });
+
+    testWidgets('the counter steps and persists each change', (
+      WidgetTester tester,
+    ) async {
+      final SettingsController controller = await _pumpSettings(tester);
+      await openDecimals(tester);
+
+      await tapStep(tester, Icons.add_rounded);
+      await tapStep(tester, Icons.add_rounded);
+
+      expect(counterValue(tester), '4');
+      expect(controller.favDecimals.value, 4);
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      expect(prefs.getInt('converter_decimals'), 4);
+
+      await tapStep(tester, Icons.remove_rounded);
+      expect(controller.favDecimals.value, 3);
+    });
+
+    testWidgets('both ends stop, and say so by going dead', (
+      WidgetTester tester,
+    ) async {
+      final SettingsController controller = await _pumpSettings(tester);
+      await openDecimals(tester);
+
+      // At the floor: nothing to remove.
+      expect(isEnabled(tester, Icons.remove_rounded), isFalse);
+      expect(isEnabled(tester, Icons.add_rounded), isTrue);
+
+      for (
+        int i = Constants.converterMinDecimals;
+        i < Constants.converterMaxDecimals;
+        i++
+      ) {
+        await tapStep(tester, Icons.add_rounded);
+      }
+
+      expect(controller.favDecimals.value, Constants.converterMaxDecimals);
+      expect(counterValue(tester), '${Constants.converterMaxDecimals}');
+      expect(isEnabled(tester, Icons.add_rounded), isFalse);
+      expect(isEnabled(tester, Icons.remove_rounded), isTrue);
+
+      // And the ceiling holds: tapping a disabled button changes nothing.
+      await tester.tap(find.byIcon(Icons.add_rounded), warnIfMissed: false);
+      await tester.pumpAndSettle();
+      expect(controller.favDecimals.value, Constants.converterMaxDecimals);
+    });
+
+    testWidgets('the worked example is the real formatter, not a mock-up', (
+      WidgetTester tester,
+    ) async {
+      await _pumpSettings(tester);
+      await openDecimals(tester);
+
+      // At the floor the sample rounds to two...
+      expect(find.text('1234.57'), findsOneWidget);
+
+      await tapStep(tester, Icons.add_rounded);
+      await tapStep(tester, Icons.add_rounded);
+
+      // ...and each step reveals a digit the figure genuinely has, which is
+      // exactly what `castAmount` would print for the same ceiling.
+      expect(
+        find.text(
+          CurrencyHelpers.castAmount(value: 1234.567890123456, maxDecimals: 4),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text('1234.5679'), findsOneWidget);
+    });
+
+    testWidgets('the menu shows the count as the current value', (
+      WidgetTester tester,
+    ) async {
+      await _pumpSettings(
+        tester,
+        prefs: <String, Object>{'converter_decimals': 7},
+      );
+
+      // Four entries now, and the three that existed are untouched — the
+      // criterion "adding a setting is adding an entry" collected rather than
+      // asserted.
+      expect(find.byType(SettingsMenuTile), findsNWidgets(4));
+      expect(find.text(AppMessages.converterDecimals), findsOneWidget);
+      expect(find.text('7'), findsOneWidget);
     });
   });
 }

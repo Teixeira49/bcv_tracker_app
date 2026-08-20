@@ -40,4 +40,11 @@ abstract class AppRoutes {
 
   /// Where light / dark / follow-the-system is chosen.
   static const settingsTheme = '/settings/theme';
+
+  /// Where the converter's decimals ceiling is set.
+  ///
+  /// #37's increment, and the first route added *through* the menu rather than
+  /// with it — which is the shape the issue's last acceptance criterion asked
+  /// for: a setting arrives as an entry and a page, with nothing rearranged.
+  static const settingsDecimals = '/settings/decimals';
 }

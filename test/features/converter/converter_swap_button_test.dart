@@ -7,6 +7,7 @@ import 'package:bcv_tracker_app/shared/data/repositories/currency_repository.dar
 import 'package:bcv_tracker_app/shared/domain/entities/bcv_currencies.dart';
 import 'package:bcv_tracker_app/shared/domain/entities/currency.dart';
 import 'package:bcv_tracker_app/shared/domain/repositories/dollar_repositories.dart';
+import 'package:bcv_tracker_app/shared/presentation/controller/settings_controller.dart';
 import 'package:bcv_tracker_app/shared/presentation/widgets/custom_skeletonizer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -38,6 +39,10 @@ Future<void> _pumpConverter(WidgetTester tester, {double rate = 152.30}) async {
   Get.testMode = true;
   Get.put<IDollarRepository>(_FakeDollarRepository(rate: rate));
   final CurrencyRepository repo = Get.put(CurrencyRepository());
+  // #37's increment made the decimals ceiling a setting, so both converters
+  // now resolve `SettingsController`. Registered first, as
+  // `test-coverage.md` asks: fakes in dependency order.
+  Get.put(SettingsController());
   Get.put(ConverterController());
   repo.averageCurrencies.clear();
   repo.bcvCurrencies.clear();

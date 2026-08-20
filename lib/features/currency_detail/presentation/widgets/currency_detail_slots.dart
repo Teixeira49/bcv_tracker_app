@@ -286,6 +286,7 @@ class _CurrencyDetailConverterBodyState
           child: Text(
             CurrencyHelpers.castAmount(
               value: controller.convertedValueFor(widget.rate),
+              maxDecimals: controller.amountDecimals,
             ),
             textAlign: TextAlign.end,
             maxLines: 1,

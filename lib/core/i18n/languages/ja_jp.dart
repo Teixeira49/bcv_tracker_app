@@ -91,4 +91,13 @@ const Map<String, String> jaJp = {
   'defaultMarketIntro': 'アプリを開いたときに表示するタブを選んでください。',
   'languageIntro': 'アプリを表示する言語を選んでください。',
   'themeIntro': '見やすいテーマに設定してください。',
+
+  // --- Converter decimals (#37, incremental) ---
+  'converterDecimals': '換算の小数点以下の桁数',
+  'converterDecimalsDescription': '結果に表示できる小数点以下の桁数',
+  'converterDecimalsIntro':
+      '換算結果に表示できる小数点以下の桁数を選んでください。常に2桁は表示され、それ以上は数値に実際にある場合だけ表示されます。',
+  'decimalsExample': '例',
+  'decreaseAction': '1つ減らす',
+  'increaseAction': '1つ増やす',
 };

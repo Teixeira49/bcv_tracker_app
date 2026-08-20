@@ -94,4 +94,14 @@ const Map<String, String> frFr = {
   'languageIntro':
       'Choisissez la langue dans laquelle vous préférez lire l\'application.',
   'themeIntro': 'Réglez le thème de l\'application selon votre confort.',
+
+  // --- Converter decimals (#37, incremental) ---
+  'converterDecimals': 'Décimales du convertisseur',
+  'converterDecimalsDescription':
+      'Combien de décimales le résultat peut afficher',
+  'converterDecimalsIntro':
+      'Choisissez combien de décimales le convertisseur peut afficher. Vous en verrez toujours au moins deux ; les autres n\'apparaissent que si le nombre les a vraiment.',
+  'decimalsExample': 'Exemple',
+  'decreaseAction': 'Une de moins',
+  'increaseAction': 'Une de plus',
 };

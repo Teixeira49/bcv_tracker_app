@@ -7,6 +7,7 @@ import 'package:bcv_tracker_app/shared/data/repositories/currency_repository.dar
 import 'package:bcv_tracker_app/shared/domain/entities/bcv_currencies.dart';
 import 'package:bcv_tracker_app/shared/domain/entities/currency.dart';
 import 'package:bcv_tracker_app/shared/domain/repositories/dollar_repositories.dart';
+import 'package:bcv_tracker_app/shared/presentation/controller/settings_controller.dart';
 import 'package:bcv_tracker_app/shared/presentation/widgets/app_state_view.dart';
 import 'package:bcv_tracker_app/shared/presentation/widgets/base_bottom_sheet.dart';
 import 'package:bcv_tracker_app/shared/presentation/widgets/base_modal.dart';
@@ -63,6 +64,10 @@ Future<void> _pumpConverter(WidgetTester tester) async {
   Get.testMode = true;
   Get.put<IDollarRepository>(_FakeDollarRepository());
   final CurrencyRepository repo = Get.put(CurrencyRepository());
+  // #37's increment made the decimals ceiling a setting, so both converters
+  // now resolve `SettingsController`. Registered first, as
+  // `test-coverage.md` asks: fakes in dependency order.
+  Get.put(SettingsController());
   Get.put(ConverterController());
 
   // The skeleton placeholders carry a `placehold.co` URL; `onReady`'s refresh

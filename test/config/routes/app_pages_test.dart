@@ -12,6 +12,7 @@ const List<String> _declaredRoutes = [
   AppRoutes.settingsMarket,
   AppRoutes.settingsLanguage,
   AppRoutes.settingsTheme,
+  AppRoutes.settingsDecimals,
 ];
 
 void main() {

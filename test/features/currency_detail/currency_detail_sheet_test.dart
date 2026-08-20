@@ -6,6 +6,7 @@ import 'package:bcv_tracker_app/features/currency_detail/presentation/controller
 import 'package:bcv_tracker_app/features/currency_detail/presentation/page/currency_detail_sheet.dart';
 import 'package:bcv_tracker_app/features/currency_detail/presentation/widgets/currency_detail_section.dart';
 import 'package:bcv_tracker_app/shared/domain/entities/currency.dart';
+import 'package:bcv_tracker_app/shared/presentation/controller/settings_controller.dart';
 import 'package:bcv_tracker_app/shared/presentation/widgets/performance_indicator_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -20,6 +21,10 @@ Future<void> _pumpSheet(WidgetTester tester, Currency currency) async {
   // controller, so the sheet now needs it registered — as the app does in
   // `initial_bindings.dart`.
   Get.testMode = true;
+  // #37's increment made the decimals ceiling a setting, so both converters
+  // now resolve `SettingsController`. Registered first, as
+  // `test-coverage.md` asks: fakes in dependency order.
+  Get.put(SettingsController());
   Get.put(CurrencyDetailController());
 
   await tester.pumpWidget(

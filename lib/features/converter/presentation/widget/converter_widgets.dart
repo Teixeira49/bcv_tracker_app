@@ -45,7 +45,10 @@ class _CurrencyInputCard extends StatelessWidget {
               // caret (see `_CurrencyInputFieldCardState.didUpdateWidget`).
               amount: isInput
                   ? currency.convertedValue.toString()
-                  : CurrencyHelpers.castAmount(value: currency.convertedValue),
+                  : CurrencyHelpers.castAmount(
+                      value: currency.convertedValue,
+                      maxDecimals: controller.amountDecimals,
+                    ),
             ),
             // A market with no rate yields 0.0 instead of a conversion, and a
             // bare 0 reads like a legitimate result. Only the output card says

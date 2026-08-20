@@ -91,4 +91,13 @@ const Map<String, String> koKr = {
   'defaultMarketIntro': '앱을 열 때 표시할 탭을 선택하세요.',
   'languageIntro': '앱을 표시할 언어를 선택하세요.',
   'themeIntro': '보기 편한 테마로 설정하세요.',
+
+  // --- Converter decimals (#37, incremental) ---
+  'converterDecimals': '환율 계산기 소수점 자리',
+  'converterDecimalsDescription': '결과에 표시할 수 있는 소수점 자리 수',
+  'converterDecimalsIntro':
+      '계산 결과에 표시할 수 있는 소수점 자리 수를 선택하세요. 항상 두 자리는 표시되며, 나머지는 실제로 값이 있을 때만 나타납니다.',
+  'decimalsExample': '예시',
+  'decreaseAction': '하나 줄이기',
+  'increaseAction': '하나 늘리기',
 };

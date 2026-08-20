@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../core/constants/constants.dart';
 import '../../domain/entities/language.dart';
 
-/// The user's settings — theme, language, favourite market — for the whole
-/// session.
+/// The user's settings — theme, language, favourite market and the converter's
+/// decimals ceiling — for the whole session.
 ///
 /// A **`GetxService`**, not a controller: it belongs to no view, outlives every
 /// screen and is the same role `CurrencyRepository` already plays. The name is
@@ -34,9 +35,23 @@ class SettingsController extends GetxService {
   final Rx<ThemeMode> favBrightness = ThemeMode.system.obs;
   final RxString favLanguageCode = defaultLanguage.code.obs;
 
+  /// Most decimals the converter may show, between
+  /// [Constants.converterMinDecimals] and [Constants.converterMaxDecimals].
+  ///
+  /// A **ceiling**, not a count: `CurrencyHelpers.castAmount` shows a figure
+  /// with as many decimals as it genuinely has, never fewer than two and never
+  /// more than this. At the minimum the converter formats exactly as it did
+  /// before the setting existed, which is what makes the default safe.
+  ///
+  /// It changes nothing about the arithmetic. `ConverterController` keeps the
+  /// full `double`; this is read at the point of display, so moving it never
+  /// recomputes a conversion.
+  final RxInt favDecimals = Constants.converterMinDecimals.obs;
+
   static const String _themeKey = 'theme_mode';
   static const String _langKey = 'language_code';
   static const String _favMarketKey = 'fav_market';
+  static const String _decimalsKey = 'converter_decimals';
 
   /// Whether the user has ever chosen a language on this install.
   ///
@@ -201,7 +216,7 @@ class SettingsController extends GetxService {
     return this;
   }
 
-  /// Reads the three settings from `SharedPreferences` into the observables.
+  /// Reads the four settings from `SharedPreferences` into the observables.
   ///
   /// Pure state: no `Get.changeThemeMode`, no `Get.updateLocale`. See the class
   /// doc for why applying them here was both redundant and, for the locale,
@@ -212,6 +227,18 @@ class SettingsController extends GetxService {
     final int? marketIndex = prefs.getInt(_favMarketKey);
     if (marketIndex != null) {
       favMarketIndex.value = marketIndex;
+    }
+
+    // Clamped on the way in, not only on the way out: the stored value is
+    // whatever *any* build wrote there, and an out-of-range ceiling reaching
+    // `toStringAsFixed` throws — on the converter, which is not where a bad
+    // preference should surface.
+    final int? decimals = prefs.getInt(_decimalsKey);
+    if (decimals != null) {
+      favDecimals.value = decimals.clamp(
+        Constants.converterMinDecimals,
+        Constants.converterMaxDecimals,
+      );
     }
 
     final String? themeName = prefs.getString(_themeKey);
@@ -300,6 +327,25 @@ class SettingsController extends GetxService {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(_langKey, code);
+  }
+
+  /// Applies and persists a new decimals ceiling, clamped to the offered range.
+  ///
+  /// The counter on the settings screen already stops at both ends, so the
+  /// clamp here is not for it: it is for every other caller this setter will
+  /// ever have. A ceiling outside `2..10` reaches `toStringAsFixed`, which
+  /// throws above 20 — an exception on the converter, raised by a screen the
+  /// user left minutes ago.
+  Future<void> setFavDecimals(int decimals) async {
+    final int next = decimals.clamp(
+      Constants.converterMinDecimals,
+      Constants.converterMaxDecimals,
+    );
+    if (favDecimals.value == next) return;
+
+    favDecimals.value = next;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_decimalsKey, next);
   }
 
   Future<void> setFavTheme(ThemeMode themeMode) async {

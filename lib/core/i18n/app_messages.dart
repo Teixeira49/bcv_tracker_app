@@ -237,4 +237,24 @@ class AppMessages {
   static String get languageIntro => 'languageIntro'.tr;
 
   static String get themeIntro => 'themeIntro'.tr;
+
+  // --- Converter decimals (#37, incremental) ---
+
+  static String get converterDecimals => 'converterDecimals'.tr;
+
+  static String get converterDecimalsDescription =>
+      'converterDecimalsDescription'.tr;
+
+  static String get converterDecimalsIntro => 'converterDecimalsIntro'.tr;
+
+  /// Labels the worked figure under the counter — the same amount rendered at
+  /// the chosen ceiling, so "seven decimals" is something the user can see
+  /// rather than imagine.
+  static String get decimalsExample => 'decimalsExample'.tr;
+
+  /// Tooltips of the counter's two buttons. Icon-only controls, so these are
+  /// the only names a screen reader has for them.
+  static String get decreaseAction => 'decreaseAction'.tr;
+
+  static String get increaseAction => 'increaseAction'.tr;
 }

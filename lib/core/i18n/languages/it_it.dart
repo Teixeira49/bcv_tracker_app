@@ -92,4 +92,13 @@ const Map<String, String> itIt = {
   'defaultMarketIntro': 'Scegli la scheda da mostrare all\'apertura dell\'app.',
   'languageIntro': 'Scegli la lingua in cui preferisci leggere l\'app.',
   'themeIntro': 'Imposta il tema dell\'app come ti risulta più comodo.',
+
+  // --- Converter decimals (#37, incremental) ---
+  'converterDecimals': 'Decimali del convertitore',
+  'converterDecimalsDescription': 'Quanti decimali può mostrare il risultato',
+  'converterDecimalsIntro':
+      'Scegli quanti decimali può mostrare il convertitore. Ne vedrai sempre almeno due; gli altri compaiono solo quando la cifra li ha davvero.',
+  'decimalsExample': 'Esempio',
+  'decreaseAction': 'Uno in meno',
+  'increaseAction': 'Uno in più',
 };

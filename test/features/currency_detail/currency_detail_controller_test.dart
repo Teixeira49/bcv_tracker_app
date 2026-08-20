@@ -1,6 +1,7 @@
 import 'package:bcv_tracker_app/core/constants/market_constants.dart';
 import 'package:bcv_tracker_app/features/currency_detail/presentation/controller/currency_detail_controller.dart';
 import 'package:bcv_tracker_app/shared/domain/entities/currency.dart';
+import 'package:bcv_tracker_app/shared/presentation/controller/settings_controller.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 
@@ -16,6 +17,10 @@ void main() {
 
   setUp(() {
     Get.testMode = true;
+    // #37's increment made the decimals ceiling a setting, so both converters
+    // now resolve `SettingsController`. Registered first, as
+    // `test-coverage.md` asks: fakes in dependency order.
+    Get.put(SettingsController());
     controller = Get.put(CurrencyDetailController());
   });
 

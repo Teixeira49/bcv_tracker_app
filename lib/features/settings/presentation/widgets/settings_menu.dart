@@ -40,6 +40,15 @@ class _SettingsMenu extends StatelessWidget {
                 onTap: () => Get.toNamed<void>(AppRoutes.settingsMarket),
               ),
               SettingsMenuTile(
+                icon: Icons.tag_rounded,
+                title: AppMessages.converterDecimals,
+                description: AppMessages.converterDecimalsDescription,
+                // The count itself is the value: "5" is what the setting is
+                // set to, and no label reads better than the number.
+                value: '${controller.favDecimals.value}',
+                onTap: () => Get.toNamed<void>(AppRoutes.settingsDecimals),
+              ),
+              SettingsMenuTile(
                 icon: Icons.translate_rounded,
                 title: AppMessages.language,
                 description: AppMessages.languageDescription,

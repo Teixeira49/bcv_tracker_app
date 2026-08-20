@@ -92,4 +92,14 @@ const Map<String, String> esEs = {
       'Elige la pestaña que quieres ver al abrir la aplicación.',
   'languageIntro': 'Elige el idioma en el que prefieres leer la aplicación.',
   'themeIntro': 'Ajusta el tema de la aplicación según tu comodidad.',
+
+  // --- Converter decimals (#37, incremental) ---
+  'converterDecimals': 'Decimales del conversor',
+  'converterDecimalsDescription':
+      'Cuántos decimales puede mostrar el resultado',
+  'converterDecimalsIntro':
+      'Elige cuántos decimales puede mostrar el conversor. Siempre verás al menos dos; los demás aparecen solo cuando la cifra realmente los tiene.',
+  'decimalsExample': 'Ejemplo',
+  'decreaseAction': 'Quitar uno',
+  'increaseAction': 'Añadir uno',
 };

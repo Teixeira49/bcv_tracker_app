@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../../../core/helpers/currency_helpers.dart';
 import '../../../../shared/domain/conversion.dart';
 import '../../../../shared/domain/entities/currency.dart';
+import '../../../../shared/presentation/controller/settings_controller.dart';
 
 /// Owns which rate the detail sheet is showing.
 ///
@@ -35,6 +36,18 @@ class CurrencyDetailController extends GetxController {
   /// controller in this app owns its `onClose`, permanently.
   Worker? _currencyWorker;
 
+  /// Bridges the decimals ceiling the user sets (#37's increment) to the sheet.
+  ///
+  /// Same reason and same obligation as [_currencyWorker]: the setting is
+  /// changed on a screen stacked over the sheet's caller, so nothing else would
+  /// repaint the quick converter with the new precision.
+  Worker? _decimalsWorker;
+
+  /// Most decimals the quick converter may show, as the user set it.
+  ///
+  /// A plain `int`: the sheet never names the service's reactive types.
+  int get amountDecimals => Get.find<SettingsController>().favDecimals.value;
+
   /// The rate on display, or `null` while no sheet is open.
   Currency? get currency => _currency.value;
 
@@ -48,12 +61,18 @@ class CurrencyDetailController extends GetxController {
     // The views use GetBuilder, not Obx (see `getx-architecture`), so the
     // observable has to be bridged explicitly or the sheet never repaints.
     _currencyWorker = ever(_currency, (_) => update());
+    _decimalsWorker = ever(
+      Get.find<SettingsController>().favDecimals,
+      (_) => update(),
+    );
   }
 
   @override
   void onClose() {
     _currencyWorker?.dispose();
     _currencyWorker = null;
+    _decimalsWorker?.dispose();
+    _decimalsWorker = null;
     super.onClose();
   }
 
@@ -147,8 +166,12 @@ class CurrencyDetailController extends GetxController {
   /// why [CurrencyHelpers.castAmount] has to keep small values legible: rounding
   /// the carried figure to `0.00` here would destroy it for good.
   void toggleDirection(Currency rate) {
+    // The user's ceiling on purpose: what is carried across is **what they were
+    // reading**, and carrying a figure with more precision than the screen
+    // showed would change the number under them on the way back.
     final String carried = CurrencyHelpers.castAmount(
       value: convertedValueFor(rate),
+      maxDecimals: amountDecimals,
     );
     _isReversed = !_isReversed;
     _amountInput = carried;

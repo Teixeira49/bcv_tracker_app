@@ -5,6 +5,7 @@ import 'package:bcv_tracker_app/core/i18n/app_translations.dart';
 import 'package:bcv_tracker_app/features/currency_detail/presentation/controller/currency_detail_controller.dart';
 import 'package:bcv_tracker_app/features/currency_detail/presentation/page/currency_detail_sheet.dart';
 import 'package:bcv_tracker_app/shared/domain/entities/currency.dart';
+import 'package:bcv_tracker_app/shared/presentation/controller/settings_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -71,6 +72,10 @@ void _detailGolden(
       fileName: '${fileBase}_$mode',
       pumpWidget: (tester, widget) {
         Get.testMode = true;
+        // #37's increment made the decimals ceiling a setting, so both converters
+        // now resolve `SettingsController`. Registered first, as
+        // `test-coverage.md` asks: fakes in dependency order.
+        Get.put(SettingsController());
         Get.put(CurrencyDetailController());
         return tester.pumpWidget(
           GetMaterialApp(
