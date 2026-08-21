@@ -2,6 +2,7 @@ import 'package:bcv_tracker_app/config/enviroment/enviroment.dart';
 import 'package:bcv_tracker_app/config/routes/pages.dart';
 import 'package:bcv_tracker_app/config/routes/routes.dart';
 import 'package:bcv_tracker_app/config/theme/colors/colors_constants.dart';
+import 'package:bcv_tracker_app/config/theme/colors/colors_values.dart';
 import 'package:bcv_tracker_app/config/theme/theme.dart';
 import 'package:bcv_tracker_app/core/constants/market_constants.dart';
 import 'package:bcv_tracker_app/core/i18n/app_messages.dart';
@@ -323,10 +324,24 @@ void main() {
       // monocromo, correcto sobre la franja oscura e invisible aquí, que es la
       // primera pantalla que lo pone sobre una superficie clara.
       //
-      // `primary` y no `midnight`: el degradado de la franja va de uno al otro,
-      // y la marca tiene que leerse como parte de esa familia en vez de casi
-      // negra.
-      expect(await logoInk(tester, AppTheme.lightTheme), AppColors.primary);
+      // Y es **exactamente** el azul de los valores de los ajustes, no uno
+      // parecido: si alguien mueve uno de los dos, esto lo caza.
+      final Color ink = (await logoInk(tester, AppTheme.lightTheme))!;
+      expect(ink, AppColors.primary.shade700);
+
+      late Color settingsValueBlue;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.lightTheme,
+          home: Builder(
+            builder: (BuildContext context) {
+              settingsValueBlue = ColorValues.textBrandSecondary(context);
+              return const SizedBox();
+            },
+          ),
+        ),
+      );
+      expect(ink, settingsValueBlue);
     });
 
     testWidgets('en modo oscuro se tiñe de blanco', (
