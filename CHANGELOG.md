@@ -62,9 +62,10 @@ y el arranque lleva la marca desde el primer fotograma.
 
 ## [1.0.1] - 2026-08-07
 
-Primera versión de producción funcional tras `v1.0.0` (que solo contenía el
-andamiaje inicial). Restaura la carga de tasas, endurece la app y añade la red
-de pruebas y CI.
+Versión de mantenimiento sobre `v1.0.0`. El promedio había dejado de cargar
+cuando el backend movió `saved-currencies` de GET a POST; esta versión lo
+restaura, endurece la app y le pone la red de pruebas y el CI que la anterior
+no tenía.
 
 ### Added
 - Mensajes de error diferenciados por tipo de fallo (sin conexión, timeout,
@@ -102,5 +103,23 @@ de pruebas y CI.
 - La lista de divisas del BCV se convierte correctamente en `toEntity()`.
 - Un `.env` ilegible se reporta en vez de tumbar el arranque.
 
+## [1.0.0] - 2026-04-09
+
+Primera versión publicada. La app completa: las tasas del BCV y del mercado
+paralelo en dos pestañas, conversor, ajustes e interfaz en diez idiomas.
+
+### Added
+- Pantalla de inicio con dos pestañas —promedio del mercado paralelo y tasas
+  oficiales del BCV—, sobre los endpoints `saved-currencies` (GET) y
+  `bcv/with-memory`.
+- Conversor con regla pivote en bolívares: cualquier par se resuelve como
+  `X → VES → Y`, porque el backend solo publica tasas contra VES.
+- Ajustes con idioma, tema (claro / oscuro / sistema) y mercado de arranque,
+  persistidos en `SharedPreferences`.
+- Interfaz en **diez idiomas** mediante GetX Translations.
+- Splash, barra de navegación inferior propia y el sistema de color de cuatro
+  modos (`ColorValues`).
+
 [1.1.0]: https://github.com/Teixeira49/bcv_tracker_app/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/Teixeira49/bcv_tracker_app/compare/v1.0.0...v1.0.1
+[1.0.0]: https://github.com/Teixeira49/bcv_tracker_app/releases/tag/v1.0.0
