@@ -169,7 +169,7 @@ class CurrencyHelpers {
     required int maxDecimals,
     bool grouping = true,
   }) {
-    final NumberFormat format = NumberFormat.decimalPattern(displayLocale)
+    final NumberFormat format = _formatFor(displayLocale)
       ..minimumFractionDigits = minDecimals
       ..maximumFractionDigits = maxDecimals;
     if (!grouping) {
@@ -180,6 +180,47 @@ class CurrencyHelpers {
     // and `NaN` verbatim.
     return format.format(value.isFinite ? value : 0.0);
   }
+
+  /// A formatter for [locale], or for the fallback when `intl` does not know it.
+  ///
+  /// **`NumberFormat` does not fail quietly, and it does not fall back either.**
+  /// A code it has never heard of raises `ArgumentError` — measured on intl
+  /// 0.18.1 — from inside the `build` of every card that shows a figure. Today
+  /// the only source is `Get.locale`, always one of the ten this build ships,
+  /// but [displayLocale] is public and the next caller may not be.
+  ///
+  /// What **is** silent is the descent to the language subtag, and it happens
+  /// to six of the ten: `fr_FR→fr`, `de_DE→de`, `it_IT→it`, `ja_JP→ja`,
+  /// `ko_KR→ko`, `ru_RU→ru`. Harmless here, because those regional variants
+  /// punctuate alike — but not a rule to lean on: `pt_PT` and `pt_BR` genuinely
+  /// differ, and only the first is in the list.
+  static NumberFormat _formatFor(String locale) {
+    try {
+      return NumberFormat.decimalPattern(locale);
+    } on ArgumentError {
+      return NumberFormat.decimalPattern('en_US');
+    }
+  }
+
+  /// The amount as it appears **inside an editable field**.
+  ///
+  /// A third shape, and the reason is the caret. [castAmount] rounds to the
+  /// user's ceiling, which is right for a result and wrong for a field being
+  /// typed into: rounding `12,345` to `12,35` while the user is still writing
+  /// rewrites the text under their finger. So this one **does not round** —
+  /// `minDecimals: 0`, a high ceiling — and only replaces the separator.
+  ///
+  /// Introduced by #63's review. The input side used to print
+  /// `convertedValue.toString()`, so after a swap the largest figure on the
+  /// converter read `0.006565988181221273` — eighteen decimals **and a dot**,
+  /// while the result right above it had a comma. The long tail was already
+  /// there; the mismatched separator was this issue's doing.
+  static String castEditableAmount(double value) => formatNumber(
+    value,
+    minDecimals: 0,
+    maxDecimals: Constants.converterMaxDecimals,
+    grouping: false,
+  );
 
   /// A rate in bolívares, as the cards show it.
   ///

@@ -39,12 +39,13 @@ class _CurrencyInputCard extends StatelessWidget {
             _CurrencyInputFieldCard(
               currencyCode: currency.keyName,
               isInput: isInput,
-              // Only the result is rounded. The input side keeps the raw string
-              // so the field does not fight what the user is typing: rounding
-              // `12.345` to `12.35` mid-keystroke would rewrite it under the
-              // caret (see `_CurrencyInputFieldCardState.didUpdateWidget`).
+              // Only the result is **rounded**. The input side is formatted
+              // too — it has to be, or the two halves of this screen show
+              // different decimal separators — but without rounding: cutting
+              // `12,345` to `12,35` mid-keystroke would rewrite the text under
+              // the caret (see `_CurrencyInputFieldCardState.didUpdateWidget`).
               amount: isInput
-                  ? currency.convertedValue.toString()
+                  ? CurrencyHelpers.castEditableAmount(currency.convertedValue)
                   : CurrencyHelpers.castAmount(
                       value: currency.convertedValue,
                       maxDecimals: controller.amountDecimals,
@@ -149,22 +150,23 @@ class _CurrencyInputFieldCardState extends State<_CurrencyInputFieldCard> {
   void didUpdateWidget(covariant _CurrencyInputFieldCard oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.amount != _controller.text) {
-      final double newAmount = double.tryParse(widget.amount) ?? 0.0;
-      final double currentTextValue =
-          double.tryParse(_controller.text.replaceAll(',', '.')) ?? 0.0;
+      // Both sides through the same parser. `widget.amount` used to be a raw
+      // `toString()` and could only contain a dot; since #63 it carries the
+      // locale's separator, and a bare `double.tryParse` would read `12,3` as
+      // `0.0`, fire the threshold below and overwrite the field with rubbish.
+      final double newAmount = CurrencyConversion.parseAmount(widget.amount);
+      final double currentTextValue = CurrencyConversion.parseAmount(
+        _controller.text,
+      );
 
       // Only update if the values are actually different (e.g. from a swap or external change)
       // This prevents overwriting "10." with "10.0" while typing
       if ((newAmount - currentTextValue).abs() > 0.001) {
-        // Check if it's 0.0 and text is empty, keep empty if desired?
-        // But requirement says "conversion resets", so 0.0 is likely desired to show.
-        // However, if we want to show "0" instead of "0.0" for integers:
-        String textToSet = widget.amount;
-        if (widget.amount.endsWith('.0')) {
-          textToSet = widget.amount.substring(0, widget.amount.length - 2);
-        }
-
-        _controller.text = textToSet == '0' ? '' : textToSet;
+        // The trailing `.0` this used to strip cannot occur any more:
+        // `castEditableAmount` formats with `minDecimals: 0`, so a whole number
+        // arrives as `12`, not `12.0`. Zero still clears the field rather than
+        // showing a `0` the user has to delete before typing.
+        _controller.text = widget.amount == '0' ? '' : widget.amount;
       }
     }
   }

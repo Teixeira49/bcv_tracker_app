@@ -74,3 +74,6 @@ test/**/failures/
 # lo deriva `tool/release_notes_txt.dart` en cada build (#93). Dos archivos con
 # la misma prosa se desincronizan, y el que nadie lee lo hace primero.
 release_notes.txt
+
+# Worktrees temporales de los subagentes: son copias del propio repo.
+.claude/worktrees/

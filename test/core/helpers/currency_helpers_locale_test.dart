@@ -1,5 +1,7 @@
 import 'package:bcv_tracker_app/core/helpers/currency_helpers.dart';
 import 'package:bcv_tracker_app/shared/domain/conversion.dart';
+import 'package:bcv_tracker_app/shared/domain/entities/language.dart';
+import 'package:bcv_tracker_app/shared/presentation/controller/settings_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
@@ -50,15 +52,42 @@ void main() {
       expect(CurrencyHelpers.castAmount(value: 1234.5), '1234.50');
     });
 
-    test('japonés y coreano también son punto, y se comprueban', () {
-      // El issue pide probarlos explícitamente: sus códigos eran inválidos
-      // (`ja_JA`) hasta #98, y `NumberFormat` con un locale que no conoce cae
-      // al de por defecto **en silencio**.
+    test('japonés y coreano también son punto', () {
+      // El issue pide probarlos explícitamente porque sus códigos eran
+      // inválidos (`ja_JA`) hasta #98. El resultado coincide con el del locale
+      // por defecto, así que **este test solo no distingue** el acierto de un
+      // fallback: lo que sí los separa está en los dos de abajo.
       useLocale('ja', 'JP');
       expect(CurrencyHelpers.castAmount(value: 1234.5), '1234.50');
       useLocale('ko', 'KR');
       expect(CurrencyHelpers.castAmount(value: 1234.5), '1234.50');
     });
+  });
+
+  test('los diez códigos que la app publica son formateables', () {
+    // La premisa que el issue daba por buena era inexacta: un código que
+    // `intl` no conoce **lanza `ArgumentError`**, no cae al defecto. Lo que sí
+    // ocurre en silencio es el descenso al subtag de idioma, y le pasa a seis
+    // de los diez (`fr_FR→fr`, `de_DE→de`, …). Inocuo aquí —esas variantes
+    // puntúan igual— pero no es regla en la que apoyarse: `pt_PT` y `pt_BR`
+    // difieren de verdad.
+    for (final LanguageOption option in SettingsController().languageOptions) {
+      Get.locale = SettingsController.localeOf(option.code);
+      expect(
+        () => CurrencyHelpers.castAmount(value: 1234.5),
+        returnsNormally,
+        reason: '${option.code} no se puede formatear.',
+      );
+    }
+  });
+
+  test('un locale que intl no conoce cae al defecto en vez de lanzar', () {
+    // `formatNumber` corre dentro del `build` de cada tarjeta con cifras: un
+    // `ArgumentError` ahí tumba la pantalla. Hoy es inalcanzable —`Get.locale`
+    // sale siempre de los diez— pero `displayLocale` es público y la próxima
+    // ruta que lo alimente puede no serlo.
+    Get.locale = const Locale('xx', 'YY');
+    expect(CurrencyHelpers.castAmount(value: 1234.5), '1234.50');
   });
 
   group('el separador de miles', () {
