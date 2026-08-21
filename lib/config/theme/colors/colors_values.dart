@@ -326,12 +326,17 @@ class ColorValues {
   /// «Acerca de» (#42) fue el primer sitio que puso el logo sobre la superficie
   /// clara y lo destapó: blanco sobre blanco.
   ///
-  /// En claro es **`primary`, no `midnight`**: el degradado de la franja va de
-  /// `midnight` a `primary`, y la marca tiene que leerse como parte de esa
-  /// familia. Con `midnight` contrastaba pero salía casi negra, que es un color
-  /// que la app no usa para nada suyo.
+  /// En claro es **exactamente el azul de [textBrandSecondary]**, el de los
+  /// valores a la derecha de cada fila de ajustes. Pasó por dos tonos antes:
+  /// `midnight` contrastaba pero salía casi negro, y `primary` a secas quedaba
+  /// más claro que todo lo demás de la pantalla. Este es el azul que el usuario
+  /// ya está leyendo tres filas más abajo, así que la marca entra en la misma
+  /// familia en vez de introducir un cuarto tono.
+  ///
+  /// Deliberadamente el **mismo valor**, no uno parecido: hay un test que
+  /// compara los dos y falla si alguien mueve uno sin el otro.
   static final _fgBrandMark = _ColorScheme(
-    light: AppColors.primary,
+    light: AppColors.primary.shade700,
     dark: Colors.white,
   );
 
