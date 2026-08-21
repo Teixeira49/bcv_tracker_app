@@ -114,6 +114,49 @@ void main() {
     expect(_driftFromSeam(tester), lessThan(1));
   });
 
+  testWidgets('las dos mitades usan el mismo separador decimal', (
+    WidgetTester tester,
+  ) async {
+    // La regresión que encontró la revisión de #63: el resultado pasó a llevar
+    // coma y el campo de entrada seguía imprimiendo `convertedValue.toString()`
+    // — punto, y con la cola completa del `double`. Tras un intercambio, la
+    // cifra más grande de la pantalla (`fontSize: 40`) leía
+    // `0.006565988181221273` justo debajo de un resultado con coma.
+    await _pumpConverter(tester, rate: 152.30);
+    // Con ambos lados en VES el intercambio no mueve nada: hay que elegir una
+    // divisa para que la vuelta produzca la cifra de cola larga.
+    final ConverterController controller = Get.find<ConverterController>();
+    controller.selectCurrency(controller.currencies.first, isInput: false);
+    await tester.pump();
+    await tester.enterText(find.byType(TextFormField).first, '1');
+    await tester.pump();
+
+    await tester.tap(find.byIcon(Icons.swap_vert));
+    await tester.pumpAndSettle();
+
+    final List<String> fields = tester
+        .widgetList<TextFormField>(find.byType(TextFormField))
+        .map((TextFormField f) => f.controller?.text ?? '')
+        .where((String t) => t.isNotEmpty)
+        .toList();
+
+    // El campo de entrada ahora lleva 1/152,30: la cifra que delataba el
+    // problema.
+    expect(fields, isNotEmpty);
+    expect(
+      fields.any((String t) => t.length > 6),
+      isTrue,
+      reason: 'esperaba la cifra de cola larga tras el intercambio: $fields',
+    );
+    for (final String text in fields) {
+      expect(
+        text,
+        isNot(contains('.')),
+        reason: 'En es_ES ningún campo debería escribir punto: "$text".',
+      );
+    }
+  });
+
   testWidgets('the result is rounded for display, not in the arithmetic', (
     tester,
   ) async {
@@ -134,9 +177,13 @@ void main() {
       reason: 'the controller must still hold the full value',
     );
     expect(find.text(kept.toString()), findsNothing);
-    expect(
-      find.text(kept.toStringAsFixed(Constants.converterAmountDecimals)),
-      findsOneWidget,
-    );
+    // Un **literal**, no `castAmount(kept)`: comparar el widget contra la misma
+    // función que el widget llama pasa aunque esa función devuelva el locale
+    // equivocado. El oráculo tiene que ser independiente del sujeto.
+    //
+    // El conversor monta en es_ES, así que coma decimal y dos decimales — que
+    // es lo que este test existe para fijar desde #63.
+    expect(kept, closeTo(0.006566, 0.000001));
+    expect(find.text('0,01'), findsOneWidget);
   });
 }

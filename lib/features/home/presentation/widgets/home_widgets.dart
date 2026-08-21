@@ -259,7 +259,15 @@ class _CurrencyDollarAverageCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Bs.S ${CurrencyHelpers.getAverageValue(currencies: controller.averageCurrencies).toStringAsFixed(2)}',
+                    // Por el punto único, no con un `Bs.S` y un
+                    // `toStringAsFixed` escritos aquí: eran los mismos dos que
+                    // `castCurrency` ya tenía, y ninguno de los dos respetaba
+                    // el locale (#63).
+                    CurrencyHelpers.castCurrency(
+                      value: CurrencyHelpers.getAverageValue(
+                        currencies: controller.averageCurrencies,
+                      ),
+                    ),
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 24,
