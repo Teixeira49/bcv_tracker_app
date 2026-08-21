@@ -70,9 +70,9 @@ GetPage(
 
 Sin desviaciones. Las rutas nombradas están cableadas en `GetMaterialApp` (`getPages: AppPages.routes`, `initialRoute: AppPages.initPage`), el splash navega con `Get.offAllNamed(AppRoutes.home)` y los modales cierran con `Get.back()`. La regla describe lo que el código hace, no un objetivo (resuelto en [#58](https://github.com/Teixeira49/bcv_tracker_app/issues/58)).
 
-Son **siete** rutas desde #37: `splash`, `home`, y los ajustes con sus cuatro subpantallas (`/settings`, `/settings/market`, `/settings/language`, `/settings/theme`, `/settings/decimals`). Las cuatro últimas anidan el nombre bajo `/settings` a propósito: dice que se llega desde el menú, que es lo que debería significar un deep link a `/settings/language`.
+Son **ocho** rutas: `splash`, `home`, y los ajustes con sus cinco subpantallas (`/settings`, `/settings/market`, `/settings/language`, `/settings/theme`, `/settings/decimals`, `/settings/about`). Las cuatro últimas anidan el nombre bajo `/settings` a propósito: dice que se llega desde el menú, que es lo que debería significar un deep link a `/settings/language`.
 
-`/settings/decimals` es el incremental de #37 y la primera ruta añadida **a través** del menú en vez de con él — que es exactamente la forma que pedía el último criterio de aceptación: un ajuste llega como una entrada y una página, sin rediseñar nada.
+`/settings/decimals` es el incremental de #37 y la primera ruta añadida **a través** del menú en vez de con él — que es exactamente la forma que pedía el último criterio de aceptación: un ajuste llega como una entrada y una página, sin rediseñar nada. `/settings/about` (#42) es la segunda, y prueba que la forma aguanta algo que **no** es un ajuste: la pantalla no configura nada, y aun así entra como una entrada más.
 
 ## Al agregar una pantalla
 

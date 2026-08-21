@@ -1,6 +1,7 @@
 import 'package:alchemist/alchemist.dart';
 import 'package:bcv_tracker_app/config/theme/theme.dart';
 import 'package:bcv_tracker_app/core/i18n/app_translations.dart';
+import 'package:bcv_tracker_app/features/settings/presentation/page/settings_about_page.dart';
 import 'package:bcv_tracker_app/features/settings/presentation/page/settings_decimals_page.dart';
 import 'package:bcv_tracker_app/features/settings/presentation/page/settings_language_page.dart';
 import 'package:bcv_tracker_app/features/settings/presentation/page/settings_page.dart';
@@ -99,6 +100,17 @@ void main() {
               width: 420,
               height: 900,
               child: SettingsDecimalsPage(),
+            ),
+          ),
+          // #42. Taller than its siblings because the point of the screen is
+          // the list of nine sources, and a reference that cut it off would
+          // not guard the thing worth guarding.
+          GoldenTestScenario(
+            name: 'about',
+            child: const SizedBox(
+              width: 420,
+              height: 1500,
+              child: SettingsAboutPage(),
             ),
           ),
         ],

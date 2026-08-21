@@ -96,6 +96,10 @@ void main() {
       expect(find.text(AppMessages.defaultMarket), findsOneWidget);
       expect(find.text(AppMessages.language), findsOneWidget);
       expect(find.text(AppMessages.theme), findsOneWidget);
+      // #42's group: «Acerca de» is neither a preference nor appearance, so it
+      // gets its own heading rather than a fourth row in someone else's.
+      expect(find.text(AppMessages.informationSection), findsOneWidget);
+      expect(find.text(AppMessages.aboutView), findsOneWidget);
     });
 
     testWidgets('shows what each setting is currently set to', (
@@ -526,10 +530,10 @@ void main() {
         prefs: <String, Object>{'converter_decimals': 7},
       );
 
-      // Four entries now, and the three that existed are untouched — the
-      // criterion "adding a setting is adding an entry" collected rather than
-      // asserted.
-      expect(find.byType(SettingsMenuTile), findsNWidgets(4));
+      // Five entries now — the four settings plus «Acerca de» (#42), which
+      // opens a screen instead of setting anything. The criterion "adding a
+      // setting is adding an entry" collected rather than asserted, twice.
+      expect(find.byType(SettingsMenuTile), findsNWidgets(5));
       expect(find.text(AppMessages.converterDecimals), findsOneWidget);
       expect(find.text('7'), findsOneWidget);
     });

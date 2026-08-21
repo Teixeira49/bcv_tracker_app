@@ -110,6 +110,11 @@ components:
     textColor: "{colors.primary}"
     rounded: "{rounded.md}"
     padding: "{spacing.md}"
+  aboutLinkRow:
+    backgroundColor: "{colors.neutral}"
+    textColor: "{colors.secondary}"
+    rounded: "{rounded.md}"
+    padding: "{spacing.md}"
   errorState:
     textColor: "{colors.error}"
     rounded: "{rounded.sm}"
@@ -162,6 +167,11 @@ El schema de `colors` es un mapa plano *token → color*, pero esta app asigna h
 | Texto secundario | `neutral` (grey.600) | grey claro |
 | Acción / marca (fg) | `primary` / `secondary` | tonos claros de `primary` |
 | Bordes sutiles | `info` con alpha | `info` con alpha |
+| Marca sobre superficie (`fgBrandMark`) | `primary.700` — el mismo que el texto de marca | blanco |
+
+**Sobre `fgBrandMark`.** El arte de la marca es monocromo y quien lo pinta elige el color — así lo hace ya el splash con un `colorFilter`. Sobre las superficies **oscuras** de la app (la franja, el splash) el blanco es correcto; sobre una **clara** desaparece. «Acerca de» fue el primer sitio que puso el logo sobre la superficie clara y lo dejó al descubierto: blanco sobre blanco. El token invierte la tinta por modo en vez de fijar un color, que es lo que permite reutilizar el mismo asset en las dos.
+
+En claro es **el mismo azul que el texto de marca** (`primary.700`), el que llevan los valores a la derecha de cada fila de ajustes. Pasó por dos tonos antes de llegar ahí: `midnight` contrasta bien pero sale casi negro, un color que la app no usa para nada propio; `primary` a secas queda más claro que el resto de la pantalla. Reutilizar el tono que el usuario ya está leyendo evita introducir un cuarto azul en una pantalla que solo tiene tres.
 
 ## Typography
 
@@ -234,6 +244,12 @@ Los tokens de `components` fijan las relaciones color→rol de los componentes r
   **En los extremos los botones se apagan, no desaparecen.** Un control que se va obliga a buscar qué cambió; uno atenuado dice «hasta aquí llega», que es la respuesta real. Además `onPressed: null` es lo que hace que `IconButton` se anuncie como deshabilitado a las tecnologías de asistencia, así que lo que se ve y lo que se lee coinciden.
 
   Bajo el contador va un **ejemplo trabajado**: la misma cifra renderizada con el ajuste puesto. Un techo es abstracto —«siete decimales» no significa nada hasta ver una cifra con siete— y el ejemplo se calcula con el formateador real, no con uno escrito para la vista, para que no pueda prometer algo que el conversor no hará.
+- **aboutLinkRow:** la fila que **sale de la app** (#42). Misma tarjeta y mismo ritmo que `settingsTile`, con una diferencia deliberada y única: termina en un icono de *abrir en nuevo* en vez de un chevron.
+
+  Ese icono es todo el componente. Un chevron promete «profundizas en la app» y un enlace externo promete «te vas al navegador»; son afordancias distintas y la pantalla de «Acerca de» pone catorce de las segundas justo debajo del menú lleno de las primeras. Si las dos filas terminaran igual, el usuario descubriría la diferencia perdiendo el sitio.
+
+  El valor a la derecha —el tipo de referencia del mercado, el nombre de la licencia— usa el mismo `secondary` que el valor actual de `settingsTile`, porque responde a la misma pregunta: qué es esto que estoy mirando.
+
 - **errorState / emptyState:** acento `error` vs. `warning`, radio `sm`. Hoy son tarjetas mínimas (`_ErrorAdvisorCard`); #11 los rediseña como componentes compartidos con branding, e #18 define qué dice cada uno según la causa.
 
 ## Do's and Don'ts

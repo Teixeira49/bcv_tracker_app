@@ -47,4 +47,12 @@ abstract class AppRoutes {
   /// with it — which is the shape the issue's last acceptance criterion asked
   /// for: a setting arrives as an entry and a page, with nothing rearranged.
   static const settingsDecimals = '/settings/decimals';
+
+  /// Who made the app, where its rates come from and under what licence.
+  ///
+  /// A sub-route of `/settings` like the rest, though it sets nothing: it is
+  /// reached from the same menu and belongs to the same shelf. The alternative
+  /// —a top-level `/about`— would say it is a destination of its own, and
+  /// nothing in the app points there.
+  static const settingsAbout = '/settings/about';
 }

@@ -100,4 +100,28 @@ const Map<String, String> ruRu = {
   'decimalsExample': 'Пример',
   'decreaseAction': 'На один меньше',
   'increaseAction': 'На один больше',
+
+  // --- About screen (#42) ---
+  'aboutView': 'О приложении',
+  'aboutDescription': 'Приложение, его источники и лицензия',
+  'aboutIntro':
+      'Что это за приложение, откуда берутся курсы и кто его поддерживает.',
+  'appTagline':
+      'Смотрите курсы БЦВ и параллельного рынка и конвертируйте валюты.',
+  'dataSourcesSection': 'Источники данных',
+  'dataSourcesNote':
+      'Каждый курс приходит из одного из этих источников. Нажмите на любой, чтобы открыть его.',
+  'projectSection': 'Проект',
+  'creditsSection': 'Благодарности',
+  'marketKindOfficial': 'Официальный',
+  'marketKindPeerToPeer': 'P2P-рынок',
+  'marketKindAggregator': 'Агрегатор',
+  'licenseLabel': 'Лицензия',
+  'appRepositoryLabel': 'Репозиторий приложения',
+  'backendRepositoryLabel': 'Репозиторий бэкенда',
+  'apiDocsLabel': 'Документация API',
+  'developedByLabel': 'Разработчик',
+  'reportIssueLabel': 'Сообщить о проблеме',
+  'openLinkError': 'Не удалось открыть ссылку',
+  'informationSection': 'Информация',
 };

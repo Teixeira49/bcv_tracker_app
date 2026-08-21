@@ -101,4 +101,28 @@ const Map<String, String> itIt = {
   'decimalsExample': 'Esempio',
   'decreaseAction': 'Uno in meno',
   'increaseAction': 'Uno in più',
+
+  // --- About screen (#42) ---
+  'aboutView': 'Info sull\'app',
+  'aboutDescription': 'L\'app, le sue fonti e la sua licenza',
+  'aboutIntro':
+      'Che cos\'è questa app, da dove arrivano i suoi tassi e chi la mantiene.',
+  'appTagline':
+      'Consulta i tassi della BCV e del mercato parallelo, e converti tra valute.',
+  'dataSourcesSection': 'Fonti dei dati',
+  'dataSourcesNote':
+      'Ogni tasso che vedi arriva da una di queste fonti. Toccane una per andare alla sua origine.',
+  'projectSection': 'Progetto',
+  'creditsSection': 'Crediti',
+  'marketKindOfficial': 'Ufficiale',
+  'marketKindPeerToPeer': 'Mercato P2P',
+  'marketKindAggregator': 'Aggregatore',
+  'licenseLabel': 'Licenza',
+  'appRepositoryLabel': 'Repository dell\'app',
+  'backendRepositoryLabel': 'Repository del backend',
+  'apiDocsLabel': 'Documentazione dell\'API',
+  'developedByLabel': 'Sviluppato da',
+  'reportIssueLabel': 'Segnala un problema',
+  'openLinkError': 'Impossibile aprire il link',
+  'informationSection': 'Informazioni',
 };

@@ -39,6 +39,7 @@ dependencies:
   intl: ^0.18.1
 
   shared_preferences: ^2.2.3
+  url_launcher: ^6.3.1
   skeletonizer: ^2.0.0
 
   firebase_core: ^4.10.0
@@ -56,6 +57,10 @@ dev_dependencies:
   change_app_package_name: ^1.4.0
   flutter_launcher_icons: ^0.14.3
   alchemist: ^0.14.0
+  # Only the tests reach for it: `external_link_test.dart` swaps
+  # `UrlLauncherPlatform.instance` for a fake, which is the supported way to
+  # assert what the app asked the platform to open without touching a device.
+  url_launcher_platform_interface: ^2.3.2
 
 # Los iconos se GENERAN; no se editan a mano. Las dos fuentes de abajo salen a
 # su vez de `assets/brand/dt_icon.svg` con `flutter test tool/generate_app_icon.dart`

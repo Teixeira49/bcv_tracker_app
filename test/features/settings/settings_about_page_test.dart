@@ -1,0 +1,411 @@
+import 'package:bcv_tracker_app/config/enviroment/enviroment.dart';
+import 'package:bcv_tracker_app/config/routes/pages.dart';
+import 'package:bcv_tracker_app/config/routes/routes.dart';
+import 'package:bcv_tracker_app/config/theme/colors/colors_constants.dart';
+import 'package:bcv_tracker_app/config/theme/colors/colors_values.dart';
+import 'package:bcv_tracker_app/config/theme/theme.dart';
+import 'package:bcv_tracker_app/core/constants/market_constants.dart';
+import 'package:bcv_tracker_app/core/i18n/app_messages.dart';
+import 'package:bcv_tracker_app/core/i18n/app_translations.dart';
+import 'package:bcv_tracker_app/features/settings/presentation/page/settings_about_page.dart';
+import 'package:bcv_tracker_app/features/settings/presentation/widgets/about_widgets.dart';
+import 'package:bcv_tracker_app/shared/presentation/controller/settings_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher_platform_interface/link.dart';
+import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
+
+/// A platform that declines every launch — a device with no browser, or an
+/// Android 11+ manifest missing its `<queries>` entry.
+class _RefusingLauncher extends UrlLauncherPlatform {
+  @override
+  LinkDelegate? get linkDelegate => null;
+
+  @override
+  Future<bool> canLaunch(String url) async => false;
+
+  @override
+  Future<bool> launchUrl(String url, LaunchOptions options) async => false;
+}
+
+/// Records what the screen asked the platform to open.
+class _FakeLauncher extends UrlLauncherPlatform {
+  final List<String> launched = <String>[];
+
+  @override
+  LinkDelegate? get linkDelegate => null;
+
+  @override
+  Future<bool> canLaunch(String url) async => true;
+
+  @override
+  Future<bool> launchUrl(String url, LaunchOptions options) async {
+    launched.add(url);
+    return true;
+  }
+}
+
+/// The About screen (#42).
+///
+/// What is worth testing here is **not** that fourteen rows render — it is that
+/// each one points where it claims to. A screen whose whole purpose is
+/// attribution fails silently if a row opens the wrong site, and nothing about
+/// the layout would look different.
+late _FakeLauncher launcher; // ignore: library_private_types_in_public_api
+late UrlLauncherPlatform originalLauncher;
+
+Future<void> _pumpAbout(WidgetTester tester) async {
+  Get.testMode = true;
+  // Tall enough for the whole screen to lay out. A `ListView` builds lazily,
+  // so on the default 800×600 window the project and credits blocks do not
+  // exist at all — and a test that scrolled to reach them would be asserting
+  // the scroll, not the links.
+  tester.view.devicePixelRatio = 1;
+  tester.view.physicalSize = const Size(500, 2000);
+  addTearDown(tester.view.reset);
+  SharedPreferences.setMockInitialValues(<String, Object>{});
+  Get.put(SettingsController(), permanent: true);
+
+  await tester.pumpWidget(
+    GetMaterialApp(
+      translations: AppTranslations(),
+      locale: const Locale('es', 'ES'),
+      fallbackLocale: const Locale('en', 'US'),
+      getPages: AppPages.routes,
+      initialRoute: AppRoutes.settingsAbout,
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
+/// Taps the row labelled [label] and lets the launch future resolve.
+Future<void> _tapRow(WidgetTester tester, String label) async {
+  await tester.tap(find.text(label));
+  await tester.pumpAndSettle();
+}
+
+void main() {
+  setUp(() {
+    originalLauncher = UrlLauncherPlatform.instance;
+    launcher = _FakeLauncher();
+    UrlLauncherPlatform.instance = launcher;
+    // The API docs row is composed from the configured backend, so the test
+    // has to configure one. Loaded through `dotenv` like every other
+    // environment test, rather than through a seam that would let this pass
+    // while the real lookup was broken.
+    dotenv.testLoad(
+      fileInput: '${Environment.currencyBackKey}=https://api.example.test',
+    );
+    Environment.debugSetEnvFileAvailable(true);
+  });
+
+  tearDown(() {
+    UrlLauncherPlatform.instance = originalLauncher;
+    dotenv.clean();
+    Environment.debugSetEnvFileAvailable(false);
+    Get.reset();
+  });
+
+  group('the data sources block', () {
+    testWidgets('lists every market the app can show, with its kind', (
+      WidgetTester tester,
+    ) async {
+      await _pumpAbout(tester);
+
+      expect(find.byType(SettingsAboutPage), findsOneWidget);
+      // No un 9 mágico: cada mercado que el backend puede reportar tiene su
+      // ficha. Un décimo añadido a `Markets` se caería de «Acerca de» en
+      // silencio, y esta pantalla es justamente la que promete listarlos todos.
+      const List<String> everyMarket = <String>[
+        Markets.bcv,
+        Markets.yadio,
+        Markets.binance,
+        Markets.bybit,
+        Markets.okx,
+        Markets.bitget,
+        Markets.airtm,
+        Markets.dolarApi,
+        Markets.exchangeMonitor,
+      ];
+      expect(
+        Markets.sources.map((MarketSource s) => s.name).toSet(),
+        everyMarket.toSet(),
+      );
+      for (final String market in Markets.averageTab) {
+        expect(
+          Markets.sources.any((MarketSource s) => s.name == market),
+          isTrue,
+          reason: '$market se muestra en Home y no está en «Acerca de».',
+        );
+      }
+
+      for (final MarketSource source in Markets.sources) {
+        expect(
+          find.text(source.name),
+          findsOneWidget,
+          reason: '${source.name} is missing from the sources list.',
+        );
+      }
+
+      // The classification is the point of the block: a rate an institution
+      // sets and one that emerged from trading are different answers to "how
+      // much is the dollar".
+      expect(find.text(AppMessages.marketKindOfficial), findsOneWidget);
+      expect(find.text(AppMessages.marketKindPeerToPeer), findsNWidgets(5));
+      expect(find.text(AppMessages.marketKindAggregator), findsNWidgets(3));
+    });
+
+    testWidgets('every market row opens its own source, not another', (
+      WidgetTester tester,
+    ) async {
+      await _pumpAbout(tester);
+
+      for (final MarketSource source in Markets.sources) {
+        await _tapRow(tester, source.name);
+
+        expect(
+          launcher.launched.last,
+          source.url,
+          reason: 'Tapping ${source.name} opened the wrong address.',
+        );
+      }
+
+      expect(launcher.launched.length, Markets.sources.length);
+    });
+
+    testWidgets('the block says what it is a list of', (
+      WidgetTester tester,
+    ) async {
+      await _pumpAbout(tester);
+
+      // Nueve marcas sueltas es exactamente el problema que #42 plantea, así
+      // que la línea que las presenta es parte del entregable. Se le pasó a la
+      // primera versión: `SettingsSection` aceptaba el texto y no lo pintaba,
+      // `flutter analyze` calla ante un campo público sin usar, y el golden
+      // regenerado consagró la ausencia.
+      expect(find.text(AppMessages.dataSourcesNote), findsOneWidget);
+    });
+
+    testWidgets('the market names are not translated', (
+      WidgetTester tester,
+    ) async {
+      await _pumpAbout(tester);
+
+      // They are institutions and brands (`i18n-convention.md`, rule 9), so
+      // they read the same whatever the interface language is.
+      expect(find.text('Banco Central de Venezuela'), findsOneWidget);
+      expect(find.text('Binance'), findsOneWidget);
+      expect(find.text('DolarAPI'), findsOneWidget);
+    });
+  });
+
+  testWidgets('a link the platform refuses says so instead of doing nothing', (
+    WidgetTester tester,
+  ) async {
+    UrlLauncherPlatform.instance = _RefusingLauncher();
+    await _pumpAbout(tester);
+
+    await tester.tap(find.text(Markets.sources.first.name));
+    await tester.pump();
+    await tester.pump();
+
+    // Un toque que no hace nada es indistinguible de una pantalla rota.
+    //
+    // Este test encontró un defecto real antes de poder afirmar esto:
+    // `Get.snackbar` resolvía su propio overlay y lanzaba «No Overlay widget
+    // found» desde esta pantalla — la ruta de error fallaba más ruidosamente
+    // que el error que iba a reportar. Con `ScaffoldMessenger` el mensaje se
+    // monta en el `Scaffold` que la página ya tiene, y se puede ver.
+    expect(find.text(AppMessages.openLinkError), findsOneWidget);
+  });
+
+  testWidgets('it fits a phone-width screen with the system text enlarged', (
+    WidgetTester tester,
+  ) async {
+    // El resto del archivo usa una ventana alta para derrotar la construcción
+    // perezosa del `ListView`; eso deja sin ejercitar el ancho real de un
+    // teléfono, que es donde una fila de tres columnas se rompe. 360 dp con la
+    // escala tipográfica al doble es el peor caso razonable.
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(360, 4000);
+    addTearDown(tester.view.reset);
+
+    Get.testMode = true;
+    SharedPreferences.setMockInitialValues(<String, Object>{});
+    Get.put(SettingsController(), permanent: true);
+
+    await tester.pumpWidget(
+      GetMaterialApp(
+        translations: AppTranslations(),
+        // Alemán: las etiquetas más largas de los diez idiomas.
+        locale: const Locale('de', 'DE'),
+        fallbackLocale: const Locale('en', 'US'),
+        getPages: AppPages.routes,
+        initialRoute: AppRoutes.settingsAbout,
+        builder: (BuildContext context, Widget? child) =>
+            MediaQuery.withClampedTextScaling(
+              minScaleFactor: 2,
+              maxScaleFactor: 2,
+              child: child!,
+            ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // Sin desbordes: `tester.takeException()` recoge el `FlutterError` que
+    // lanza un `RenderFlex` que no cabe.
+    expect(tester.takeException(), isNull);
+    expect(find.byType(SettingsAboutPage), findsOneWidget);
+  });
+
+  group('el bloque de créditos', () {
+    testWidgets('nombra al autor sin enlazar a ninguna parte', (
+      WidgetTester tester,
+    ) async {
+      await _pumpAbout(tester);
+
+      // El autor era un enlace a su perfil de GitHub. Salió con el bloque
+      // «Proyecto»: apuntaba al repositorio, que es lo que se dejó de revelar.
+      expect(find.text('Teixeira49'), findsOneWidget);
+      expect(find.text(AppMessages.reportIssueLabel), findsNothing);
+    });
+  });
+
+  group('el logo de la cabecera', () {
+    /// Monta la pantalla con [theme] y devuelve el color del logo.
+    Future<Color?> logoInk(WidgetTester tester, ThemeData theme) async {
+      Get.testMode = true;
+      SharedPreferences.setMockInitialValues(<String, Object>{});
+      Get.put(SettingsController(), permanent: true);
+
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(500, 2000);
+      addTearDown(tester.view.reset);
+
+      await tester.pumpWidget(
+        GetMaterialApp(
+          translations: AppTranslations(),
+          locale: const Locale('es', 'ES'),
+          theme: theme,
+          getPages: AppPages.routes,
+          initialRoute: AppRoutes.settingsAbout,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      return tester
+          .widget<Image>(
+            find.descendant(
+              of: find.byType(AboutHeader),
+              matching: find.byType(Image),
+            ),
+          )
+          .color;
+    }
+
+    // Se afirma el color del **widget**, no el píxel: `Image.asset` no termina
+    // de decodificar antes de que Alchemist capture, así que el golden deja un
+    // hueco donde va el logo y no puede vigilar esto. Es la comprobación que
+    // sustituye a la referencia que no existe.
+    testWidgets('en modo claro se tiñe del azul de marca, no de blanco', (
+      WidgetTester tester,
+    ) async {
+      // El defecto que reportó el propietario al probarlo: el arte es blanco
+      // monocromo, correcto sobre la franja oscura e invisible aquí, que es la
+      // primera pantalla que lo pone sobre una superficie clara.
+      //
+      // Y es **exactamente** el azul de los valores de los ajustes, no uno
+      // parecido: si alguien mueve uno de los dos, esto lo caza.
+      final Color ink = (await logoInk(tester, AppTheme.lightTheme))!;
+      expect(ink, AppColors.primary.shade700);
+
+      late Color settingsValueBlue;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.lightTheme,
+          home: Builder(
+            builder: (BuildContext context) {
+              settingsValueBlue = ColorValues.textBrandSecondary(context);
+              return const SizedBox();
+            },
+          ),
+        ),
+      );
+      expect(ink, settingsValueBlue);
+    });
+
+    testWidgets('en modo oscuro se tiñe de blanco', (
+      WidgetTester tester,
+    ) async {
+      Get.reset();
+      expect(await logoInk(tester, AppTheme.darkTheme), Colors.white);
+    });
+  });
+
+  group('lo que ya no se revela', () {
+    testWidgets('el bloque «Proyecto» no está en pantalla', (
+      WidgetTester tester,
+    ) async {
+      await _pumpAbout(tester);
+
+      // Retirado tras la prueba en dispositivo: no exponer el estado del
+      // proyecto en una versión pública. La documentación de la API además
+      // revelaba la URL del backend configurado.
+      for (final String label in <String>[
+        AppMessages.projectSection,
+        AppMessages.licenseLabel,
+        AppMessages.appRepositoryLabel,
+        AppMessages.backendRepositoryLabel,
+        AppMessages.apiDocsLabel,
+      ]) {
+        expect(
+          find.text(label),
+          findsNothing,
+          reason: '"$label" sigue visible.',
+        );
+      }
+    });
+
+    testWidgets('ninguna fila apunta al repositorio ni al backend', (
+      WidgetTester tester,
+    ) async {
+      await _pumpAbout(tester);
+
+      // Lo que importa no es que falten las etiquetas: es que no quede
+      // ninguna ruta para llegar. Se tocan **todas** las filas.
+      for (final Element element in find.byType(AboutLinkTile).evaluate()) {
+        await tester.tap(find.byWidget(element.widget));
+        await tester.pumpAndSettle();
+      }
+
+      for (final String opened in launcher.launched) {
+        expect(
+          opened,
+          isNot(contains('github.com/Teixeira49')),
+          reason: 'una fila sigue llevando al repositorio: $opened',
+        );
+        expect(opened, isNot(contains('api.example.test')));
+      }
+      // Las nueve fuentes sí siguen: son el motivo de la pantalla.
+      expect(launcher.launched.length, Markets.sources.length);
+    });
+  });
+
+  testWidgets('every row that leaves the app says so', (
+    WidgetTester tester,
+  ) async {
+    await _pumpAbout(tester);
+
+    // The open-in-new icon is the only thing separating these rows from the
+    // settings rows above, which drill down and carry a chevron.
+    // Solo las nueve fuentes: el bloque «Proyecto» (4) y la fila de reportar
+    // salieron, y la autoría dejó de ser un enlace.
+    final int links = tester.widgetList(find.byType(AboutLinkTile)).length;
+    expect(links, Markets.sources.length);
+    expect(find.byIcon(Icons.open_in_new_rounded), findsNWidgets(links));
+    expect(find.byIcon(Icons.chevron_right_rounded), findsNothing);
+  });
+}

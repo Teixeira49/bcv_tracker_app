@@ -100,4 +100,28 @@ const Map<String, String> ptPt = {
   'decimalsExample': 'Exemplo',
   'decreaseAction': 'Menos um',
   'increaseAction': 'Mais um',
+
+  // --- About screen (#42) ---
+  'aboutView': 'Acerca de',
+  'aboutDescription': 'A app, as suas fontes e a sua licença',
+  'aboutIntro':
+      'O que é esta app, de onde vêm as taxas que mostra e quem a mantém.',
+  'appTagline':
+      'Consulte as taxas do BCV e do mercado paralelo, e converta entre divisas.',
+  'dataSourcesSection': 'Fontes de dados',
+  'dataSourcesNote':
+      'Cada taxa que vê vem de uma destas fontes. Toque em qualquer uma para ir à sua origem.',
+  'projectSection': 'Projeto',
+  'creditsSection': 'Créditos',
+  'marketKindOfficial': 'Oficial',
+  'marketKindPeerToPeer': 'Mercado P2P',
+  'marketKindAggregator': 'Agregador',
+  'licenseLabel': 'Licença',
+  'appRepositoryLabel': 'Repositório da app',
+  'backendRepositoryLabel': 'Repositório do backend',
+  'apiDocsLabel': 'Documentação da API',
+  'developedByLabel': 'Desenvolvido por',
+  'reportIssueLabel': 'Reportar um problema',
+  'openLinkError': 'Não foi possível abrir a ligação',
+  'informationSection': 'Informação',
 };
