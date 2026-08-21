@@ -10,7 +10,10 @@ import 'package:package_info_plus/package_info_plus.dart';
 /// mismatch is what makes the test fail.
 const String kFakeVersion = '9.9.9';
 const String kFakeBuild = '42';
-const String kFakeVersionLabel = '$kFakeVersion ($kFakeBuild)';
+
+/// Lo que la pantalla muestra: solo `MAJOR.MINOR.PATCH`. El build se lee pero
+/// no se enseña, por decisión tomada al probarlo en dispositivo.
+const String kFakeVersionLabel = kFakeVersion;
 
 /// Registers an [AppInfoService] already filled in with the fake package.
 ///

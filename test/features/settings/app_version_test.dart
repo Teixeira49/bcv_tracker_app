@@ -100,13 +100,17 @@ void main() {
   tearDown(Get.reset);
 
   group('el servicio', () {
-    test('compone versión y build, que es lo que pide un reporte', () async {
+    test('lee versión y build, y solo muestra la versión', () async {
       final AppInfoService info = AppInfoService();
       await info.load(read: () async => _info('1.2.3', '77'));
 
+      // Los dos se leen —#43 lo pide en tiempo de ejecución, y el build es lo
+      // que distingue dos artefactos de la misma versión...
       expect(info.version.value, '1.2.3');
       expect(info.buildNumber.value, '77');
-      expect(info.versionLabel, '1.2.3 (77)');
+      // ...pero la etiqueta es `MAJOR.MINOR.PATCH` a secas: quien lee esa fila
+      // quiere saber qué versión tiene, no cuál de sus compilaciones.
+      expect(info.versionLabel, '1.2.3');
       expect(info.isKnown, isTrue);
     });
 
@@ -114,7 +118,7 @@ void main() {
       // Lo que ve la pantalla entre el registro y la respuesta del canal. Es la
       // razón por la que los valores son observables y no `late final`.
       final AppInfoService info = AppInfoService();
-      expect(info.versionLabel, '-- (--)');
+      expect(info.versionLabel, '--');
       expect(info.isKnown, isFalse);
     });
 
@@ -131,7 +135,7 @@ void main() {
       );
 
       expect(info.isKnown, isFalse);
-      expect(info.versionLabel, '-- (--)');
+      expect(info.versionLabel, '--');
     });
 
     test('un lector que nunca contesta no bloquea a nadie', () async {
@@ -145,7 +149,7 @@ void main() {
 
       await Future<void>.delayed(Duration.zero);
       expect(info.isKnown, isFalse);
-      expect(info.versionLabel, '-- (--)');
+      expect(info.versionLabel, '--');
     });
 
     test('una respuesta tardía todavía llega', () async {
@@ -161,7 +165,7 @@ void main() {
       pending.complete(_info('2.0.0', '9'));
       await Future<void>.delayed(Duration.zero);
 
-      expect(info.versionLabel, '2.0.0 (9)');
+      expect(info.versionLabel, '2.0.0');
     });
   });
 
@@ -216,7 +220,7 @@ void main() {
 
       // La fila se ve, con el marcador: que no se sepa la versión es
       // información. Lo que no se hace es copiar `-- (--)` y anunciar éxito.
-      expect(find.text('-- (--)'), findsOneWidget);
+      expect(find.text('--'), findsOneWidget);
 
       await tester.tap(find.text(AppMessages.appVersion));
       await tester.pump();

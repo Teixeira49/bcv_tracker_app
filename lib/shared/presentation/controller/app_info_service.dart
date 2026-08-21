@@ -60,19 +60,29 @@ class AppInfoService extends GetxService {
 
   /// Build number of the installed package — `3`.
   ///
-  /// **Will not match the `+N` in `pubspec.yaml` on a release build**, and that
-  /// is correct rather than a defect: `codemagic.yaml` passes
-  /// `--build-number ${CM_BUILD_NUMBER}`, so the number in the repository is
-  /// only what a local `flutter build` would stamp. What matters for a bug
-  /// report is the build the tester actually has.
+  /// **Leído pero no mostrado**, por decisión del propietario: la etiqueta de
+  /// la pantalla es `MAJOR.MINOR.PATCH` a secas. Se sigue leyendo porque #43 lo
+  /// pide en tiempo de ejecución y porque es el dato que distingue dos
+  /// artefactos de la misma versión — el día que un flujo de reporte lo
+  /// necesite, está aquí y no hay que volver a montar nada.
+  ///
+  /// **No coincidirá con el `+N` del `pubspec.yaml` en una build de release**, y
+  /// eso es correcto, no un defecto: `codemagic.yaml` pasa
+  /// `--build-number ${CM_BUILD_NUMBER}`, así que el número del repositorio es
+  /// solo lo que estamparía un `flutter build` local.
   final RxString buildNumber = unknown.obs;
 
-  /// Version and build as one string — `1.1.0 (3)`.
+  /// La versión como se muestra: `1.1.0`, sin el número de build.
   ///
-  /// The shape a bug report needs: the semantic version says what the code is,
-  /// the build number says which artefact of it. Formatted here so the menu,
-  /// «Acerca de» and the clipboard all carry the same text.
-  String get versionLabel => '${version.value} (${buildNumber.value})';
+  /// Fue `1.1.0 (3)` hasta que el propietario lo probó en dispositivo. El
+  /// paréntesis dice algo verdadero —qué artefacto de esa versión— pero se lo
+  /// dice a alguien que no lo va a usar: quien lee esta fila quiere saber qué
+  /// versión tiene, no cuál de sus compilaciones. [buildNumber] sigue leído y
+  /// disponible para cuando haga falta.
+  ///
+  /// Compuesto aquí y no en cada pantalla, que es lo que hace imposible que el
+  /// menú, «Acerca de» y el portapapeles digan cosas distintas.
+  String get versionLabel => version.value;
 
   /// Whether the package answered. `false` means [versionLabel] is placeholders.
   bool get isKnown => version.value != unknown;
