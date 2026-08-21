@@ -104,7 +104,14 @@ void main() {
     expect(find.text(AppMessages.registeredSince), findsOneWidget);
     // A parallel market, and the label says so without naming a currency.
     expect(find.text(AppMessages.parallelRate), findsOneWidget);
-    expect(find.text('+1.2400%'), findsOneWidget);
+    // Coma decimal y dos decimales: la hoja monta en es_ES, y desde #63 el
+    // número sigue al idioma en vez de escribir siempre un punto.
+    //
+    // **Dos**, y esa es la señal de que #63 hizo su trabajo: el badge de la
+    // tarjeta y la fila de la tabla imprimían la misma variación con dos
+    // formatos distintos — `1.2400%` sin signo arriba, `+1.2400%` abajo.
+    // Ahora ambos pasan por `castTendency` y no pueden discrepar.
+    expect(find.text('+1,24%'), findsNWidgets(2));
   });
 
   testWidgets(

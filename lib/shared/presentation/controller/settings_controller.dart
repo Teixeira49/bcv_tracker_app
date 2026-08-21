@@ -230,9 +230,11 @@ class SettingsController extends GetxService {
     }
 
     // Clamped on the way in, not only on the way out: the stored value is
-    // whatever *any* build wrote there, and an out-of-range ceiling reaching
-    // `toStringAsFixed` throws — on the converter, which is not where a bad
-    // preference should surface.
+    // whatever *any* build wrote there, and an out-of-range ceiling would
+    // surface as an absurd rendering on the converter, which is not where a bad
+    // preference should show up. (Until #63 the failure was louder — the value
+    // reached `toStringAsFixed`, which throws above 20; `NumberFormat` merely
+    // obeys.)
     final int? decimals = prefs.getInt(_decimalsKey);
     if (decimals != null) {
       favDecimals.value = decimals.clamp(
@@ -333,9 +335,9 @@ class SettingsController extends GetxService {
   ///
   /// The counter on the settings screen already stops at both ends, so the
   /// clamp here is not for it: it is for every other caller this setter will
-  /// ever have. A ceiling outside `2..10` reaches `toStringAsFixed`, which
-  /// throws above 20 — an exception on the converter, raised by a screen the
-  /// user left minutes ago.
+  /// ever have. A ceiling outside `2..10` reaches `CurrencyHelpers.formatNumber`
+  /// and comes back as a figure with twenty decimals — nonsense on the
+  /// converter, produced by a screen the user left minutes ago.
   Future<void> setFavDecimals(int decimals) async {
     final int next = decimals.clamp(
       Constants.converterMinDecimals,

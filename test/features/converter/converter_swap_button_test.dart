@@ -1,5 +1,6 @@
 import 'package:bcv_tracker_app/core/constants/constants.dart';
 import 'package:bcv_tracker_app/core/constants/market_constants.dart';
+import 'package:bcv_tracker_app/core/helpers/currency_helpers.dart';
 import 'package:bcv_tracker_app/core/i18n/app_translations.dart';
 import 'package:bcv_tracker_app/features/converter/presentation/controller/converter_controller.dart';
 import 'package:bcv_tracker_app/features/converter/presentation/page/converter_page.dart';
@@ -134,9 +135,9 @@ void main() {
       reason: 'the controller must still hold the full value',
     );
     expect(find.text(kept.toString()), findsNothing);
-    expect(
-      find.text(kept.toStringAsFixed(Constants.converterAmountDecimals)),
-      findsOneWidget,
-    );
+    // Por el formateador real, no por `toStringAsFixed`: el conversor monta en
+    // es_ES y desde #63 el resultado lleva coma. Comparar contra
+    // `toStringAsFixed` volvería a afirmar el punto que el issue vino a quitar.
+    expect(find.text(CurrencyHelpers.castAmount(value: kept)), findsOneWidget);
   });
 }

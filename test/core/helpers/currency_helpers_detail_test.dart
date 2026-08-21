@@ -45,12 +45,21 @@ void main() {
 
   group('castTendency', () {
     test('signs a rise and leaves a fall with its own sign', () {
-      expect(CurrencyHelpers.castTendency(value: 1.24), '+1.2400%');
-      expect(CurrencyHelpers.castTendency(value: -0.53), '-0.5300%');
+      // Dos decimales desde #63, no cuatro: `+1.2400%` era más precisión de la
+      // que un cambio diario carga, y cuatro caracteres que la vista salta
+      // para llegar a lo que importa.
+      expect(CurrencyHelpers.castTendency(value: 1.24), '+1.24%');
+      expect(CurrencyHelpers.castTendency(value: -0.53), '-0.53%');
     });
 
     test('zero is a real reading and is shown as such', () {
-      expect(CurrencyHelpers.castTendency(value: 0), '0.0000%');
+      expect(CurrencyHelpers.castTendency(value: 0), '0.00%');
+    });
+
+    test('a move too small for two decimals still shows', () {
+      // El techo de cuatro existe para esto: `0,00 %` afirmaría que la tasa se
+      // mantuvo, y no se mantuvo.
+      expect(CurrencyHelpers.castTendency(value: 0.0012), '+0.0012%');
     });
 
     test('a change the source never sent degrades, it does not become 0%', () {
@@ -62,7 +71,7 @@ void main() {
       );
     });
 
-    test('keeps four decimals, matching the badge on the cards', () {
+    test('rounds at four, which is where the badge stops too', () {
       expect(CurrencyHelpers.castTendency(value: 0.123456), '+0.1235%');
     });
   });

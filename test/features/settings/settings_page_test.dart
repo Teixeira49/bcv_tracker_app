@@ -501,8 +501,9 @@ void main() {
       await _pumpSettings(tester);
       await openDecimals(tester);
 
-      // At the floor the sample rounds to two...
-      expect(find.text('1234.57'), findsOneWidget);
+      // At the floor the sample rounds to two — con coma, porque la pantalla
+      // monta en es_ES (#63).
+      expect(find.text('1234,57'), findsOneWidget);
 
       await tapStep(tester, Icons.add_rounded);
       await tapStep(tester, Icons.add_rounded);
@@ -515,7 +516,7 @@ void main() {
         ),
         findsOneWidget,
       );
-      expect(find.text('1234.5679'), findsOneWidget);
+      expect(find.text('1234,5679'), findsOneWidget);
     });
 
     testWidgets('the menu shows the count as the current value', (

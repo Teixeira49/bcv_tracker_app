@@ -2,7 +2,7 @@
 
 Este documento es el **inventario de la suite**: primero lo que ya está cubierto, después lo que queda por hacer (roadmap). Mantenlo al día al agregar tests — la regla [`test-coverage.md`](../.agents/rules/test-coverage.md) exige que toda fuente, endpoint, controlador o helper de cálculo nuevo nazca con sus tests, y el check de PR de #27 (`flutter test` en GitHub Actions) lo hace cumplir en cada PR.
 
-## Cobertura actual (51 archivos, 367 tests)
+## Cobertura actual (52 archivos, 382 tests)
 
 | Área | Archivo | Qué cubre |
 |---|---|---|
@@ -11,6 +11,7 @@ Este documento es el **inventario de la suite**: primero lo que ya está cubiert
 | | `test/core/helpers/currency_helpers_parse_date_test.dart` | Formato de fechas para la UI |
 | | `test/core/helpers/currency_helpers_detail_test.dart` | **(#38, #39, #37 incremental)** `isOfficialRate`, `castTendency`, `castOptionalDate`, los nombres traducidos de lira/yuan/rublo, y la precisión adaptativa de `castAmount` — incluido el techo configurable: muestra los decimales que la cifra tiene, redondea en el techo, nunca baja del suelo de dos, no rellena con ceros, **subir el techo nunca muestra menos dígitos que bajarlo**, y un techo fuera de rango se acota en vez de obedecerse |
 | | `test/core/helpers/currency_helpers_detail_test.dart` | **(#38)** `isOfficialRate`, `castTendency`, `castOptionalDate` y los nombres traducidos de lira/yuan/rublo |
+| | `test/core/helpers/currency_helpers_locale_test.dart` | **(#63)** El formateo por locale: coma en los **seis** idiomas que la usan y punto en inglés, japonés y coreano —los tres que el issue pedía comprobar explícitamente, porque `NumberFormat` cae al defecto en silencio con un locale que no conoce—; que **agrupa donde la cifra solo se lee y no donde vuelve al campo de texto**; el **ciclo completo** escribir → convertir → mostrar → reparsear en un locale con coma, también con techo alto de decimales; que cambiar de idioma cambia la siguiente lectura; y que sin locale asignado no revienta |
 | | `test/core/helpers/search_text_test.dart` | **(#41)** Plegado de mayúsculas y acentos, y coincidencia por nombre o mercado; incluye los scripts no latinos |
 | | `test/core/helpers/amount_input_formatter_test.dart` | **(#40)** Qué acepta y qué rechaza el campo de monto: dígitos, un separador, y nada de letras, símbolos o pegados a medio parsear |
 | **Datos / mapeo** | `test/shared/data/currency_normalizer_test.dart` | Normalización del promedio (dedup, merge buy/sell) |

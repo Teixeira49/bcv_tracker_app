@@ -1,4 +1,5 @@
 import 'package:bcv_tracker_app/config/theme/colors/colors_values.dart';
+import 'package:bcv_tracker_app/core/helpers/currency_helpers.dart';
 import 'package:flutter/material.dart';
 
 import 'custom_badged.dart';
@@ -31,7 +32,11 @@ class PerformanceIndicatorWidget extends StatelessWidget {
       children: [
         _PerformanceArrow(value: value),
         Text(
-          '${value.toStringAsFixed(4)}%',
+          // Por `castTendency`, que es el punto único (#63). Trae consigo el
+          // signo `+` en las subidas: redundante con la flecha, y aun así
+          // preferible a un segundo formateador que pueda discrepar del que
+          // usa la hoja de detalle para la misma cifra.
+          CurrencyHelpers.castTendency(value: value),
           style: TextStyle(color: selectValueColor(context)),
         ),
       ],
