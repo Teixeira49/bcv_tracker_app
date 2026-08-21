@@ -79,4 +79,24 @@ const Map<String, String> enUs = {
   'noSearchResultsMessage': 'No currency matches “@query”.',
   'clearSearchAction': 'Clear search',
   'closeAction': 'Close',
+
+  // --- Settings screen (#37) ---
+  'preferencesSection': 'Preferences',
+  'appearanceSection': 'Appearance',
+  'defaultMarketDescription': 'Tab the app opens on',
+  'languageDescription': 'Interface language',
+  'themeDescription': 'Light, dark or system',
+  'backAction': 'Back',
+  'defaultMarketIntro': 'Choose the tab you want to see when you open the app.',
+  'languageIntro': 'Choose the language you prefer to read the app in.',
+  'themeIntro': 'Set the theme to whatever is easiest on your eyes.',
+
+  // --- Converter decimals (#37, incremental) ---
+  'converterDecimals': 'Converter decimals',
+  'converterDecimalsDescription': 'How many decimals the result may show',
+  'converterDecimalsIntro':
+      'Choose how many decimals the converter may show. You will always see at least two; the rest appear only when the figure really has them.',
+  'decimalsExample': 'Example',
+  'decreaseAction': 'One fewer',
+  'increaseAction': 'One more',
 };

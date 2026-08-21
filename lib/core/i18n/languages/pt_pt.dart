@@ -79,4 +79,25 @@ const Map<String, String> ptPt = {
   'noSearchResultsMessage': 'Nenhuma moeda corresponde a «@query».',
   'clearSearchAction': 'Limpar procura',
   'closeAction': 'Fechar',
+
+  // --- Settings screen (#37) ---
+  'preferencesSection': 'Preferências',
+  'appearanceSection': 'Aparência',
+  'defaultMarketDescription': 'Separador aberto ao iniciar',
+  'languageDescription': 'Idioma da interface',
+  'themeDescription': 'Claro, escuro ou o do sistema',
+  'backAction': 'Voltar',
+  'defaultMarketIntro':
+      'Escolha o separador que quer ver ao abrir a aplicação.',
+  'languageIntro': 'Escolha o idioma em que prefere ler a aplicação.',
+  'themeIntro': 'Ajuste o tema da aplicação ao seu conforto.',
+
+  // --- Converter decimals (#37, incremental) ---
+  'converterDecimals': 'Decimais do conversor',
+  'converterDecimalsDescription': 'Quantos decimais o resultado pode mostrar',
+  'converterDecimalsIntro':
+      'Escolha quantos decimais o conversor pode mostrar. Verá sempre pelo menos dois; os restantes aparecem só quando o número realmente os tem.',
+  'decimalsExample': 'Exemplo',
+  'decreaseAction': 'Menos um',
+  'increaseAction': 'Mais um',
 };

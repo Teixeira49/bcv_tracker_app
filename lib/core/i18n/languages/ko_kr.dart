@@ -80,4 +80,24 @@ const Map<String, String> koKr = {
   'noSearchResultsMessage': '“@query”와 일치하는 통화가 없습니다.',
   'clearSearchAction': '검색 지우기',
   'closeAction': '닫기',
+
+  // --- Settings screen (#37) ---
+  'preferencesSection': '기본 설정',
+  'appearanceSection': '화면',
+  'defaultMarketDescription': '앱 시작 시 열리는 탭',
+  'languageDescription': '인터페이스 언어',
+  'themeDescription': '밝게, 어둡게 또는 시스템',
+  'backAction': '뒤로',
+  'defaultMarketIntro': '앱을 열 때 표시할 탭을 선택하세요.',
+  'languageIntro': '앱을 표시할 언어를 선택하세요.',
+  'themeIntro': '보기 편한 테마로 설정하세요.',
+
+  // --- Converter decimals (#37, incremental) ---
+  'converterDecimals': '환율 계산기 소수점 자리',
+  'converterDecimalsDescription': '결과에 표시할 수 있는 소수점 자리 수',
+  'converterDecimalsIntro':
+      '계산 결과에 표시할 수 있는 소수점 자리 수를 선택하세요. 항상 두 자리는 표시되며, 나머지는 실제로 값이 있을 때만 나타납니다.',
+  'decimalsExample': '예시',
+  'decreaseAction': '하나 줄이기',
+  'increaseAction': '하나 늘리기',
 };

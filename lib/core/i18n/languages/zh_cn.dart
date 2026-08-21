@@ -78,4 +78,23 @@ const Map<String, String> zhCn = {
   'noSearchResultsMessage': '没有与“@query”匹配的货币。',
   'clearSearchAction': '清除搜索',
   'closeAction': '关闭',
+
+  // --- Settings screen (#37) ---
+  'preferencesSection': '偏好设置',
+  'appearanceSection': '外观',
+  'defaultMarketDescription': '启动时打开的标签页',
+  'languageDescription': '界面语言',
+  'themeDescription': '浅色、深色或跟随系统',
+  'backAction': '返回',
+  'defaultMarketIntro': '选择打开应用时显示的标签页。',
+  'languageIntro': '选择阅读应用所使用的语言。',
+  'themeIntro': '按你的舒适度调整应用主题。',
+
+  // --- Converter decimals (#37, incremental) ---
+  'converterDecimals': '换算小数位数',
+  'converterDecimalsDescription': '结果最多可显示的小数位数',
+  'converterDecimalsIntro': '选择换算结果最多可显示几位小数。至少总会显示两位，其余只在数值确实有时才出现。',
+  'decimalsExample': '示例',
+  'decreaseAction': '减少一位',
+  'increaseAction': '增加一位',
 };

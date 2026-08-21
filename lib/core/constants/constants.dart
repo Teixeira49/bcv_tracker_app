@@ -19,17 +19,36 @@ class Constants {
   /// empty state. Declared as an asset in `pubspec.yaml`.
   static const String appLogoAsset = 'assets/images/foreground_icon_app.png';
 
-  /// Decimals shown for a converted amount.
+  /// Decimals a converted amount **always** shows.
   ///
   /// Two, because that is how a bolívar price is quoted — the converter used to
   /// print the raw `double` and showed `864.0962999999999`, which is the
   /// arithmetic, not the answer.
   ///
-  /// **Deliberately a single constant.** Turning this into something the user
-  /// picks in settings should be a `SettingsController` read wired into
-  /// [CurrencyHelpers.castAmount]'s `decimals` argument, not a hunt through the
-  /// widgets — every call site already routes through here. The rounding is
+  /// This is the floor, not the whole answer: since #37's increment the user
+  /// picks a **ceiling** between this and [converterMaxDecimals], and a figure
+  /// is shown with as many decimals as it genuinely has, between the two. A
+  /// value with fewer is padded to this; one with more is rounded at the
+  /// ceiling.
+  ///
+  /// **Deliberately a single constant.** Making the precision a setting was a
+  /// `SettingsController` read wired into `CurrencyHelpers.castAmount`'s
+  /// argument, exactly as this comment predicted — no hunt through the widgets,
+  /// because every call site already routed through here. The rounding is
   /// applied **only when formatting**; `ConverterController` keeps the full
-  /// precision, so raising this never has to recompute anything.
+  /// precision, so raising the ceiling never has to recompute anything.
   static const int converterAmountDecimals = 2;
+
+  /// Lowest ceiling the decimals setting offers, and the same value as the
+  /// floor: at the minimum the converter behaves exactly as it did before the
+  /// setting existed.
+  static const int converterMinDecimals = converterAmountDecimals;
+
+  /// Highest ceiling the decimals setting offers.
+  ///
+  /// Ten, which is past what any rate published to this app justifies and short
+  /// of where a `double` stops being able to back the digits it prints. It is a
+  /// ceiling on the *request*, not on what gets shown: a figure with four real
+  /// decimals still shows four.
+  static const int converterMaxDecimals = 10;
 }

@@ -80,4 +80,26 @@ const Map<String, String> esEs = {
   'noSearchResultsMessage': 'Ninguna moneda coincide con «@query».',
   'clearSearchAction': 'Borrar búsqueda',
   'closeAction': 'Cerrar',
+
+  // --- Settings screen (#37) ---
+  'preferencesSection': 'Preferencias',
+  'appearanceSection': 'Apariencia',
+  'defaultMarketDescription': 'Pestaña que se abre al iniciar',
+  'languageDescription': 'Idioma de la interfaz',
+  'themeDescription': 'Claro, oscuro o el del sistema',
+  'backAction': 'Volver',
+  'defaultMarketIntro':
+      'Elige la pestaña que quieres ver al abrir la aplicación.',
+  'languageIntro': 'Elige el idioma en el que prefieres leer la aplicación.',
+  'themeIntro': 'Ajusta el tema de la aplicación según tu comodidad.',
+
+  // --- Converter decimals (#37, incremental) ---
+  'converterDecimals': 'Decimales del conversor',
+  'converterDecimalsDescription':
+      'Cuántos decimales puede mostrar el resultado',
+  'converterDecimalsIntro':
+      'Elige cuántos decimales puede mostrar el conversor. Siempre verás al menos dos; los demás aparecen solo cuando la cifra realmente los tiene.',
+  'decimalsExample': 'Ejemplo',
+  'decreaseAction': 'Quitar uno',
+  'increaseAction': 'Añadir uno',
 };

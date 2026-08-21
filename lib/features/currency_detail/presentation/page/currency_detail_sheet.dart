@@ -28,9 +28,10 @@ part '../widgets/currency_detail_slots.dart';
 /// Detail view of a single rate, presented as a draggable bottom sheet.
 ///
 /// It is a **modal, not a route**: it is opened with `showCurrencyDetailSheet`
-/// and closed with `Get.back()`, the same shape the app uses for `SettingsModal`
-/// and the converter's currency selector (see `navigation-convention.md`, rule
-/// 6). The consequence, stated because #38 mentions it as a future use: the
+/// and closed with `Get.back()`, the same shape the app uses for the converter's
+/// currency selector (see `navigation-convention.md`, rule 6 — settings was the
+/// third of these until #37 made it a screen). The consequence, stated
+/// because #38 mentions it as a future use: the
 /// sheet is **not addressable by a deep link** yet. Making it so means
 /// registering a `GetPage` in `AppPages` whose page resolves the rate from a
 /// route parameter and renders this same widget — nothing in here has to change

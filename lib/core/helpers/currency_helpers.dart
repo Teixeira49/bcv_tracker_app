@@ -155,38 +155,74 @@ class CurrencyHelpers {
   /// display** — `ConverterController` keeps the full value, which is the rule
   /// the converter has followed since its rounding bug.
   ///
-  /// The precision **adapts**: [decimals] normally, more when that would erase
-  /// the figure. See the comment in the body and
-  /// [_significantDigitsWhenTiny].
+  /// The precision **adapts**, between a floor and a ceiling.
   ///
-  /// [decimals] defaults to [Constants.converterAmountDecimals] and is exposed
-  /// so a future issue can make the base precision a user setting without
-  /// touching any widget. A non-finite value degrades to zero for the same
-  /// reason `CurrencyConversion.sanitize` exists: `Infinity` and `NaN` format
-  /// verbatim and must never reach the screen.
+  /// [Constants.converterAmountDecimals] is the floor and is never crossed:
+  /// `100` reads `100.00`, because a price with no decimals still has two.
+  /// [maxDecimals] is the ceiling the user sets (#37's increment): a figure
+  /// with more decimals than the floor shows them, up to the ceiling, and is
+  /// rounded there. Digits that only exist to pad — the zeros of
+  /// `152.3068000000` — are dropped back to the floor, so raising the setting
+  /// never adds noise to a figure that does not have it.
+  ///
+  /// **The floor wins over the ceiling in one case**, and it is the reason this
+  /// method exists at all: a few bolívares are thousandths of a dollar, and
+  /// `0.00` for a real amount is not a rounding, it is the figure erased. When
+  /// the ceiling would erase a non-zero value, the result expands past it to
+  /// [_significantDigitsWhenTiny] significant digits. That expansion is
+  /// measured against the **floor**, not against the ceiling: measured against
+  /// the ceiling, raising the setting from 2 to 5 would take `0.001314` down to
+  /// `0.00131`, and a setting called "more decimals" would have shown fewer.
+  ///
+  /// A non-finite value degrades to zero for the same reason
+  /// `CurrencyConversion.sanitize` exists: `Infinity` and `NaN` format verbatim
+  /// and must never reach the screen.
   static String castAmount({
     required double value,
-    int decimals = Constants.converterAmountDecimals,
+    int maxDecimals = Constants.converterMinDecimals,
   }) {
+    const int floor = Constants.converterAmountDecimals;
     final double safe = value.isFinite ? value : 0.0;
-    final String fixed = safe.toStringAsFixed(decimals);
+    final int ceiling = maxDecimals.clamp(
+      floor,
+      Constants.converterMaxDecimals,
+    );
 
-    // Two decimals is right for a bolívar price, and wrong in the other
-    // direction: a few bolívares are thousandths of a dollar, and `0.00` for a
-    // real amount is not a rounding, it is the figure erased. When the default
-    // would wipe a non-zero value out, keep enough decimals to show it.
-    //
     // Detected by rendering rather than by comparing magnitudes, so the rule is
-    // exactly "the default would have shown nothing" — no threshold to keep in
-    // sync with [decimals].
-    if (safe == 0 || double.parse(fixed) != 0) {
-      return fixed;
+    // exactly "the floor would have shown nothing" — no threshold to keep in
+    // sync with the constants.
+    final bool erasedAtFloor =
+        safe != 0 && double.parse(safe.toStringAsFixed(floor)) == 0;
+
+    int decimals = ceiling;
+    if (erasedAtFloor) {
+      final int firstSignificant = -(log(safe.abs()) / ln10).floor();
+      final int expanded = (firstSignificant + _significantDigitsWhenTiny - 1)
+          .clamp(floor, _maxDecimals);
+      // `max`, not the expansion alone: a user who asked for ten decimals on a
+      // tiny figure gets ten, not the four significant digits the rescue needs.
+      decimals = expanded > ceiling ? expanded : ceiling;
     }
 
-    final int firstSignificant = -(log(safe.abs()) / ln10).floor();
-    final int expanded = (firstSignificant + _significantDigitsWhenTiny - 1)
-        .clamp(decimals, _maxDecimals);
-    return safe.toStringAsFixed(expanded);
+    return _trimToFloor(safe.toStringAsFixed(decimals), floor);
+  }
+
+  /// Drops trailing zeros from [fixed], never leaving fewer than [floor]
+  /// decimals.
+  ///
+  /// String surgery rather than arithmetic on purpose: [fixed] is already the
+  /// rounded, final rendering, and re-parsing it to re-format would reintroduce
+  /// the binary representation this whole method exists to hide.
+  static String _trimToFloor(String fixed, int floor) {
+    final int dot = fixed.indexOf('.');
+    if (dot < 0) return fixed;
+
+    int end = fixed.length;
+    final int minEnd = dot + 1 + floor;
+    while (end > minEnd && fixed[end - 1] == '0') {
+      end--;
+    }
+    return fixed.substring(0, end);
   }
 
   static String castCurrencySymbolText({required String currencyCode}) {

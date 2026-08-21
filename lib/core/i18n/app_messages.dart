@@ -192,4 +192,69 @@ class AppMessages {
       'noSearchResultsMessage'.trParams(<String, String>{'query': query});
 
   static String get clearSearchAction => 'clearSearchAction'.tr;
+
+  // --- Settings screen (#37) ---
+
+  /// Heading of the group that changes how the app behaves — the market it
+  /// opens on, the language it speaks. Kept apart from [appearanceSection]
+  /// because "what the app does" and "what the app looks like" are the two
+  /// questions a settings menu has to answer, and the settings still to come
+  /// (notifications #13, accessibility #33, analytics consent #34) each belong
+  /// clearly to one of them.
+  static String get preferencesSection => 'preferencesSection'.tr;
+
+  static String get appearanceSection => 'appearanceSection'.tr;
+
+  /// One line under each menu entry saying what the setting decides.
+  ///
+  /// The dialog this screen replaces had none: three selectors in a row with no
+  /// statement of what they affected. They are deliberately short — the entry
+  /// also shows its current value, and the two together have to fit a row in
+  /// German and Russian.
+  static String get defaultMarketDescription => 'defaultMarketDescription'.tr;
+
+  static String get languageDescription => 'languageDescription'.tr;
+
+  static String get themeDescription => 'themeDescription'.tr;
+
+  /// Tooltip of the strip's back button. Not decoration: it is the only label
+  /// a screen reader has for an icon-only control.
+  static String get backAction => 'backAction'.tr;
+
+  /// The sentence that opens each choice sub-screen, above the options.
+  ///
+  /// A different job from the `…Description` keys above, which label the
+  /// setting on the menu in three or four words. These are addressed to
+  /// someone who has already tapped through and is looking at a list: they say
+  /// what picking one will do, in a full sentence and in the second person, so
+  /// the screen reads as an invitation rather than a bare set of radio rows.
+  ///
+  /// Written as complete sentences **with a full stop**, unlike every other
+  /// key here — they are prose, not labels, and the ten translations have to
+  /// agree on that or the screens read differently per language.
+  static String get defaultMarketIntro => 'defaultMarketIntro'.tr;
+
+  static String get languageIntro => 'languageIntro'.tr;
+
+  static String get themeIntro => 'themeIntro'.tr;
+
+  // --- Converter decimals (#37, incremental) ---
+
+  static String get converterDecimals => 'converterDecimals'.tr;
+
+  static String get converterDecimalsDescription =>
+      'converterDecimalsDescription'.tr;
+
+  static String get converterDecimalsIntro => 'converterDecimalsIntro'.tr;
+
+  /// Labels the worked figure under the counter — the same amount rendered at
+  /// the chosen ceiling, so "seven decimals" is something the user can see
+  /// rather than imagine.
+  static String get decimalsExample => 'decimalsExample'.tr;
+
+  /// Tooltips of the counter's two buttons. Icon-only controls, so these are
+  /// the only names a screen reader has for them.
+  static String get decreaseAction => 'decreaseAction'.tr;
+
+  static String get increaseAction => 'increaseAction'.tr;
 }

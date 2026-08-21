@@ -5,7 +5,15 @@ import 'package:flutter_test/flutter_test.dart';
 /// Every route constant declared in [AppRoutes], read reflectively-by-hand.
 /// Kept next to the routes so adding a constant without listing it here is an
 /// obvious omission in the same file.
-const List<String> _declaredRoutes = [AppRoutes.splash, AppRoutes.home];
+const List<String> _declaredRoutes = [
+  AppRoutes.splash,
+  AppRoutes.home,
+  AppRoutes.settings,
+  AppRoutes.settingsMarket,
+  AppRoutes.settingsLanguage,
+  AppRoutes.settingsTheme,
+  AppRoutes.settingsDecimals,
+];
 
 void main() {
   group('AppPages', () {

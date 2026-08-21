@@ -17,6 +17,9 @@ Light **and** dark theme, for each:
 | Home cards — average tab (`_CurrencyDollarAverageCard`, `_DollarCurrencyCard`) | `test/features/home/home_page_golden_test.dart` |
 | Home cards — BCV tab (`_BCVAdvisorCard`, `_BCVDollarCard`) | `test/features/home/home_page_golden_test.dart` |
 | Converter body (`_ConverterBody`, the VES↔USD inputs) | `test/features/converter/converter_page_golden_test.dart` |
+| Currency detail sheet (parallel + official rate) | `test/features/currency_detail/currency_detail_sheet_golden_test.dart` |
+| Currency selector sheet | `test/features/converter/currency_selector_sheet_golden_test.dart` |
+| Settings menu + language sub-screen (#37) | `test/features/settings/settings_page_golden_test.dart` |
 
 The Home cards and the converter body are private (`part of` their page), so
 they are rendered through their page with fixed **offline** fixtures — never

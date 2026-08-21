@@ -2,6 +2,11 @@ import 'package:bcv_tracker_app/config/routes/routes.dart';
 import 'package:get/get.dart';
 
 import '../../features/dashboard/presentation/page/dashboard_page.dart';
+import '../../features/settings/presentation/page/settings_decimals_page.dart';
+import '../../features/settings/presentation/page/settings_language_page.dart';
+import '../../features/settings/presentation/page/settings_market_page.dart';
+import '../../features/settings/presentation/page/settings_page.dart';
+import '../../features/settings/presentation/page/settings_theme_page.dart';
 import '../../features/splash/presentation/page/splash_page.dart';
 
 /// The routing table `GetMaterialApp` is built with.
@@ -24,6 +29,31 @@ class AppPages {
       page: () => DashboardPage(),
       transition: Transition.fadeIn,
       transitionDuration: const Duration(milliseconds: 500),
+    ),
+    // Settings and its three choice screens (#37). They stack over the
+    // dashboard with the platform's own transition — the default — because
+    // these are ordinary drill-downs and a bespoke animation on a settings
+    // menu is the kind of flourish that reads as slower each time it plays.
+    //
+    // No `binding:` on any of them: they read `SettingsController`, the
+    // permanent service `InitialBinding.initServices()` registers before the
+    // first frame, and they declare no state of their own.
+    GetPage(name: AppRoutes.settings, page: () => const SettingsPage()),
+    GetPage(
+      name: AppRoutes.settingsMarket,
+      page: () => const SettingsMarketPage(),
+    ),
+    GetPage(
+      name: AppRoutes.settingsLanguage,
+      page: () => const SettingsLanguagePage(),
+    ),
+    GetPage(
+      name: AppRoutes.settingsTheme,
+      page: () => const SettingsThemePage(),
+    ),
+    GetPage(
+      name: AppRoutes.settingsDecimals,
+      page: () => const SettingsDecimalsPage(),
     ),
   ];
 }

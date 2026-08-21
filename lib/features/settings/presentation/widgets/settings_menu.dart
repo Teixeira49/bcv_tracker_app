@@ -1,0 +1,81 @@
+part of '../page/settings_page.dart';
+
+/// The rows of the menu, grouped.
+///
+/// Two groups today — what the app *does* and what the app *looks like* — and
+/// the split is what makes the menu survive growth: notifications and analytics
+/// consent join `preferencesSection`, accessibility joins `appearanceSection`,
+/// and neither forces a redesign.
+///
+/// Reads the settings service through `Obx` rather than `GetBuilder`.
+/// `SettingsController` is a `GetxService` since
+/// [#59](https://github.com/Teixeira49/bcv_tracker_app/issues/59) and never
+/// calls `update()`, so a `GetBuilder` here would locate the instance and then
+/// never rebuild — the trap `settings_widgets.dart` documented before this
+/// screen replaced it. The whole menu sits in one `Obx` on purpose: all three
+/// values are on the same three rows, so splitting it would buy a rebuild of
+/// two rows instead of three.
+class _SettingsMenu extends StatelessWidget {
+  const _SettingsMenu();
+
+  @override
+  Widget build(BuildContext context) {
+    final SettingsController controller = Get.find<SettingsController>();
+
+    return Obx(
+      () => ListView(
+        // Clears the last card from the bottom edge of the panel.
+        padding: EdgeInsets.only(bottom: WidthValues.spacing4xl),
+        children: <Widget>[
+          SettingsSection(
+            title: AppMessages.preferencesSection,
+            children: <Widget>[
+              SettingsMenuTile(
+                icon: Icons.storefront_rounded,
+                title: AppMessages.defaultMarket,
+                description: AppMessages.defaultMarketDescription,
+                value: SettingsChoices.marketLabel(
+                  controller.favMarketIndex.value,
+                ),
+                onTap: () => Get.toNamed<void>(AppRoutes.settingsMarket),
+              ),
+              SettingsMenuTile(
+                icon: Icons.tag_rounded,
+                title: AppMessages.converterDecimals,
+                description: AppMessages.converterDecimalsDescription,
+                // The count itself is the value: "5" is what the setting is
+                // set to, and no label reads better than the number.
+                value: '${controller.favDecimals.value}',
+                onTap: () => Get.toNamed<void>(AppRoutes.settingsDecimals),
+              ),
+              SettingsMenuTile(
+                icon: Icons.translate_rounded,
+                title: AppMessages.language,
+                description: AppMessages.languageDescription,
+                // The service's own resolution, not a lookup written here: it
+                // falls back to the default when the stored code is one this
+                // build no longer ships, which is the crash #98 fixed.
+                value: controller.selectedLanguage.name,
+                onTap: () => Get.toNamed<void>(AppRoutes.settingsLanguage),
+              ),
+            ],
+          ),
+          SettingsSection(
+            title: AppMessages.appearanceSection,
+            children: <Widget>[
+              SettingsMenuTile(
+                icon: Icons.palette_outlined,
+                title: AppMessages.theme,
+                description: AppMessages.themeDescription,
+                value: SettingsChoices.themeLabel(
+                  controller.favBrightness.value,
+                ),
+                onTap: () => Get.toNamed<void>(AppRoutes.settingsTheme),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}

@@ -79,4 +79,25 @@ const Map<String, String> ruRu = {
   'noSearchResultsMessage': 'Нет валют, соответствующих «@query».',
   'clearSearchAction': 'Очистить поиск',
   'closeAction': 'Закрыть',
+
+  // --- Settings screen (#37) ---
+  'preferencesSection': 'Предпочтения',
+  'appearanceSection': 'Оформление',
+  'defaultMarketDescription': 'Вкладка при запуске',
+  'languageDescription': 'Язык интерфейса',
+  'themeDescription': 'Светлая, тёмная или системная',
+  'backAction': 'Назад',
+  'defaultMarketIntro':
+      'Выберите вкладку, которая будет открываться при запуске.',
+  'languageIntro': 'Выберите язык, на котором вы хотите читать приложение.',
+  'themeIntro': 'Настройте тему приложения так, как вам удобно.',
+
+  // --- Converter decimals (#37, incremental) ---
+  'converterDecimals': 'Знаки после запятой',
+  'converterDecimalsDescription': 'Сколько знаков может показать результат',
+  'converterDecimalsIntro':
+      'Выберите, сколько знаков после запятой может показывать конвертер. Два вы увидите всегда; остальные появятся, только если они действительно есть.',
+  'decimalsExample': 'Пример',
+  'decreaseAction': 'На один меньше',
+  'increaseAction': 'На один больше',
 };

@@ -94,6 +94,22 @@ components:
     borderColor: "{colors.info}"
     rounded: "{rounded.xl}"
     padding: "{spacing.md}"
+  settingsTile:
+    backgroundColor: "{colors.neutral}"
+    textColor: "{colors.secondary}"
+    rounded: "{rounded.md}"
+    padding: "{spacing.md}"
+  settingsChoiceCard:
+    backgroundColor: "{colors.neutral}"
+    borderColor: "{colors.primary}"
+    textColor: "{colors.secondary}"
+    rounded: "{rounded.md}"
+    padding: "{spacing.md}"
+  settingsCounter:
+    backgroundColor: "{colors.neutral}"
+    textColor: "{colors.primary}"
+    rounded: "{rounded.md}"
+    padding: "{spacing.md}"
   errorState:
     textColor: "{colors.error}"
     rounded: "{rounded.sm}"
@@ -202,6 +218,22 @@ Los tokens de `components` fijan las relaciones color→rol de los componentes r
 - **bottomSheet:** panel que sube desde el borde inferior, arrastrable. Radio `xl` (24) —mayor que el `md` de las tarjetas, porque es una superficie amplia y el gesto pide una esquina más suave—, borde `info` de 1.25 px y un halo suave del mismo tono, la misma profundidad por borde que el resto. Lleva una barra fija con el asa y el botón de cerrar, **sin texto**: su alto es fijo y no podría crecer con la escala tipográfica del sistema. Implementado en `shared/presentation/widgets/base_bottom_sheet.dart` y usado por el detalle de moneda (#38) y el selector del conversor (#40).
 
   **Cuándo hoja inferior y cuándo diálogo:** una hoja inferior para contenido que se recorre —una lista, una ficha con secciones— porque queda al alcance del pulgar y aprovecha la altura; un diálogo centrado (`BaseModal`) para una decisión corta que interrumpe. El selector de divisas era lo primero dentro de lo segundo, y por eso cambió en #40.
+
+  **Y cuándo ninguna de las dos.** Los ajustes eran un diálogo hasta #37. Lo que los sacó de ahí no fue el alcance del pulgar sino el techo: un diálogo no crece, y lo que se recorre *y* se agrupa *y* tiene que admitir opciones nuevas —notificaciones, accesibilidad, consentimiento, «acerca de»— ya no es un modal de ningún tipo, es una pantalla con su ruta. La pregunta a hacerse antes de elegir contenedor: ¿esto va a listar más cosas dentro de seis meses? Si la respuesta es sí, empieza por la pantalla.
+
+- **settingsTile:** la fila del menú de ajustes (#37). Tarjeta neutra de radio `md` agrupada por sección, icono de marca en un cuadro teñido a la izquierda, título y una línea de descripción, y **el valor actual en `secondary` alineado a la derecha** — ese valor es el componente: un menú que no dice a qué está puesta cada opción obliga a entrar en las tres para saberlo. La misma tarjeta, sin icono ni descripción y con una marca de verificación, es la fila de las subpantallas de elección.
+- **settingsChoiceCard:** la opción como **tarjeta en rejilla de dos columnas**, no como fila (#37). Icono arriba, etiqueta debajo, ambos centrados; la seleccionada se remarca con borde de marca de 2 px, fondo teñido y la etiqueta en `secondary` y en negrita.
+
+  **Cuándo rejilla y cuándo lista**, que es la decisión real: rejilla cuando las opciones son **pocas y cada una tiene un icono que la distingue de un vistazo** —el tema: claro, oscuro, sistema—, porque ahí el icono hace el trabajo que haría leer la etiqueta y dos columnas ponen las tres a la vista sin desplazar. Lista cuando son **muchas o se leen** —los diez idiomas—, donde una rejilla obliga a barrer en zigzag lo que se lee mejor en columna. Con un número impar la última celda queda vacía a propósito: mantener el tamaño de celda es lo que hace que se lea como rejilla y no como botones sueltos de anchos distintos.
+
+  El borde de 2 px, y no solo el color, es deliberado: el estado seleccionado no puede depender únicamente del tono (ver *Do's and Don'ts*), y el grosor se percibe en escala de grises. Para lectores de pantalla la selección viaja además en `Semantics(selected:)`, que es lo que ningún píxel comunica.
+- **settingsCounter:** la tercera forma que toma un ajuste, para un **número acotado** (#37, incremental). Tarjeta neutra de radio `md` con dos botones tonales en los extremos y la cifra al centro en `titleLarge` — el número es el contenido de la pantalla, así que recibe el tamaño que recibiría el resultado del conversor.
+
+  **Cuándo contador y cuándo lista:** contador cuando el valor es un número dentro de un rango y el usuario piensa en «uno más», no en «el séptimo» — nueve valores en una lista serían nueve filas idénticas salvo por un dígito. Lista o rejilla cuando las opciones son cosas distintas entre sí, no puntos de una escala.
+
+  **En los extremos los botones se apagan, no desaparecen.** Un control que se va obliga a buscar qué cambió; uno atenuado dice «hasta aquí llega», que es la respuesta real. Además `onPressed: null` es lo que hace que `IconButton` se anuncie como deshabilitado a las tecnologías de asistencia, así que lo que se ve y lo que se lee coinciden.
+
+  Bajo el contador va un **ejemplo trabajado**: la misma cifra renderizada con el ajuste puesto. Un techo es abstracto —«siete decimales» no significa nada hasta ver una cifra con siete— y el ejemplo se calcula con el formateador real, no con uno escrito para la vista, para que no pueda prometer algo que el conversor no hará.
 - **errorState / emptyState:** acento `error` vs. `warning`, radio `sm`. Hoy son tarjetas mínimas (`_ErrorAdvisorCard`); #11 los rediseña como componentes compartidos con branding, e #18 define qué dice cada uno según la causa.
 
 ## Do's and Don'ts

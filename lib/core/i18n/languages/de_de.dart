@@ -80,4 +80,27 @@ const Map<String, String> deDe = {
   'noSearchResultsMessage': 'Keine Währung passt zu „@query“.',
   'clearSearchAction': 'Suche löschen',
   'closeAction': 'Schließen',
+
+  // --- Settings screen (#37) ---
+  'preferencesSection': 'Präferenzen',
+  'appearanceSection': 'Erscheinungsbild',
+  'defaultMarketDescription': 'Tab beim Start',
+  'languageDescription': 'Sprache der Oberfläche',
+  'themeDescription': 'Hell, dunkel oder System',
+  'backAction': 'Zurück',
+  'defaultMarketIntro':
+      'Wähle den Tab, der beim Öffnen der App angezeigt wird.',
+  'languageIntro': 'Wähle die Sprache, in der du die App lesen möchtest.',
+  'themeIntro':
+      'Stelle das Design der App so ein, wie es für dich angenehm ist.',
+
+  // --- Converter decimals (#37, incremental) ---
+  'converterDecimals': 'Dezimalstellen des Umrechners',
+  'converterDecimalsDescription':
+      'Wie viele Dezimalstellen das Ergebnis zeigen darf',
+  'converterDecimalsIntro':
+      'Wähle, wie viele Dezimalstellen der Umrechner zeigen darf. Zwei siehst du immer; die übrigen erscheinen nur, wenn die Zahl sie wirklich hat.',
+  'decimalsExample': 'Beispiel',
+  'decreaseAction': 'Eine weniger',
+  'increaseAction': 'Eine mehr',
 };

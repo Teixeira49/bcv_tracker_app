@@ -1,11 +1,12 @@
 import 'package:bcv_tracker_app/core/constants/constants.dart';
-import 'package:bcv_tracker_app/shared/presentation/widgets/show_blurred_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 
+import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors/colors_values.dart';
 import '../../../config/theme/icons/icons_constants.dart';
-import '../../../features/settings/presentation/page/settings_modal.dart';
+import '../../../core/i18n/app_messages.dart';
 
 /// The branded frame every top-level screen sits in.
 ///
@@ -17,6 +18,16 @@ import '../../../features/settings/presentation/page/settings_modal.dart';
 /// It measures against its own **box**, not the screen. That is not incidental:
 /// against `MediaQuery` the title kept its absolute offset while the body shrank
 /// under the keyboard, and ended up clipped behind the panel.
+///
+/// ### The strip on a pushed screen
+///
+/// Since [#37](https://github.com/Teixeira49/bcv_tracker_app/issues/37) the frame
+/// also serves screens that are **stacked over** the dashboard rather than
+/// hosted by it — settings and its three choice sub-screens. Those pass
+/// [showBackButton] and [showSettingsAction], and the strip is otherwise
+/// identical: a pushed screen that dropped the gradient and the wave would read
+/// as a different app, which is exactly what the settings dialog used to avoid
+/// by being a dialog.
 class BaseLayout extends StatelessWidget {
   /// Content below the branded strip. Null renders the frame alone, which is what
   /// the splash and the error page want.
@@ -30,8 +41,29 @@ class BaseLayout extends StatelessWidget {
   /// touching the frame.
   final EdgeInsetsGeometry margins;
 
+  /// Replaces the brand mark with a back arrow that pops the route.
+  ///
+  /// The two are exclusive on purpose: the logo is what says "you are in the
+  /// app", and a pushed screen has to say "you are one level down" instead.
+  /// Showing both crowds a strip that also carries the title in ten languages.
+  final bool showBackButton;
+
+  /// Whether the strip offers the gear that opens settings.
+  ///
+  /// `false` on the settings screens themselves — an action that navigates to
+  /// where you already are is a dead control, and on the sub-screens it would
+  /// stack a second copy of the menu over the first.
+  final bool showSettingsAction;
+
   /// Wraps [child] in the branded frame.
-  const BaseLayout({super.key, this.child, required this.margins, this.title});
+  const BaseLayout({
+    super.key,
+    this.child,
+    required this.margins,
+    this.title,
+    this.showBackButton = false,
+    this.showSettingsAction = true,
+  });
 
   /// Where the title sits inside the branded strip, as a share of the height.
   /// Roughly centred in the strip `_BaseBody` reserves for it.
@@ -61,33 +93,63 @@ class BaseLayout extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           spacing: 8,
           children: [
-            SvgPicture.asset(
-              AppIcons.onlyLogo,
-              colorFilter: ColorFilter.mode(
-                ColorValues.textWhite70(context),
-                BlendMode.srcIn,
+            if (showBackButton)
+              IconButton(
+                onPressed: Get.back<void>,
+                tooltip: AppMessages.backAction,
+                icon: Icon(
+                  Icons.arrow_back_rounded,
+                  color: ColorValues.textWhite70(context),
+                ),
+              )
+            else
+              SvgPicture.asset(
+                AppIcons.onlyLogo,
+                colorFilter: ColorFilter.mode(
+                  ColorValues.textWhite70(context),
+                  BlendMode.srcIn,
+                ),
+                height: 24,
               ),
-              height: 24,
+            // `Expanded`, and it is doing two jobs at once — which is why it is
+            // not a bare `Text` and not a `Flexible` either.
+            //
+            // Bounding it is what keeps a long title wrapping instead of
+            // pushing the action off the row: "Configuración" is one of the
+            // shortest headings this strip carries, and the Russian and German
+            // settings sub-screens are far longer (`i18n-convention.md`, rule
+            // 6).
+            //
+            // Taking **all** the leftover width is what keeps the action flush
+            // right. A `Flexible` with a `Spacer` after it looked equivalent and
+            // was not: `Row` splits the free space by flex factor *before* a
+            // loose child decides how much of its share it wants, and what it
+            // declines does not go back to the `Spacer` — it lands as slack at
+            // the end of the row, dragging the gear inward. One tight child and
+            // no `Spacer` leaves nothing to strand.
+            Expanded(
+              child: Text(
+                title ?? Constants.appTitle,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: ColorValues.textWhite70(context),
+                ),
+              ),
             ),
-            Text(
-              title ?? Constants.appTitle,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: ColorValues.textWhite70(context),
+            if (showSettingsAction)
+              IconButton(
+                // A route since #37, not a dialog: the menu grows with the
+                // settings still queued, and a screen is where they fit.
+                onPressed: () => Get.toNamed<void>(AppRoutes.settings),
+                tooltip: AppMessages.settingsView,
+                icon: Icon(
+                  Icons.settings,
+                  color: ColorValues.textWhite70(context),
+                ),
               ),
-            ),
-            Spacer(),
-            IconButton(
-              onPressed: () => showBlurredDialog<void>(
-                context: context,
-                builder: (context) => SettingsModal(),
-              ),
-              icon: Icon(
-                Icons.settings,
-                color: ColorValues.textWhite70(context),
-              ),
-            ),
           ],
         ),
       ),
