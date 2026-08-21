@@ -23,6 +23,13 @@ class AboutHeader extends StatelessWidget {
         Image.asset(
           Constants.appLogoAsset,
           height: 72,
+          // Tinted per mode, and it has to be: the artwork is monochrome white,
+          // which is right on the branded strip and invisible here — this is
+          // the first screen that puts the mark on a **light** surface, so it
+          // was white on white. `srcIn` keeps the silhouette and replaces the
+          // ink, the same thing the splash does with its `colorFilter`.
+          color: ColorValues.fgBrandMark(context),
+          colorBlendMode: BlendMode.srcIn,
           // Decorative: the name is right underneath, so announcing the logo
           // to a screen reader would read the app's identity out twice.
           excludeFromSemantics: true,
@@ -142,9 +149,12 @@ class AboutLinkTile extends StatelessWidget {
 
 /// A row that states a fact and goes nowhere.
 ///
-/// The version (#43) is the only one so far. Deliberately **not** an
-/// [AboutLinkTile]: that shape ends in an open-in-new icon, which would promise
-/// a browser. What this row promises is nothing, which is what it does.
+/// El nombre del autor y la versión (#43) son las dos. Deliberately **not** an
+/// [AboutLinkTile]: that
+/// shape ends in an open-in-new icon, which promises a browser. This one
+/// promises nothing, which is what it does — the author used to be a link to
+/// their profile and stopped being one when the project block was withdrawn,
+/// because that profile is the repository by another route.
 class AboutFactRow extends StatelessWidget {
   const AboutFactRow({super.key, required this.label, required this.value});
 

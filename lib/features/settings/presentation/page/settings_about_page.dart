@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../config/enviroment/enviroment.dart';
 import '../../../../config/theme/colors/colors_values.dart';
 import '../../../../config/theme/width/width_values.dart';
 import '../../../../core/constants/app_links.dart';
@@ -22,11 +21,17 @@ import '../widgets/settings_section.dart';
 /// emerged from people trading, or whether somebody else averaged it first.
 /// **Attribution is not decoration in an app whose product is a rate.**
 ///
-/// The four blocks are the issue's: the app, the sources, the project and the
-/// credits. The version joined the last one in
-/// [#43](https://github.com/Teixeira49/bcv_tracker_app/issues/43), read from
-/// `AppInfoService` — the same object the settings menu reads, so the two
-/// cannot quote different builds.
+/// **Tres bloques, no los cuatro del issue.** El de «Proyecto» —licencia, ambos
+/// repositorios y la documentación de la API— se retiró tras la prueba en
+/// dispositivo: el propietario no quiere exponer el estado del proyecto en una
+/// versión pública, y la de la API además revelaba la URL del backend
+/// configurado. Vuelve detrás de un interruptor por dispositivo, que es un
+/// feature aparte; la copy y las constantes se conservan intactas para
+/// entonces.
+///
+/// Lo que queda es lo que el usuario final necesita: qué es la app y **de dónde
+/// sale cada tasa**, el bloque que justifica la pantalla. La versión llega en
+/// [#43](https://github.com/Teixeira49/bcv_tracker_app/issues/43).
 ///
 /// Everything that leaves the app goes through [ExternalLink], which only opens
 /// `https` and reports a refusal. A tap that does nothing is indistinguishable
@@ -67,7 +72,6 @@ class SettingsAboutPage extends StatelessWidget {
           ),
           const AboutHeader(),
           _DataSourcesSection(),
-          _ProjectSection(),
           _CreditsSection(),
         ],
       ),
@@ -130,66 +134,32 @@ class _DataSourcesSection extends StatelessWidget {
   );
 }
 
-/// Licence, both repositories and the API documentation.
-class _ProjectSection extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // Composed from the configured backend, not hardcoded: the documentation
-    // of a staging backend is not the documentation of production, and this
-    // value comes from `.env` (see `environment-variables.md`).
-    final String apiDocs = '${Environment.currency}${AppLinks.apiDocsPath}';
-
-    return SettingsSection(
-      title: AppMessages.projectSection,
-      children: <Widget>[
-        AboutLinkTile(
-          title: AppMessages.licenseLabel,
-          trailing: AppLinks.licenseName,
-          onTap: () => _open(context, AppLinks.licenseUrl),
-        ),
-        AboutLinkTile(
-          title: AppMessages.appRepositoryLabel,
-          onTap: () => _open(context, AppLinks.repository),
-        ),
-        AboutLinkTile(
-          title: AppMessages.backendRepositoryLabel,
-          onTap: () => _open(context, AppLinks.backendRepository),
-        ),
-        AboutLinkTile(
-          title: AppMessages.apiDocsLabel,
-          onTap: () => _open(context, apiDocs),
-        ),
-      ],
-    );
-  }
-}
-
-/// Who maintains it, how to tell them something is wrong, and which build they
-/// are being told about.
+/// Who maintains it, and which build the user is looking at.
+///
+/// **Sin enlaces.** El autor era un enlace a su perfil y había una fila de
+/// «reportar un problema»; las dos salieron a petición del propietario tras
+/// probarlo en dispositivo. La segunda vuelve como sección propia en un feature
+/// futuro; la primera apuntaba al repositorio, que es justo lo que el bloque
+/// «Proyecto» dejó de revelar.
 class _CreditsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) => SettingsSection(
     title: AppMessages.creditsSection,
     children: <Widget>[
-      // The same `AppInfoService` the settings menu reads (#43). One service so
-      // the two cannot disagree — a report quoting a version this screen made
-      // up on its own would be worse than no version at all.
-      // `Obx`, unlike the rows around it: the version arrives after the
-      // first build now that nothing awaits it before `runApp`.
+      AboutFactRow(
+        label: AppMessages.developedByLabel,
+        value: AppLinks.authorName,
+      ),
+      // El mismo `AppInfoService` que lee el menú (#43): un solo servicio, así
+      // que las dos pantallas no pueden citar builds distintas.
+      //
+      // `Obx`, a diferencia de la fila de arriba: la versión llega después del
+      // primer build ahora que nada la espera antes de `runApp`.
       Obx(
         () => AboutFactRow(
           label: AppMessages.appVersion,
           value: Get.find<AppInfoService>().versionLabel,
         ),
-      ),
-      AboutLinkTile(
-        title: AppMessages.developedByLabel,
-        trailing: AppLinks.authorName,
-        onTap: () => _open(context, AppLinks.author),
-      ),
-      AboutLinkTile(
-        title: AppMessages.reportIssueLabel,
-        onTap: () => _open(context, AppLinks.reportIssue),
       ),
     ],
   );

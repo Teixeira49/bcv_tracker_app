@@ -9,6 +9,12 @@
 /// backend base URL, which is a per-environment value read from `.env` (see
 /// `.agents/rules/environment-variables.md`). `SettingsAboutPage` composes it
 /// from `Environment.currency` at build time.
+/// **Casi todo esto no tiene llamante hoy.** El bloque «Proyecto» de «Acerca
+/// de» —licencia, repositorios y documentación de la API— se retiró tras la
+/// prueba en dispositivo, y vuelve detrás de un interruptor por dispositivo.
+/// Solo [authorName] sigue en pantalla. Se conservan porque las direcciones no
+/// cambian y volver a buscarlas sería trabajo repetido; si ese feature se
+/// descarta, este archivo se reduce a un nombre.
 class AppLinks {
   const AppLinks._();
 

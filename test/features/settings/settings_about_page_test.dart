@@ -1,7 +1,8 @@
 import 'package:bcv_tracker_app/config/enviroment/enviroment.dart';
 import 'package:bcv_tracker_app/config/routes/pages.dart';
 import 'package:bcv_tracker_app/config/routes/routes.dart';
-import 'package:bcv_tracker_app/core/constants/app_links.dart';
+import 'package:bcv_tracker_app/config/theme/colors/colors_constants.dart';
+import 'package:bcv_tracker_app/config/theme/theme.dart';
 import 'package:bcv_tracker_app/core/constants/market_constants.dart';
 import 'package:bcv_tracker_app/core/i18n/app_messages.dart';
 import 'package:bcv_tracker_app/core/i18n/app_translations.dart';
@@ -203,60 +204,13 @@ void main() {
     });
   });
 
-  group('the project block', () {
-    testWidgets('links the licence and both repositories', (
-      WidgetTester tester,
-    ) async {
-      await _pumpAbout(tester);
-
-      for (final (String label, String url) in <(String, String)>[
-        (AppMessages.licenseLabel, AppLinks.licenseUrl),
-        (AppMessages.appRepositoryLabel, AppLinks.repository),
-        (AppMessages.backendRepositoryLabel, AppLinks.backendRepository),
-      ]) {
-        await _tapRow(tester, label);
-        expect(launcher.launched.last, url, reason: '"$label" points wrong.');
-      }
-
-      // Apache 2.0, matching the `LICENSE` at the root of the repository.
-      expect(find.text(AppLinks.licenseName), findsOneWidget);
-    });
-
-    testWidgets('the API docs link follows the configured backend', (
-      WidgetTester tester,
-    ) async {
-      await _pumpAbout(tester);
-
-      await _tapRow(tester, AppMessages.apiDocsLabel);
-
-      // Hardcoding the production host would send a tester reading a staging
-      // build to the wrong documentation.
-      expect(launcher.launched.last, 'https://api.example.test/docs');
-    });
-  });
-
-  group('the credits block', () {
-    testWidgets('names the author and offers a way to report a problem', (
-      WidgetTester tester,
-    ) async {
-      await _pumpAbout(tester);
-
-      await _tapRow(tester, AppMessages.reportIssueLabel);
-
-      // The issue **form**, not the issue list: someone tapping this wants to
-      // write one, not read forty.
-      expect(launcher.launched.last, endsWith('/issues/new'));
-      expect(find.text('Teixeira49'), findsOneWidget);
-    });
-  });
-
   testWidgets('a link the platform refuses says so instead of doing nothing', (
     WidgetTester tester,
   ) async {
     UrlLauncherPlatform.instance = _RefusingLauncher();
     await _pumpAbout(tester);
 
-    await tester.tap(find.text(AppMessages.appRepositoryLabel));
+    await tester.tap(find.text(Markets.sources.first.name));
     await tester.pump();
     await tester.pump();
 
@@ -310,6 +264,124 @@ void main() {
     expect(find.byType(SettingsAboutPage), findsOneWidget);
   });
 
+  group('el bloque de créditos', () {
+    testWidgets('nombra al autor sin enlazar a ninguna parte', (
+      WidgetTester tester,
+    ) async {
+      await _pumpAbout(tester);
+
+      // El autor era un enlace a su perfil de GitHub. Salió con el bloque
+      // «Proyecto»: apuntaba al repositorio, que es lo que se dejó de revelar.
+      expect(find.text('Teixeira49'), findsOneWidget);
+      expect(find.text(AppMessages.reportIssueLabel), findsNothing);
+    });
+  });
+
+  group('el logo de la cabecera', () {
+    /// Monta la pantalla con [theme] y devuelve el color del logo.
+    Future<Color?> logoInk(WidgetTester tester, ThemeData theme) async {
+      Get.testMode = true;
+      SharedPreferences.setMockInitialValues(<String, Object>{});
+      Get.put(SettingsController(), permanent: true);
+      // La pantalla muestra la versión desde #43, así que el servicio tiene
+      // que existir aunque este test vaya del color del logo.
+      await putFakeAppInfo();
+
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(500, 2000);
+      addTearDown(tester.view.reset);
+
+      await tester.pumpWidget(
+        GetMaterialApp(
+          translations: AppTranslations(),
+          locale: const Locale('es', 'ES'),
+          theme: theme,
+          getPages: AppPages.routes,
+          initialRoute: AppRoutes.settingsAbout,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      return tester
+          .widget<Image>(
+            find.descendant(
+              of: find.byType(AboutHeader),
+              matching: find.byType(Image),
+            ),
+          )
+          .color;
+    }
+
+    // Se afirma el color del **widget**, no el píxel: `Image.asset` no termina
+    // de decodificar antes de que Alchemist capture, así que el golden deja un
+    // hueco donde va el logo y no puede vigilar esto. Es la comprobación que
+    // sustituye a la referencia que no existe.
+    testWidgets('en modo claro se tiñe de midnight, no de blanco', (
+      WidgetTester tester,
+    ) async {
+      // El defecto que reportó el propietario al probarlo: el arte es blanco
+      // monocromo, correcto sobre la franja oscura e invisible aquí, que es la
+      // primera pantalla que lo pone sobre una superficie clara.
+      expect(await logoInk(tester, AppTheme.lightTheme), AppColors.midnight);
+    });
+
+    testWidgets('en modo oscuro se tiñe de blanco', (
+      WidgetTester tester,
+    ) async {
+      Get.reset();
+      expect(await logoInk(tester, AppTheme.darkTheme), Colors.white);
+    });
+  });
+
+  group('lo que ya no se revela', () {
+    testWidgets('el bloque «Proyecto» no está en pantalla', (
+      WidgetTester tester,
+    ) async {
+      await _pumpAbout(tester);
+
+      // Retirado tras la prueba en dispositivo: no exponer el estado del
+      // proyecto en una versión pública. La documentación de la API además
+      // revelaba la URL del backend configurado.
+      for (final String label in <String>[
+        AppMessages.projectSection,
+        AppMessages.licenseLabel,
+        AppMessages.appRepositoryLabel,
+        AppMessages.backendRepositoryLabel,
+        AppMessages.apiDocsLabel,
+      ]) {
+        expect(
+          find.text(label),
+          findsNothing,
+          reason: '"$label" sigue visible.',
+        );
+      }
+    });
+
+    testWidgets('ninguna fila apunta al repositorio ni al backend', (
+      WidgetTester tester,
+    ) async {
+      await _pumpAbout(tester);
+
+      // Lo que importa no es que falten las etiquetas: es que no quede
+      // ninguna ruta para llegar. Se tocan **todas** las filas.
+      for (final Element element in find.byType(AboutLinkTile).evaluate()) {
+        await tester.tap(find.byWidget(element.widget));
+        await tester.pumpAndSettle();
+      }
+
+      for (final String opened in launcher.launched) {
+        expect(
+          opened,
+          isNot(contains('github.com/Teixeira49')),
+          reason: 'una fila sigue llevando al repositorio: $opened',
+        );
+        expect(opened, isNot(contains('api.example.test')));
+      }
+      // Las nueve fuentes sí siguen: son el motivo de la pantalla.
+      expect(launcher.launched.length, Markets.sources.length);
+    });
+  });
+
   testWidgets('every row that leaves the app says so', (
     WidgetTester tester,
   ) async {
@@ -317,8 +389,10 @@ void main() {
 
     // The open-in-new icon is the only thing separating these rows from the
     // settings rows above, which drill down and carry a chevron.
+    // Solo las nueve fuentes: el bloque «Proyecto» (4) y la fila de reportar
+    // salieron, y la autoría dejó de ser un enlace.
     final int links = tester.widgetList(find.byType(AboutLinkTile)).length;
-    expect(links, Markets.sources.length + 4 + 2);
+    expect(links, Markets.sources.length);
     expect(find.byIcon(Icons.open_in_new_rounded), findsNWidgets(links));
     expect(find.byIcon(Icons.chevron_right_rounded), findsNothing);
   });

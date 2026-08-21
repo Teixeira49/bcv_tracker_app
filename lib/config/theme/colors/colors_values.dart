@@ -318,6 +318,18 @@ class ColorValues {
 
   static final _fgWhite = _ColorScheme(light: Colors.white, dark: Colors.white);
 
+  /// Tinta de la marca **sobre una superficie de la app**, no sobre la franja.
+  ///
+  /// El arte es monocromo y quien lo pinta elige el color. Sobre las
+  /// superficies oscuras —la franja, el splash— el blanco es lo correcto y se
+  /// aplica con un `colorFilter` fijo; sobre una superficie clara desaparece.
+  /// «Acerca de» (#42) fue el primer sitio que puso el logo sobre la superficie
+  /// clara y lo destapó: blanco sobre blanco.
+  static final _fgBrandMark = _ColorScheme(
+    light: AppColors.midnight,
+    dark: Colors.white,
+  );
+
   // --- Getters Foreground ---
   static Color fgPrimary(BuildContext context) => _fgPrimary.getColor(context);
 
@@ -343,6 +355,9 @@ class ColorValues {
       _fgSuccessPrimary.getColor(context);
 
   static Color fgWhite(BuildContext context) => _fgWhite.getColor(context);
+
+  static Color fgBrandMark(BuildContext context) =>
+      _fgBrandMark.getColor(context);
 
   // -------------------------------------------------------------
   // <---------------- Background color values ------------------>
