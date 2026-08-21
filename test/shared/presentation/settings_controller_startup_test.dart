@@ -3,7 +3,6 @@ import 'package:bcv_tracker_app/shared/presentation/controller/settings_controll
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const String _themeKey = 'theme_mode';
@@ -19,18 +18,6 @@ const String _favMarketKey = 'fav_market';
 /// accident, not a design, and it would have evaporated the day the splash got
 /// shorter.
 void main() {
-  // `initServices()` lee el paquete instalado desde #43, y en un test nadie
-  // contesta ese canal: sin este doble la llamada se queda esperando y arrastra
-  // la suite entera. El servicio degrada a `--` por su cuenta, pero degradar en
-  // silencio en cada test escondería el día que deje de leerse de verdad.
-  PackageInfo.setMockInitialValues(
-    appName: 'BCV Tracker',
-    packageName: 'com.example.bcv_tracker_app',
-    version: '1.1.0',
-    buildNumber: '3',
-    buildSignature: '',
-  );
-
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() => Get.testMode = true);

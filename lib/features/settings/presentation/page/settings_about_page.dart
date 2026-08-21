@@ -174,9 +174,13 @@ class _CreditsSection extends StatelessWidget {
       // The same `AppInfoService` the settings menu reads (#43). One service so
       // the two cannot disagree — a report quoting a version this screen made
       // up on its own would be worse than no version at all.
-      AboutFactRow(
-        label: AppMessages.appVersion,
-        value: Get.find<AppInfoService>().versionLabel,
+      // `Obx`, unlike the rows around it: the version arrives after the
+      // first build now that nothing awaits it before `runApp`.
+      Obx(
+        () => AboutFactRow(
+          label: AppMessages.appVersion,
+          value: Get.find<AppInfoService>().versionLabel,
+        ),
       ),
       AboutLinkTile(
         title: AppMessages.developedByLabel,

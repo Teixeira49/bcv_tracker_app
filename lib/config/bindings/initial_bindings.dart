@@ -52,16 +52,6 @@ class InitialBinding extends Bindings {
       () => SettingsController().init(deviceLocale: deviceLocale),
       permanent: true,
     );
-
-    // The version the settings menu and «Acerca de» both show (#43). It is not
-    // read by the first frame, so it could have waited — but `dependencies()`
-    // is not awaited, and a `Get.find` that arrives before an unawaited
-    // `putAsync` resolves throws. One channel round trip here buys a value
-    // that is always there.
-    await Get.putAsync<AppInfoService>(
-      () => AppInfoService().init(),
-      permanent: true,
-    );
   }
 
   @override
@@ -84,6 +74,13 @@ class InitialBinding extends Bindings {
     // that used to sit on this line was inert anyway — `main` had already
     // registered the instance with `Get.put`, which is the double registration
     // #45 catalogued.
+
+    // The version the settings menu and «Acerca de» show (#43). **Not** in
+    // `initServices()`: the first frame does not read it, which is the criterion
+    // this file's own rule states. Registered synchronously and told to fill
+    // itself in — the instance exists immediately, so `Get.find` cannot hit an
+    // unresolved `putAsync`, and startup waits for nothing.
+    Get.put<AppInfoService>(AppInfoService()..load(), permanent: true);
 
     // New Injections
     Get.put<CurrencyRepository>(CurrencyRepository(), permanent: true);

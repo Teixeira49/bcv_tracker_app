@@ -1,7 +1,6 @@
 import 'package:bcv_tracker_app/config/routes/pages.dart';
 import 'package:bcv_tracker_app/core/i18n/app_translations.dart';
 import 'package:bcv_tracker_app/features/settings/presentation/page/settings_page.dart';
-import 'package:bcv_tracker_app/shared/presentation/controller/app_info_service.dart';
 import 'package:bcv_tracker_app/shared/presentation/controller/settings_controller.dart';
 import 'package:bcv_tracker_app/shared/presentation/widgets/base_layout.dart';
 import 'package:bcv_tracker_app/shared/presentation/widgets/base_modal.dart';
@@ -9,8 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../support/app_info_fake.dart';
 
 /// The branded strip, and what its two controls do since #37.
 ///
@@ -30,7 +30,7 @@ Future<void> _pumpLayout(
   Get.testMode = true;
   SharedPreferences.setMockInitialValues(<String, Object>{});
   Get.put(SettingsController(), permanent: true);
-  await putAppInfo();
+  await putFakeAppInfo();
 
   await tester.pumpWidget(
     GetMaterialApp(
@@ -51,24 +51,6 @@ Future<void> _pumpLayout(
   );
   await tester.pumpAndSettle();
 }
-
-/// La versión que estos tests dan por instalada.
-///
-/// Inyectada en vez de leída de la plataforma: `PackageInfo.fromPlatform()`
-/// necesita un canal, y una aserción contra la versión real del `pubspec` se
-/// rompería en cada release — que es exactamente el acoplamiento que #43 vino
-/// a quitar.
-Future<AppInfoService> putAppInfo() => Get.putAsync<AppInfoService>(
-  () => AppInfoService().init(
-    info: PackageInfo(
-      appName: 'BCV Tracker',
-      packageName: 'com.example.bcv_tracker_app',
-      version: '9.9.9',
-      buildNumber: '42',
-    ),
-  ),
-  permanent: true,
-);
 
 void main() {
   tearDown(Get.reset);

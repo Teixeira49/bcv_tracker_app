@@ -7,16 +7,16 @@ import 'package:bcv_tracker_app/core/i18n/app_messages.dart';
 import 'package:bcv_tracker_app/core/i18n/app_translations.dart';
 import 'package:bcv_tracker_app/features/settings/presentation/page/settings_about_page.dart';
 import 'package:bcv_tracker_app/features/settings/presentation/widgets/about_widgets.dart';
-import 'package:bcv_tracker_app/shared/presentation/controller/app_info_service.dart';
 import 'package:bcv_tracker_app/shared/presentation/controller/settings_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher_platform_interface/link.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
+
+import '../../support/app_info_fake.dart';
 
 /// A platform that declines every launch — a device with no browser, or an
 /// Android 11+ manifest missing its `<queries>` entry.
@@ -68,7 +68,7 @@ Future<void> _pumpAbout(WidgetTester tester) async {
   addTearDown(tester.view.reset);
   SharedPreferences.setMockInitialValues(<String, Object>{});
   Get.put(SettingsController(), permanent: true);
-  await putAppInfo();
+  await putFakeAppInfo();
 
   await tester.pumpWidget(
     GetMaterialApp(
@@ -87,24 +87,6 @@ Future<void> _tapRow(WidgetTester tester, String label) async {
   await tester.tap(find.text(label));
   await tester.pumpAndSettle();
 }
-
-/// La versión que estos tests dan por instalada.
-///
-/// Inyectada en vez de leída de la plataforma: `PackageInfo.fromPlatform()`
-/// necesita un canal, y una aserción contra la versión real del `pubspec` se
-/// rompería en cada release — que es exactamente el acoplamiento que #43 vino
-/// a quitar.
-Future<AppInfoService> putAppInfo() => Get.putAsync<AppInfoService>(
-  () => AppInfoService().init(
-    info: PackageInfo(
-      appName: 'BCV Tracker',
-      packageName: 'com.example.bcv_tracker_app',
-      version: '9.9.9',
-      buildNumber: '42',
-    ),
-  ),
-  permanent: true,
-);
 
 void main() {
   setUp(() {
@@ -302,7 +284,7 @@ void main() {
     Get.testMode = true;
     SharedPreferences.setMockInitialValues(<String, Object>{});
     Get.put(SettingsController(), permanent: true);
-    await putAppInfo();
+    await putFakeAppInfo();
 
     await tester.pumpWidget(
       GetMaterialApp(

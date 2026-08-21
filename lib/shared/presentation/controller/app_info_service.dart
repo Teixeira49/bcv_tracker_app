@@ -1,6 +1,9 @@
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+/// Reads the installed package. Injectable so a test can supply one — or fail.
+typedef PackageReader = Future<PackageInfo> Function();
+
 /// What version of the app is actually installed.
 ///
 /// **Read from the package at runtime, never from a constant.** `pubspec.yaml`
@@ -15,19 +18,45 @@ import 'package:package_info_plus/package_info_plus.dart';
 /// independent `PackageInfo.fromPlatform()` calls would satisfy that today and
 /// stop satisfying it the day one of them gains a format.
 ///
-/// **Registered through `InitialBinding.initServices()`, which `main` awaits.**
-/// The first frame does not read it — settings are a tap away — but
-/// `dependencies()` is *not* awaited by `GetMaterialApp`
-/// (`dependency-injection.md`), so a `putAsync` there resolves whenever it
-/// resolves and a `Get.find` that arrives first throws. "In practice it will
-/// have finished" is exactly the reasoning that rule warns against. The cost is
-/// one platform-channel round trip before `runApp`.
+/// ### Why it is registered in `dependencies()` and not `initServices()`
+///
+/// The first draft awaited it before `runApp`, with a two-second timeout, and
+/// the review of #121 was right to push back: `dependency-injection.md` states
+/// one criterion — *if the first frame reads it, `initServices()`; if not,
+/// `dependencies()`* — and the first frame does not read this. The rule was
+/// being cited to justify the opposite of what it says.
+///
+/// The reason the first draft reached for `initServices()` was real: a
+/// `putAsync` in `dependencies()` is **not awaited**, so a `Get.find` arriving
+/// first throws. What that argument missed is a third option — register a
+/// **synchronous instance** and let it fill itself in:
+///
+/// ```dart
+/// Get.put<AppInfoService>(AppInfoService()..load(), permanent: true);
+/// ```
+///
+/// The instance exists from the moment it is registered, so `Get.find` cannot
+/// throw; startup pays nothing; the timeout stops being necessary because
+/// nothing is waiting; and the observables mean a late answer still reaches the
+/// screen. The price is a theoretical frame showing `--` on a screen the user
+/// takes seconds to reach.
+///
+/// The bill for the first draft was visible in its own diff: six test files had
+/// to learn about `package_info_plus`, two of which have nothing to do with the
+/// version and only suffered it because it hung off `initServices()`.
 class AppInfoService extends GetxService {
+  /// What is shown while the package has not answered, or when it will not.
+  ///
+  /// The same placeholder `CurrencyHelpers` uses for a missing figure, so an
+  /// unknown version reads like every other absent value in the app.
+  static const String unknown = '--';
+
   /// Semantic version of the installed package — `1.1.0`.
   ///
   /// Matches the part of `pubspec.yaml`'s `version:` before the `+`, which is
-  /// what Codemagic passes as `--build-name`.
-  late final String version;
+  /// what Codemagic passes as `--build-name`. Observable because [load] fills
+  /// it in after the first frame; a plain field would freeze at `--`.
+  final RxString version = unknown.obs;
 
   /// Build number of the installed package — `3`.
   ///
@@ -35,52 +64,44 @@ class AppInfoService extends GetxService {
   /// is correct rather than a defect: `codemagic.yaml` passes
   /// `--build-number ${CM_BUILD_NUMBER}`, so the number in the repository is
   /// only what a local `flutter build` would stamp. What matters for a bug
-  /// report is the build the tester actually has, which is this one.
-  late final String buildNumber;
+  /// report is the build the tester actually has.
+  final RxString buildNumber = unknown.obs;
 
   /// Version and build as one string — `1.1.0 (3)`.
   ///
   /// The shape a bug report needs: the semantic version says what the code is,
   /// the build number says which artefact of it. Formatted here so the menu,
   /// «Acerca de» and the clipboard all carry the same text.
-  String get versionLabel => '$version ($buildNumber)';
+  String get versionLabel => '${version.value} (${buildNumber.value})';
 
-  /// What is shown when the platform will not say.
-  ///
-  /// The same placeholder `CurrencyHelpers` uses for a missing figure, so an
-  /// unknown version reads like every other absent value in the app.
-  static const String unknown = '--';
+  /// Whether the package answered. `false` means [versionLabel] is placeholders.
+  bool get isKnown => version.value != unknown;
 
-  /// Ceiling on how long startup will wait for the plugin.
+  /// Fills the observables in, in the background.
   ///
-  /// `main` awaits this before `runApp`, so a channel that never answers would
-  /// hold the app on a blank screen forever. Two seconds is far beyond what a
-  /// package read takes and far below what a user would tolerate — and it
-  /// stopped being hypothetical the moment the test suite hung on exactly that.
-  static const Duration _readTimeout = Duration(seconds: 2);
-
-  /// Reads the package and returns itself, for `Get.putAsync`.
+  /// Returns a `Future` so a test can await it, but **nothing in the app does**:
+  /// it is started with `..load()` at registration and the screens read the
+  /// observables. That is what removes the timeout the first draft needed —
+  /// a call nobody waits for cannot hold up a launch.
   ///
-  /// [info] is a parameter so a test can hand over a known package without a
-  /// platform channel; production leaves it out and the plugin answers.
+  /// Never throws. A version label is the least important thing on any screen
+  /// it appears on; failing to read it leaves `--`, which is information, and
+  /// **retryable** — unlike the `late final` of the first draft, which froze
+  /// the placeholder in for the life of the process.
   ///
-  /// **Never throws and never blocks past [_readTimeout].** A version label is
-  /// the least important thing on the screen and this call sits in front of the
-  /// first frame: failing to read it must degrade to `--`, not delay or crash
-  /// the launch. The same reasoning as `Environment.load` — a configuration
-  /// problem is something to report, not a reason to die before drawing.
-  Future<AppInfoService> init({PackageInfo? info}) async {
-    PackageInfo? resolved = info;
-    if (resolved == null) {
-      try {
-        resolved = await PackageInfo.fromPlatform().timeout(_readTimeout);
-      } on Object {
-        resolved = null;
-      }
+  /// [read] is the seam the review of #121 asked for. Injecting the *result*
+  /// (a `PackageInfo`) made the failure paths untestable: the only test of them
+  /// was `expect(unknown, '--')`, which is `'--' == '--'`. Injecting the
+  /// *reader* lets a test fail, hang or answer.
+  Future<void> load({PackageReader? read}) async {
+    try {
+      final PackageInfo info = await (read ?? PackageInfo.fromPlatform)();
+      version.value = info.version;
+      buildNumber.value = info.buildNumber;
+    } on Object {
+      // Left at `unknown`. Deliberately swallowed: there is no caller to
+      // report to — nothing awaits this — and a plugin that cannot answer is
+      // not a reason to take a screen down.
     }
-
-    version = resolved?.version ?? unknown;
-    buildNumber = resolved?.buildNumber ?? unknown;
-    return this;
   }
 }

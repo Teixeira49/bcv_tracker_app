@@ -16,15 +16,22 @@ part '../widgets/settings_menu.dart';
 
 /// Copies the installed version to the clipboard and says so.
 ///
+/// Private: its only caller is `settings_menu.dart`, a `part` of this file.
+///
 /// The detail that makes the entry useful rather than decorative (#43): what a
 /// bug report needs is the exact string, and reading it off a screen to retype
 /// it is where the digit gets lost.
 ///
 /// `ScaffoldMessenger`, not `Get.snackbar`, for the reason #42 found the hard
 /// way: GetX resolves its own overlay and throws from these screens.
-Future<void> copyVersion(BuildContext context) async {
+Future<void> _copyVersion(BuildContext context) async {
+  final AppInfoService info = Get.find<AppInfoService>();
+  // Nothing to put on a clipboard: copying `-- (--)` and announcing success
+  // would be a confirmation of nothing.
+  if (!info.isKnown) return;
+
   final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
-  final String label = Get.find<AppInfoService>().versionLabel;
+  final String label = info.versionLabel;
 
   await Clipboard.setData(ClipboardData(text: label));
   if (!context.mounted) return;
