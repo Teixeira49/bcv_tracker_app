@@ -12,6 +12,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../support/app_info_fake.dart';
+
 /// Golden references for the settings screen (#37), in light and dark: the menu
 /// and its sub-screens — the language list that replaced the dialog's dropdown,
 /// the theme grid, and the decimals counter the increment added.
@@ -31,6 +33,7 @@ Future<void> _seed() async {
   // Loaded explicitly, from an empty store, so the references do not depend on
   // the host machine's language.
   await settings.loadPreferences(deviceLocale: const Locale('es', 'ES'));
+  await putFakeAppInfo();
 }
 
 void main() {

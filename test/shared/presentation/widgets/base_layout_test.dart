@@ -10,6 +10,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../support/app_info_fake.dart';
+
 /// The branded strip, and what its two controls do since #37.
 ///
 /// The gear is the entry point to settings from every top-level screen, so
@@ -28,6 +30,7 @@ Future<void> _pumpLayout(
   Get.testMode = true;
   SharedPreferences.setMockInitialValues(<String, Object>{});
   Get.put(SettingsController(), permanent: true);
+  await putFakeAppInfo();
 
   await tester.pumpWidget(
     GetMaterialApp(

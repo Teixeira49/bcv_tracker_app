@@ -18,6 +18,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher_platform_interface/link.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 
+import '../../support/app_info_fake.dart';
+
 /// A platform that declines every launch — a device with no browser, or an
 /// Android 11+ manifest missing its `<queries>` entry.
 class _RefusingLauncher extends UrlLauncherPlatform {
@@ -68,6 +70,7 @@ Future<void> _pumpAbout(WidgetTester tester) async {
   addTearDown(tester.view.reset);
   SharedPreferences.setMockInitialValues(<String, Object>{});
   Get.put(SettingsController(), permanent: true);
+  await putFakeAppInfo();
 
   await tester.pumpWidget(
     GetMaterialApp(
@@ -236,6 +239,7 @@ void main() {
     Get.testMode = true;
     SharedPreferences.setMockInitialValues(<String, Object>{});
     Get.put(SettingsController(), permanent: true);
+    await putFakeAppInfo();
 
     await tester.pumpWidget(
       GetMaterialApp(
@@ -280,6 +284,9 @@ void main() {
       Get.testMode = true;
       SharedPreferences.setMockInitialValues(<String, Object>{});
       Get.put(SettingsController(), permanent: true);
+      // La pantalla muestra la versión desde #43, así que el servicio tiene
+      // que existir aunque este test vaya del color del logo.
+      await putFakeAppInfo();
 
       tester.view.devicePixelRatio = 1;
       tester.view.physicalSize = const Size(500, 2000);

@@ -315,4 +315,14 @@ class AppMessages {
   /// Shown when a link cannot be opened — no browser, or the platform refused.
   /// A silent tap is indistinguishable from a broken screen.
   static String get openLinkError => 'openLinkError'.tr;
+
+  // --- App version (#43) ---
+
+  static String get appVersion => 'appVersion'.tr;
+
+  static String get appVersionDescription => 'appVersionDescription'.tr;
+
+  /// Confirms the copy. Without it the tap is silent, and a control that does
+  /// nothing visible is one the user taps again wondering if it worked.
+  static String get versionCopied => 'versionCopied'.tr;
 }

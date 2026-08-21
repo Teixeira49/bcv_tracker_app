@@ -149,7 +149,8 @@ class AboutLinkTile extends StatelessWidget {
 
 /// A row that states a fact and goes nowhere.
 ///
-/// The author's name is one. Deliberately **not** an [AboutLinkTile]: that
+/// El nombre del autor y la versión (#43) son las dos. Deliberately **not** an
+/// [AboutLinkTile]: that
 /// shape ends in an open-in-new icon, which promises a browser. This one
 /// promises nothing, which is what it does — the author used to be a link to
 /// their profile and stopped being one when the project block was withdrawn,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../../config/theme/colors/colors_values.dart';
 import '../../../../config/theme/width/width_values.dart';
@@ -6,6 +7,7 @@ import '../../../../core/constants/app_links.dart';
 import '../../../../core/constants/market_constants.dart';
 import '../../../../core/helpers/external_link.dart';
 import '../../../../core/i18n/app_messages.dart';
+import '../../../../shared/presentation/controller/app_info_service.dart';
 import '../../../../shared/presentation/widgets/base_layout.dart';
 import '../widgets/about_widgets.dart';
 import '../widgets/settings_section.dart';
@@ -132,7 +134,7 @@ class _DataSourcesSection extends StatelessWidget {
   );
 }
 
-/// Who maintains it.
+/// Who maintains it, and which build the user is looking at.
 ///
 /// **Sin enlaces.** El autor era un enlace a su perfil y había una fila de
 /// «reportar un problema»; las dos salieron a petición del propietario tras
@@ -147,6 +149,17 @@ class _CreditsSection extends StatelessWidget {
       AboutFactRow(
         label: AppMessages.developedByLabel,
         value: AppLinks.authorName,
+      ),
+      // El mismo `AppInfoService` que lee el menú (#43): un solo servicio, así
+      // que las dos pantallas no pueden citar builds distintas.
+      //
+      // `Obx`, a diferencia de la fila de arriba: la versión llega después del
+      // primer build ahora que nada la espera antes de `runApp`.
+      Obx(
+        () => AboutFactRow(
+          label: AppMessages.appVersion,
+          value: Get.find<AppInfoService>().versionLabel,
+        ),
       ),
     ],
   );

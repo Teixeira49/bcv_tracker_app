@@ -125,4 +125,9 @@ const Map<String, String> itIt = {
   'reportIssueLabel': 'Segnala un problema',
   'openLinkError': 'Impossibile aprire il link',
   'informationSection': 'Informazioni',
+
+  // --- App version (#43) ---
+  'appVersion': 'Versione',
+  'appVersionDescription': 'Tocca per copiarla in una segnalazione',
+  'versionCopied': 'Versione copiata',
 };

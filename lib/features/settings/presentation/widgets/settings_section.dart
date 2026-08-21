@@ -115,6 +115,7 @@ class SettingsMenuTile extends StatelessWidget {
     required this.title,
     required this.onTap,
     this.value,
+    this.trailingIcon = Icons.chevron_right_rounded,
     this.description,
   });
 
@@ -140,6 +141,14 @@ class SettingsMenuTile extends StatelessWidget {
 
   /// Opens the sub-screen where the choice is made.
   final VoidCallback onTap;
+
+  /// What the row ends in.
+  ///
+  /// A chevron by default, because almost every row here drills down. The
+  /// version row (#43) **copies** instead, and ending it in a chevron would
+  /// promise a screen that does not exist — the affordance has to match what
+  /// the tap does.
+  final IconData trailingIcon;
 
   @override
   Widget build(BuildContext context) => InkWell(
@@ -218,7 +227,7 @@ class SettingsMenuTile extends StatelessWidget {
               ),
             ),
           Icon(
-            Icons.chevron_right_rounded,
+            trailingIcon,
             size: 20,
             color: ColorValues.textTertiary(context),
           ),

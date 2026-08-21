@@ -121,4 +121,9 @@ const Map<String, String> jaJp = {
   'reportIssueLabel': '問題を報告',
   'openLinkError': 'リンクを開けませんでした',
   'informationSection': '情報',
+
+  // --- App version (#43) ---
+  'appVersion': 'バージョン',
+  'appVersionDescription': 'タップすると報告用にコピーします',
+  'versionCopied': 'バージョンをコピーしました',
 };

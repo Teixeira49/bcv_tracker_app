@@ -10,6 +10,7 @@ import '../../shared/data/datasource/datasource.dart';
 import '../../shared/data/repositories/currency_repository.dart';
 import '../../shared/data/repositories/dollar_repositories.dart';
 import '../../shared/domain/repositories/dollar_repositories.dart';
+import '../../shared/presentation/controller/app_info_service.dart';
 import '../../shared/presentation/controller/settings_controller.dart';
 import '../enviroment/enviroment.dart';
 
@@ -73,6 +74,13 @@ class InitialBinding extends Bindings {
     // that used to sit on this line was inert anyway — `main` had already
     // registered the instance with `Get.put`, which is the double registration
     // #45 catalogued.
+
+    // The version the settings menu and «Acerca de» show (#43). **Not** in
+    // `initServices()`: the first frame does not read it, which is the criterion
+    // this file's own rule states. Registered synchronously and told to fill
+    // itself in — the instance exists immediately, so `Get.find` cannot hit an
+    // unresolved `putAsync`, and startup waits for nothing.
+    Get.put<AppInfoService>(AppInfoService()..load(), permanent: true);
 
     // New Injections
     Get.put<CurrencyRepository>(CurrencyRepository(), permanent: true);

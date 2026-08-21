@@ -126,4 +126,9 @@ const Map<String, String> esEs = {
   'reportIssueLabel': 'Reportar un problema',
   'openLinkError': 'No se pudo abrir el enlace',
   'informationSection': 'Información',
+
+  // --- App version (#43) ---
+  'appVersion': 'Versión',
+  'appVersionDescription': 'Tócala para copiarla en un reporte',
+  'versionCopied': 'Versión copiada',
 };

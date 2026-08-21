@@ -121,4 +121,9 @@ const Map<String, String> koKr = {
   'reportIssueLabel': '문제 신고',
   'openLinkError': '링크를 열 수 없습니다',
   'informationSection': '정보',
+
+  // --- App version (#43) ---
+  'appVersion': '버전',
+  'appVersionDescription': '탭하면 신고용으로 복사됩니다',
+  'versionCopied': '버전을 복사했습니다',
 };

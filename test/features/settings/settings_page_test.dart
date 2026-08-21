@@ -15,6 +15,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../support/app_info_fake.dart';
+
 /// The settings screen #37 replaced the dialog with: the menu, the three choice
 /// sub-screens, and the navigation between them.
 ///
@@ -45,6 +47,7 @@ Future<SettingsController> _pumpSettings(
     permanent: true,
   );
   await controller.loadPreferences(deviceLocale: const Locale('es', 'ES'));
+  await putFakeAppInfo();
 
   await tester.pumpWidget(
     GetMaterialApp(
@@ -531,10 +534,10 @@ void main() {
         prefs: <String, Object>{'converter_decimals': 7},
       );
 
-      // Five entries now — the four settings plus «Acerca de» (#42), which
-      // opens a screen instead of setting anything. The criterion "adding a
-      // setting is adding an entry" collected rather than asserted, twice.
-      expect(find.byType(SettingsMenuTile), findsNWidgets(5));
+      // Seis: los cuatro ajustes, «Acerca de» (#42) y la versión (#43). Ni la
+      // quinta ni la sexta configuran nada, y ninguna obligó a rediseñar el
+      // menú — el criterio de #37 recogido por tercera vez.
+      expect(find.byType(SettingsMenuTile), findsNWidgets(6));
       expect(find.text(AppMessages.converterDecimals), findsOneWidget);
       expect(find.text('7'), findsOneWidget);
     });
