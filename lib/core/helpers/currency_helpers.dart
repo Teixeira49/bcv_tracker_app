@@ -4,6 +4,7 @@ import 'package:bcv_tracker_app/core/constants/constants.dart';
 import 'package:bcv_tracker_app/core/constants/market_constants.dart';
 import 'package:bcv_tracker_app/core/helpers/backend_date.dart';
 import 'package:bcv_tracker_app/core/i18n/app_messages.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../config/theme/icons/icons_constants.dart';
@@ -131,8 +132,103 @@ class CurrencyHelpers {
     return '${castCurrencyDisplayCode(currencyCode)}/VES';
   }
 
+  /// The locale every number on screen is formatted for.
+  ///
+  /// **`Get.locale`, not the device's.** The user can pick a language in
+  /// settings that differs from the phone's, and the separator has to follow
+  /// what they are reading, not what Android thinks they read. Falls back to
+  /// `intl`'s current locale only before `GetMaterialApp` has assigned one,
+  /// which in practice is tests.
+  static String get displayLocale =>
+      Get.locale?.toString() ?? Intl.getCurrentLocale();
+
+  /// **The** number formatter of the app. Every figure the user reads goes
+  /// through here.
+  ///
+  /// `toStringAsFixed` always writes a `.`, whatever the language — and six of
+  /// the ten this app ships use a comma ([#63](https://github.com/Teixeira49/bcv_tracker_app/issues/63)).
+  /// A rate punctuated with the wrong mark is not a style slip in a financial
+  /// app: it is a figure the reader has to stop and re-read to be sure of.
+  ///
+  /// [minDecimals] and [maxDecimals] give the floor-and-ceiling behaviour
+  /// directly — `NumberFormat` pads up to the minimum and trims trailing zeros
+  /// down to it, which is what [castAmount] used to do by hand with string
+  /// surgery.
+  ///
+  /// **[grouping] is off wherever the figure travels back into a text field.**
+  /// The thousands separator makes a rate far easier to read, but the
+  /// converter's amount is carried across by `CurrencyDetailController.
+  /// toggleDirection` and re-parsed: `1.234,57` reaches
+  /// `CurrencyConversion.parseAmount`, which normalises the comma and hands
+  /// `1.234.57` to `double.tryParse` — `0.0`, and the user's figure is gone.
+  /// `AmountInputFormatter` would reject the next keystroke on top. Display-only
+  /// figures group; round-tripping ones do not.
+  static String formatNumber(
+    double value, {
+    required int minDecimals,
+    required int maxDecimals,
+    bool grouping = true,
+  }) {
+    final NumberFormat format = _formatFor(displayLocale)
+      ..minimumFractionDigits = minDecimals
+      ..maximumFractionDigits = maxDecimals;
+    if (!grouping) {
+      format.turnOffGrouping();
+    }
+    // Non-finite never reaches the screen, for the same reason
+    // `CurrencyConversion.sanitize` exists: `NumberFormat` renders `Infinity`
+    // and `NaN` verbatim.
+    return format.format(value.isFinite ? value : 0.0);
+  }
+
+  /// A formatter for [locale], or for the fallback when `intl` does not know it.
+  ///
+  /// **`NumberFormat` does not fail quietly, and it does not fall back either.**
+  /// A code it has never heard of raises `ArgumentError` — measured on intl
+  /// 0.18.1 — from inside the `build` of every card that shows a figure. Today
+  /// the only source is `Get.locale`, always one of the ten this build ships,
+  /// but [displayLocale] is public and the next caller may not be.
+  ///
+  /// What **is** silent is the descent to the language subtag, and it happens
+  /// to six of the ten: `fr_FR→fr`, `de_DE→de`, `it_IT→it`, `ja_JP→ja`,
+  /// `ko_KR→ko`, `ru_RU→ru`. Harmless here, because those regional variants
+  /// punctuate alike — but not a rule to lean on: `pt_PT` and `pt_BR` genuinely
+  /// differ, and only the first is in the list.
+  static NumberFormat _formatFor(String locale) {
+    try {
+      return NumberFormat.decimalPattern(locale);
+    } on ArgumentError {
+      return NumberFormat.decimalPattern('en_US');
+    }
+  }
+
+  /// The amount as it appears **inside an editable field**.
+  ///
+  /// A third shape, and the reason is the caret. [castAmount] rounds to the
+  /// user's ceiling, which is right for a result and wrong for a field being
+  /// typed into: rounding `12,345` to `12,35` while the user is still writing
+  /// rewrites the text under their finger. So this one **does not round** —
+  /// `minDecimals: 0`, a high ceiling — and only replaces the separator.
+  ///
+  /// Introduced by #63's review. The input side used to print
+  /// `convertedValue.toString()`, so after a swap the largest figure on the
+  /// converter read `0.006565988181221273` — eighteen decimals **and a dot**,
+  /// while the result right above it had a comma. The long tail was already
+  /// there; the mismatched separator was this issue's doing.
+  static String castEditableAmount(double value) => formatNumber(
+    value,
+    minDecimals: 0,
+    maxDecimals: Constants.converterMaxDecimals,
+    grouping: false,
+  );
+
+  /// A rate in bolívares, as the cards show it.
+  ///
+  /// Grouped: this figure is read, never typed back. `Bs.S` stays untranslated
+  /// and unformatted — it is a currency symbol, which `i18n-convention.md`
+  /// exempts explicitly.
   static String castCurrency({required double value}) {
-    return 'Bs.S ${value.toStringAsFixed(2)}';
+    return 'Bs.S ${formatNumber(value, minDecimals: 2, maxDecimals: 2)}';
   }
 
   /// Significant digits kept when [Constants.converterAmountDecimals] alone
@@ -188,11 +284,12 @@ class CurrencyHelpers {
       Constants.converterMaxDecimals,
     );
 
-    // Detected by rendering rather than by comparing magnitudes, so the rule is
-    // exactly "the floor would have shown nothing" — no threshold to keep in
-    // sync with the constants.
-    final bool erasedAtFloor =
-        safe != 0 && double.parse(safe.toStringAsFixed(floor)) == 0;
+    // "The floor would have rounded this to zero", stated as arithmetic. It
+    // used to be `double.parse(safe.toStringAsFixed(floor)) == 0`, which said
+    // the same thing by rendering — replaced because #63 removes the
+    // `toStringAsFixed` calls that could be mistaken for output, and because a
+    // half-ulp comparison is what the rounding actually does.
+    final bool erasedAtFloor = safe != 0 && safe.abs() < 0.5 * pow(10, -floor);
 
     int decimals = ceiling;
     if (erasedAtFloor) {
@@ -204,25 +301,18 @@ class CurrencyHelpers {
       decimals = expanded > ceiling ? expanded : ceiling;
     }
 
-    return _trimToFloor(safe.toStringAsFixed(decimals), floor);
-  }
-
-  /// Drops trailing zeros from [fixed], never leaving fewer than [floor]
-  /// decimals.
-  ///
-  /// String surgery rather than arithmetic on purpose: [fixed] is already the
-  /// rounded, final rendering, and re-parsing it to re-format would reintroduce
-  /// the binary representation this whole method exists to hide.
-  static String _trimToFloor(String fixed, int floor) {
-    final int dot = fixed.indexOf('.');
-    if (dot < 0) return fixed;
-
-    int end = fixed.length;
-    final int minEnd = dot + 1 + floor;
-    while (end > minEnd && fixed[end - 1] == '0') {
-      end--;
-    }
-    return fixed.substring(0, end);
+    // Ungrouped, and that is load-bearing: this is the figure the detail
+    // sheet carries back into the amount field. See [formatNumber].
+    //
+    // The trailing zeros the old `_trimToFloor` stripped by hand are now
+    // `NumberFormat`'s job — it pads to `minimumFractionDigits` and trims to it,
+    // which is the same rule expressed once instead of twice.
+    return formatNumber(
+      safe,
+      minDecimals: floor,
+      maxDecimals: decimals,
+      grouping: false,
+    );
   }
 
   static String castCurrencySymbolText({required String currencyCode}) {
@@ -327,14 +417,29 @@ class CurrencyHelpers {
   ///
   /// `change` is optional in the contract, so a rate can arrive without it —
   /// which is why `null` degrades to [emptyValuePlaceholder] instead of `0%`,
-  /// a figure the user would read as "the rate did not move". The four decimals
-  /// match what `PerformanceIndicatorWidget` already shows in the cards.
+  /// a figure the user would read as "the rate did not move".
+  ///
+  /// **Two to four decimals, decided in #63.** It used to be a flat four —
+  /// `+1.2400%` on every card, which is more precision than a daily change
+  /// carries and four characters the eye skips past to reach what matters. A
+  /// floor of two reads as a percentage; a ceiling of four keeps a move of
+  /// `0,0012 %` from collapsing into `0,00 %`, which would claim the rate held
+  /// when it did not. The zeros in between are trimmed, so the common case is
+  /// short and the rare case is still true.
+  ///
+  /// Ungrouped: a change never reaches four digits before the decimal mark.
   static String castTendency({double? value}) {
     if (value == null) {
       return emptyValuePlaceholder;
     }
     final String sign = value > 0 ? '+' : '';
-    return '$sign${value.toStringAsFixed(4)}%';
+    final String number = formatNumber(
+      value,
+      minDecimals: 2,
+      maxDecimals: 4,
+      grouping: false,
+    );
+    return '$sign$number%';
   }
 
   /// Formats an optional rate timestamp, degrading to [emptyValuePlaceholder].

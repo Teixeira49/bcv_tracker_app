@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import '../../../../core/helpers/currency_helpers.dart';
 import '../../../../shared/data/repositories/currency_repository.dart';
 import '../../../../shared/domain/conversion.dart';
 import '../../../../shared/domain/entities/currency.dart';
@@ -188,9 +189,27 @@ class ConverterController extends GetxController {
     }
   }
 
-  /// The rate line under each card — `1.0 ≈ 826.84`, in the pair's own units.
-  String getRoundedCurrency() =>
-      '${fromCurrency.originalValue} ≈ ${toCurrency.originalValue}';
+  /// The rate line under each card — `1,00 ≈ 826,84`, in the pair's own units.
+  ///
+  /// Both sides go through [CurrencyHelpers.formatNumber] (#63). They used to be
+  /// interpolated `double`s, which is worse than the `toStringAsFixed` the issue
+  /// catalogued: `1.0 ≈ 826.8400000000001` is what a raw `toString` produces,
+  /// and the separator was wrong in six of the ten languages either way.
+  ///
+  /// Grouped, because this line is read and never typed back.
+  String getRoundedCurrency() {
+    final String from = CurrencyHelpers.formatNumber(
+      fromCurrency.originalValue,
+      minDecimals: 2,
+      maxDecimals: 2,
+    );
+    final String to = CurrencyHelpers.formatNumber(
+      toCurrency.originalValue,
+      minDecimals: 2,
+      maxDecimals: 2,
+    );
+    return '$from ≈ $to';
+  }
 
   /// Whether the pair currently selected cannot produce a conversion.
   ///
