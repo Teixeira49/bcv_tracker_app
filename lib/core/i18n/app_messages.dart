@@ -294,6 +294,12 @@ class AppMessages {
 
   static String get marketKindAggregator => 'marketKindAggregator'.tr;
 
+  /// Las cuatro etiquetas del bloque «Proyecto» y la de reportar un problema
+  /// **no se renderizan hoy**, y no es un olvido: el bloque se retiró de
+  /// «Acerca de» tras la prueba en dispositivo (no exponer el estado del
+  /// proyecto en una versión pública) y vuelve detrás de un interruptor por
+  /// dispositivo. Se conservan traducidas para no rehacer diez idiomas
+  /// entonces; si ese feature se descarta, se borran con él.
   static String get licenseLabel => 'licenseLabel'.tr;
 
   static String get appRepositoryLabel => 'appRepositoryLabel'.tr;

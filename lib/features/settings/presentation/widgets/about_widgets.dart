@@ -23,6 +23,13 @@ class AboutHeader extends StatelessWidget {
         Image.asset(
           Constants.appLogoAsset,
           height: 72,
+          // Tinted per mode, and it has to be: the artwork is monochrome white,
+          // which is right on the branded strip and invisible here — this is
+          // the first screen that puts the mark on a **light** surface, so it
+          // was white on white. `srcIn` keeps the silhouette and replaces the
+          // ink, the same thing the splash does with its `colorFilter`.
+          color: ColorValues.fgBrandMark(context),
+          colorBlendMode: BlendMode.srcIn,
           // Decorative: the name is right underneath, so announcing the logo
           // to a screen reader would read the app's identity out twice.
           excludeFromSemantics: true,
@@ -136,6 +143,60 @@ class AboutLinkTile extends StatelessWidget {
           ),
         ],
       ),
+    ),
+  );
+}
+
+/// A row that states a fact and goes nowhere.
+///
+/// The author's name is one. Deliberately **not** an [AboutLinkTile]: that
+/// shape ends in an open-in-new icon, which promises a browser. This one
+/// promises nothing, which is what it does — the author used to be a link to
+/// their profile and stopped being one when the project block was withdrawn,
+/// because that profile is the repository by another route.
+class AboutFactRow extends StatelessWidget {
+  const AboutFactRow({super.key, required this.label, required this.value});
+
+  /// From `AppMessages`.
+  final String label;
+
+  /// Already formatted. This widget composes nothing.
+  final String value;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: EdgeInsets.symmetric(
+      horizontal: WidthValues.spacingMd,
+      vertical: WidthValues.spacingSm,
+    ),
+    child: Row(
+      children: <Widget>[
+        Expanded(
+          flex: 6,
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 16,
+              color: ColorValues.textPrimary(context),
+            ),
+          ),
+        ),
+        SizedBox(width: WidthValues.spacingXs),
+        Expanded(
+          flex: 5,
+          child: Text(
+            value,
+            textAlign: TextAlign.end,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: ColorValues.textBrandSecondary(context),
+            ),
+          ),
+        ),
+      ],
     ),
   );
 }
