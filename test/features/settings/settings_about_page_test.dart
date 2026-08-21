@@ -16,6 +16,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher_platform_interface/link.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 
+/// A platform that declines every launch — a device with no browser, or an
+/// Android 11+ manifest missing its `<queries>` entry.
+class _RefusingLauncher extends UrlLauncherPlatform {
+  @override
+  LinkDelegate? get linkDelegate => null;
+
+  @override
+  Future<bool> canLaunch(String url) async => false;
+
+  @override
+  Future<bool> launchUrl(String url, LaunchOptions options) async => false;
+}
+
 /// Records what the screen asked the platform to open.
 class _FakeLauncher extends UrlLauncherPlatform {
   final List<String> launched = <String>[];
@@ -101,7 +114,31 @@ void main() {
       await _pumpAbout(tester);
 
       expect(find.byType(SettingsAboutPage), findsOneWidget);
-      expect(Markets.sources.length, 9);
+      // No un 9 mágico: cada mercado que el backend puede reportar tiene su
+      // ficha. Un décimo añadido a `Markets` se caería de «Acerca de» en
+      // silencio, y esta pantalla es justamente la que promete listarlos todos.
+      const List<String> everyMarket = <String>[
+        Markets.bcv,
+        Markets.yadio,
+        Markets.binance,
+        Markets.bybit,
+        Markets.okx,
+        Markets.bitget,
+        Markets.airtm,
+        Markets.dolarApi,
+        Markets.exchangeMonitor,
+      ];
+      expect(
+        Markets.sources.map((MarketSource s) => s.name).toSet(),
+        everyMarket.toSet(),
+      );
+      for (final String market in Markets.averageTab) {
+        expect(
+          Markets.sources.any((MarketSource s) => s.name == market),
+          isTrue,
+          reason: '$market se muestra en Home y no está en «Acerca de».',
+        );
+      }
 
       for (final MarketSource source in Markets.sources) {
         expect(
@@ -135,6 +172,19 @@ void main() {
       }
 
       expect(launcher.launched.length, Markets.sources.length);
+    });
+
+    testWidgets('the block says what it is a list of', (
+      WidgetTester tester,
+    ) async {
+      await _pumpAbout(tester);
+
+      // Nueve marcas sueltas es exactamente el problema que #42 plantea, así
+      // que la línea que las presenta es parte del entregable. Se le pasó a la
+      // primera versión: `SettingsSection` aceptaba el texto y no lo pintaba,
+      // `flutter analyze` calla ante un campo público sin usar, y el golden
+      // regenerado consagró la ausencia.
+      expect(find.text(AppMessages.dataSourcesNote), findsOneWidget);
     });
 
     testWidgets('the market names are not translated', (
@@ -195,6 +245,65 @@ void main() {
       expect(launcher.launched.last, endsWith('/issues/new'));
       expect(find.text('Teixeira49'), findsOneWidget);
     });
+  });
+
+  testWidgets('a link the platform refuses says so instead of doing nothing', (
+    WidgetTester tester,
+  ) async {
+    UrlLauncherPlatform.instance = _RefusingLauncher();
+    await _pumpAbout(tester);
+
+    await tester.tap(find.text(AppMessages.appRepositoryLabel));
+    await tester.pump();
+    await tester.pump();
+
+    // Un toque que no hace nada es indistinguible de una pantalla rota.
+    //
+    // Este test encontró un defecto real antes de poder afirmar esto:
+    // `Get.snackbar` resolvía su propio overlay y lanzaba «No Overlay widget
+    // found» desde esta pantalla — la ruta de error fallaba más ruidosamente
+    // que el error que iba a reportar. Con `ScaffoldMessenger` el mensaje se
+    // monta en el `Scaffold` que la página ya tiene, y se puede ver.
+    expect(find.text(AppMessages.openLinkError), findsOneWidget);
+  });
+
+  testWidgets('it fits a phone-width screen with the system text enlarged', (
+    WidgetTester tester,
+  ) async {
+    // El resto del archivo usa una ventana alta para derrotar la construcción
+    // perezosa del `ListView`; eso deja sin ejercitar el ancho real de un
+    // teléfono, que es donde una fila de tres columnas se rompe. 360 dp con la
+    // escala tipográfica al doble es el peor caso razonable.
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(360, 4000);
+    addTearDown(tester.view.reset);
+
+    Get.testMode = true;
+    SharedPreferences.setMockInitialValues(<String, Object>{});
+    Get.put(SettingsController(), permanent: true);
+
+    await tester.pumpWidget(
+      GetMaterialApp(
+        translations: AppTranslations(),
+        // Alemán: las etiquetas más largas de los diez idiomas.
+        locale: const Locale('de', 'DE'),
+        fallbackLocale: const Locale('en', 'US'),
+        getPages: AppPages.routes,
+        initialRoute: AppRoutes.settingsAbout,
+        builder: (BuildContext context, Widget? child) =>
+            MediaQuery.withClampedTextScaling(
+              minScaleFactor: 2,
+              maxScaleFactor: 2,
+              child: child!,
+            ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // Sin desbordes: `tester.takeException()` recoge el `FlutterError` que
+    // lanza un `RenderFlex` que no cabe.
+    expect(tester.takeException(), isNull);
+    expect(find.byType(SettingsAboutPage), findsOneWidget);
   });
 
   testWidgets('every row that leaves the app says so', (

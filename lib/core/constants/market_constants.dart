@@ -63,6 +63,16 @@ class Markets {
   /// Ordered as the About screen lists them: the official rate first, then the
   /// rest alphabetically. It is **not** [averageTab]'s order, which is the
   /// backend's display order for a different question.
+  ///
+  /// **Every URL is the market's own site, and none is a deep link.** The first
+  /// draft mixed the two — `p2p.binance.com` for Binance's order book and the
+  /// corporate home for the other three exchanges — which is worse than either
+  /// rule applied consistently: a user comparing two rows would have been sent
+  /// to two different kinds of place. Deep links to each P2P book would be more
+  /// precise and are the better answer once someone has opened all four and
+  /// confirmed the paths; guessing them from memory is how a row ends up
+  /// pointing at a 404. `dolarapi.com` for the same reason: `ve.dolarapi.com`
+  /// is the API host and would have answered a curious tap with raw JSON.
   static const List<MarketSource> sources = <MarketSource>[
     MarketSource(
       name: bcv,
@@ -77,7 +87,7 @@ class Markets {
     MarketSource(
       name: binance,
       kind: MarketKind.peerToPeer,
-      url: 'https://p2p.binance.com',
+      url: 'https://www.binance.com',
     ),
     MarketSource(
       name: bitget,
@@ -92,7 +102,7 @@ class Markets {
     MarketSource(
       name: dolarApi,
       kind: MarketKind.aggregator,
-      url: 'https://ve.dolarapi.com',
+      url: 'https://dolarapi.com',
     ),
     MarketSource(
       name: exchangeMonitor,

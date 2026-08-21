@@ -28,6 +28,11 @@ class AppLinks {
   /// Who maintains it.
   static const String author = 'https://github.com/Teixeira49';
 
+  /// Shown verbatim in the credits. Here and not inline in the screen for the
+  /// same reason as [licenseName]: a name that appears in two places is a name
+  /// that can disagree with itself.
+  static const String authorName = 'Teixeira49';
+
   /// Shown verbatim next to the licence row. Matches the `LICENSE` at the root
   /// of the repository — if one changes, both change.
   static const String licenseName = 'Apache 2.0';

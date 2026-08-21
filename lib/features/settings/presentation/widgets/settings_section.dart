@@ -49,15 +49,32 @@ class SettingsSection extends StatelessWidget {
         Padding(
           padding: EdgeInsets.only(
             left: WidthValues.spacingXs,
+            right: WidthValues.spacingXs,
             bottom: WidthValues.spacingXs,
           ),
-          child: Text(
-            title,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: ColorValues.textTertiary(context),
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: ColorValues.textTertiary(context),
+                ),
+              ),
+              if (note != null) ...<Widget>[
+                SizedBox(height: WidthValues.spacingXxs),
+                Text(
+                  note!,
+                  style: TextStyle(
+                    fontSize: 12,
+                    height: 1.4,
+                    color: ColorValues.textTertiary(context),
+                  ),
+                ),
+              ],
+            ],
           ),
         ),
         Card(

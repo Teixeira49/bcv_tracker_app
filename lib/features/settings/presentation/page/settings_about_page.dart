@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../../../config/enviroment/enviroment.dart';
 import '../../../../config/theme/colors/colors_values.dart';
@@ -76,18 +75,30 @@ class SettingsAboutPage extends StatelessWidget {
 /// Opens [url], and says so when it cannot.
 ///
 /// Shared by every row of the screen so the failure message is written once.
-/// The snackbar is the only feedback available: the platform gives no callback
-/// for "the browser opened", so success is simply the app going to the
-/// background.
-Future<void> _open(String url) async {
+/// A message is the only feedback available: the platform gives no callback for
+/// "the browser opened", so success is simply the app going to the background.
+///
+/// **`ScaffoldMessenger`, not `Get.snackbar`**, though the rest of the app
+/// reaches for GetX first. `Get.snackbar` resolves its own overlay, and from
+/// this screen it throws `No Overlay widget found` — reproduced in
+/// `settings_about_page_test.dart` before this was changed. Flutter's own
+/// messenger needs nothing but the `Scaffold` this page already has, so the
+/// error path cannot fail more loudly than the error it is reporting.
+Future<void> _open(BuildContext context, String url) async {
+  final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
   final bool opened = await ExternalLink.open(url);
-  if (!opened) {
-    Get.snackbar(
-      AppMessages.aboutView,
-      AppMessages.openLinkError,
-      snackPosition: SnackPosition.BOTTOM,
-    );
-  }
+  if (opened) return;
+
+  // The await crossed a frame boundary, so the element may be gone — the user
+  // can tap a link and leave before the platform answers.
+  if (!context.mounted) return;
+
+  messenger.showSnackBar(
+    SnackBar(
+      content: Text(AppMessages.openLinkError),
+      behavior: SnackBarBehavior.floating,
+    ),
+  );
 }
 
 /// The nine markets, each with what kind of reference it is and a way to check
@@ -110,7 +121,7 @@ class _DataSourcesSection extends StatelessWidget {
           title: source.name,
           isBrandName: true,
           trailing: marketKindLabel(source.kind),
-          onTap: () => _open(source.url),
+          onTap: () => _open(context, source.url),
         ),
     ],
   );
@@ -131,19 +142,19 @@ class _ProjectSection extends StatelessWidget {
         AboutLinkTile(
           title: AppMessages.licenseLabel,
           trailing: AppLinks.licenseName,
-          onTap: () => _open(AppLinks.licenseUrl),
+          onTap: () => _open(context, AppLinks.licenseUrl),
         ),
         AboutLinkTile(
           title: AppMessages.appRepositoryLabel,
-          onTap: () => _open(AppLinks.repository),
+          onTap: () => _open(context, AppLinks.repository),
         ),
         AboutLinkTile(
           title: AppMessages.backendRepositoryLabel,
-          onTap: () => _open(AppLinks.backendRepository),
+          onTap: () => _open(context, AppLinks.backendRepository),
         ),
         AboutLinkTile(
           title: AppMessages.apiDocsLabel,
-          onTap: () => _open(apiDocs),
+          onTap: () => _open(context, apiDocs),
         ),
       ],
     );
@@ -158,12 +169,12 @@ class _CreditsSection extends StatelessWidget {
     children: <Widget>[
       AboutLinkTile(
         title: AppMessages.developedByLabel,
-        trailing: 'Teixeira49',
-        onTap: () => _open(AppLinks.author),
+        trailing: AppLinks.authorName,
+        onTap: () => _open(context, AppLinks.author),
       ),
       AboutLinkTile(
         title: AppMessages.reportIssueLabel,
-        onTap: () => _open(AppLinks.reportIssue),
+        onTap: () => _open(context, AppLinks.reportIssue),
       ),
     ],
   );
