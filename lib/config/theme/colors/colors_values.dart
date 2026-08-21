@@ -325,8 +325,13 @@ class ColorValues {
   /// aplica con un `colorFilter` fijo; sobre una superficie clara desaparece.
   /// «Acerca de» (#42) fue el primer sitio que puso el logo sobre la superficie
   /// clara y lo destapó: blanco sobre blanco.
+  ///
+  /// En claro es **`primary`, no `midnight`**: el degradado de la franja va de
+  /// `midnight` a `primary`, y la marca tiene que leerse como parte de esa
+  /// familia. Con `midnight` contrastaba pero salía casi negra, que es un color
+  /// que la app no usa para nada suyo.
   static final _fgBrandMark = _ColorScheme(
-    light: AppColors.midnight,
+    light: AppColors.primary,
     dark: Colors.white,
   );
 

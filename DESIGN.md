@@ -167,9 +167,11 @@ El schema de `colors` es un mapa plano *token → color*, pero esta app asigna h
 | Texto secundario | `neutral` (grey.600) | grey claro |
 | Acción / marca (fg) | `primary` / `secondary` | tonos claros de `primary` |
 | Bordes sutiles | `info` con alpha | `info` con alpha |
-| Marca sobre superficie (`fgBrandMark`) | `midnight` | blanco |
+| Marca sobre superficie (`fgBrandMark`) | `primary` | blanco |
 
 **Sobre `fgBrandMark`.** El arte de la marca es monocromo y quien lo pinta elige el color — así lo hace ya el splash con un `colorFilter`. Sobre las superficies **oscuras** de la app (la franja, el splash) el blanco es correcto; sobre una **clara** desaparece. «Acerca de» fue el primer sitio que puso el logo sobre la superficie clara y lo dejó al descubierto: blanco sobre blanco. El token invierte la tinta por modo en vez de fijar un color, que es lo que permite reutilizar el mismo asset en las dos.
+
+En claro es **`primary` y no `midnight`**: el degradado de la franja va de `midnight` a `primary`, así que la marca sobre una superficie clara tiene que leerse como parte de esa misma familia. `midnight` contrasta igual de bien, pero sale casi negro — un color que la app no usa para nada propio.
 
 ## Typography
 
