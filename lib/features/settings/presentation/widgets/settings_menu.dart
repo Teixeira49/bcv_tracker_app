@@ -74,6 +74,22 @@ class _SettingsMenu extends StatelessWidget {
               ),
             ],
           ),
+          // A third group, and not a fourth row in «Preferencias»: «Acerca de»
+          // sets nothing. Mixing a destination in among the settings would make
+          // the value column meaningless for one row — and this is where #43
+          // puts the version, which is the same kind of thing.
+          SettingsSection(
+            title: AppMessages.informationSection,
+            children: <Widget>[
+              SettingsMenuTile(
+                icon: Icons.info_outline_rounded,
+                title: AppMessages.aboutView,
+                description: AppMessages.aboutDescription,
+                // No `value`: this row reports no state, it opens a screen.
+                onTap: () => Get.toNamed<void>(AppRoutes.settingsAbout),
+              ),
+            ],
+          ),
         ],
       ),
     );

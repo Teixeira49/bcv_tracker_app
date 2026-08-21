@@ -99,4 +99,28 @@ const Map<String, String> enUs = {
   'decimalsExample': 'Example',
   'decreaseAction': 'One fewer',
   'increaseAction': 'One more',
+
+  // --- About screen (#42) ---
+  'aboutView': 'About',
+  'aboutDescription': 'The app, its sources and its licence',
+  'aboutIntro':
+      'What this app is, where its rates come from and who maintains it.',
+  'appTagline':
+      'Check BCV and parallel market rates, and convert between currencies.',
+  'dataSourcesSection': 'Data sources',
+  'dataSourcesNote':
+      'Every rate you see comes from one of these. Tap any of them to go to its origin.',
+  'projectSection': 'Project',
+  'creditsSection': 'Credits',
+  'marketKindOfficial': 'Official',
+  'marketKindPeerToPeer': 'P2P market',
+  'marketKindAggregator': 'Aggregator',
+  'licenseLabel': 'Licence',
+  'appRepositoryLabel': 'App repository',
+  'backendRepositoryLabel': 'Backend repository',
+  'apiDocsLabel': 'API documentation',
+  'developedByLabel': 'Developed by',
+  'reportIssueLabel': 'Report a problem',
+  'openLinkError': 'The link could not be opened',
+  'informationSection': 'Information',
 };
