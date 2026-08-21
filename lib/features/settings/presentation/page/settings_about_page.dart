@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../../config/enviroment/enviroment.dart';
 import '../../../../config/theme/colors/colors_values.dart';
@@ -7,6 +8,7 @@ import '../../../../core/constants/app_links.dart';
 import '../../../../core/constants/market_constants.dart';
 import '../../../../core/helpers/external_link.dart';
 import '../../../../core/i18n/app_messages.dart';
+import '../../../../shared/presentation/controller/app_info_service.dart';
 import '../../../../shared/presentation/widgets/base_layout.dart';
 import '../widgets/about_widgets.dart';
 import '../widgets/settings_section.dart';
@@ -21,9 +23,10 @@ import '../widgets/settings_section.dart';
 /// **Attribution is not decoration in an app whose product is a rate.**
 ///
 /// The four blocks are the issue's: the app, the sources, the project and the
-/// credits. What is deliberately **absent** is the version — that is
-/// [#43](https://github.com/Teixeira49/bcv_tracker_app/issues/43), and it lands
-/// here and on the settings menu reading from one place.
+/// credits. The version joined the last one in
+/// [#43](https://github.com/Teixeira49/bcv_tracker_app/issues/43), read from
+/// `AppInfoService` — the same object the settings menu reads, so the two
+/// cannot quote different builds.
 ///
 /// Everything that leaves the app goes through [ExternalLink], which only opens
 /// `https` and reports a refusal. A tap that does nothing is indistinguishable
@@ -161,12 +164,20 @@ class _ProjectSection extends StatelessWidget {
   }
 }
 
-/// Who maintains it, and how to tell them something is wrong.
+/// Who maintains it, how to tell them something is wrong, and which build they
+/// are being told about.
 class _CreditsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) => SettingsSection(
     title: AppMessages.creditsSection,
     children: <Widget>[
+      // The same `AppInfoService` the settings menu reads (#43). One service so
+      // the two cannot disagree — a report quoting a version this screen made
+      // up on its own would be worse than no version at all.
+      AboutFactRow(
+        label: AppMessages.appVersion,
+        value: Get.find<AppInfoService>().versionLabel,
+      ),
       AboutLinkTile(
         title: AppMessages.developedByLabel,
         trailing: AppLinks.authorName,

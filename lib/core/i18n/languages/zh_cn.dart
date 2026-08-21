@@ -118,4 +118,9 @@ const Map<String, String> zhCn = {
   'reportIssueLabel': '报告问题',
   'openLinkError': '无法打开链接',
   'informationSection': '信息',
+
+  // --- App version (#43) ---
+  'appVersion': '版本',
+  'appVersionDescription': '点击复制，便于反馈问题',
+  'versionCopied': '已复制版本号',
 };

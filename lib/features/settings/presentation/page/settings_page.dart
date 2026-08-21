@@ -1,16 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../../config/routes/routes.dart';
 import '../../../../config/theme/colors/colors_values.dart';
 import '../../../../config/theme/width/width_values.dart';
 import '../../../../core/i18n/app_messages.dart';
+import '../../../../shared/presentation/controller/app_info_service.dart';
 import '../../../../shared/presentation/controller/settings_controller.dart';
 import '../../../../shared/presentation/widgets/base_layout.dart';
 import '../widgets/settings_choices.dart';
 import '../widgets/settings_section.dart';
 
 part '../widgets/settings_menu.dart';
+
+/// Copies the installed version to the clipboard and says so.
+///
+/// The detail that makes the entry useful rather than decorative (#43): what a
+/// bug report needs is the exact string, and reading it off a screen to retype
+/// it is where the digit gets lost.
+///
+/// `ScaffoldMessenger`, not `Get.snackbar`, for the reason #42 found the hard
+/// way: GetX resolves its own overlay and throws from these screens.
+Future<void> copyVersion(BuildContext context) async {
+  final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
+  final String label = Get.find<AppInfoService>().versionLabel;
+
+  await Clipboard.setData(ClipboardData(text: label));
+  if (!context.mounted) return;
+
+  messenger.showSnackBar(
+    SnackBar(
+      content: Text('${AppMessages.versionCopied}: $label'),
+      behavior: SnackBarBehavior.floating,
+    ),
+  );
+}
 
 /// The settings menu: every preference the app has, grouped, each showing what
 /// it is currently set to.

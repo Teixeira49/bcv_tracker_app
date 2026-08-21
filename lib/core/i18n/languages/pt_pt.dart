@@ -124,4 +124,9 @@ const Map<String, String> ptPt = {
   'reportIssueLabel': 'Reportar um problema',
   'openLinkError': 'Não foi possível abrir a ligação',
   'informationSection': 'Informação',
+
+  // --- App version (#43) ---
+  'appVersion': 'Versão',
+  'appVersionDescription': 'Toque para a copiar para um relatório',
+  'versionCopied': 'Versão copiada',
 };

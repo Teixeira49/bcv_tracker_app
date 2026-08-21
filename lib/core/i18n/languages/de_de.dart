@@ -127,4 +127,9 @@ const Map<String, String> deDe = {
   'reportIssueLabel': 'Problem melden',
   'openLinkError': 'Der Link konnte nicht geöffnet werden',
   'informationSection': 'Informationen',
+
+  // --- App version (#43) ---
+  'appVersion': 'Version',
+  'appVersionDescription': 'Tippen, um sie in eine Meldung zu kopieren',
+  'versionCopied': 'Version kopiert',
 };

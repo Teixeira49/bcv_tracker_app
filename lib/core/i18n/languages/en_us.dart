@@ -123,4 +123,9 @@ const Map<String, String> enUs = {
   'reportIssueLabel': 'Report a problem',
   'openLinkError': 'The link could not be opened',
   'informationSection': 'Information',
+
+  // --- App version (#43) ---
+  'appVersion': 'Version',
+  'appVersionDescription': 'Tap to copy it into a report',
+  'versionCopied': 'Version copied',
 };

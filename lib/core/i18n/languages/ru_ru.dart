@@ -124,4 +124,9 @@ const Map<String, String> ruRu = {
   'reportIssueLabel': 'Сообщить о проблеме',
   'openLinkError': 'Не удалось открыть ссылку',
   'informationSection': 'Информация',
+
+  // --- App version (#43) ---
+  'appVersion': 'Версия',
+  'appVersionDescription': 'Нажмите, чтобы скопировать для отчёта',
+  'versionCopied': 'Версия скопирована',
 };

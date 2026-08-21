@@ -6,10 +6,12 @@ import 'package:bcv_tracker_app/features/settings/presentation/page/settings_dec
 import 'package:bcv_tracker_app/features/settings/presentation/page/settings_language_page.dart';
 import 'package:bcv_tracker_app/features/settings/presentation/page/settings_page.dart';
 import 'package:bcv_tracker_app/features/settings/presentation/page/settings_theme_page.dart';
+import 'package:bcv_tracker_app/shared/presentation/controller/app_info_service.dart';
 import 'package:bcv_tracker_app/shared/presentation/controller/settings_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Golden references for the settings screen (#37), in light and dark: the menu
@@ -31,7 +33,26 @@ Future<void> _seed() async {
   // Loaded explicitly, from an empty store, so the references do not depend on
   // the host machine's language.
   await settings.loadPreferences(deviceLocale: const Locale('es', 'ES'));
+  await putAppInfo();
 }
+
+/// La versión que estos tests dan por instalada.
+///
+/// Inyectada en vez de leída de la plataforma: `PackageInfo.fromPlatform()`
+/// necesita un canal, y una aserción contra la versión real del `pubspec` se
+/// rompería en cada release — que es exactamente el acoplamiento que #43 vino
+/// a quitar.
+Future<AppInfoService> putAppInfo() => Get.putAsync<AppInfoService>(
+  () => AppInfoService().init(
+    info: PackageInfo(
+      appName: 'BCV Tracker',
+      packageName: 'com.example.bcv_tracker_app',
+      version: '9.9.9',
+      buildNumber: '42',
+    ),
+  ),
+  permanent: true,
+);
 
 void main() {
   tearDown(Get.reset);

@@ -10,6 +10,7 @@ import '../../shared/data/datasource/datasource.dart';
 import '../../shared/data/repositories/currency_repository.dart';
 import '../../shared/data/repositories/dollar_repositories.dart';
 import '../../shared/domain/repositories/dollar_repositories.dart';
+import '../../shared/presentation/controller/app_info_service.dart';
 import '../../shared/presentation/controller/settings_controller.dart';
 import '../enviroment/enviroment.dart';
 
@@ -49,6 +50,16 @@ class InitialBinding extends Bindings {
     // rebuild would reopen the very window #59 closed.
     await Get.putAsync<SettingsController>(
       () => SettingsController().init(deviceLocale: deviceLocale),
+      permanent: true,
+    );
+
+    // The version the settings menu and «Acerca de» both show (#43). It is not
+    // read by the first frame, so it could have waited — but `dependencies()`
+    // is not awaited, and a `Get.find` that arrives before an unawaited
+    // `putAsync` resolves throws. One channel round trip here buys a value
+    // that is always there.
+    await Get.putAsync<AppInfoService>(
+      () => AppInfoService().init(),
       permanent: true,
     );
   }

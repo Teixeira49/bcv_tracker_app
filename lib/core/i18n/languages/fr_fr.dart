@@ -128,4 +128,9 @@ const Map<String, String> frFr = {
   'reportIssueLabel': 'Signaler un problème',
   'openLinkError': 'Impossible d\'ouvrir le lien',
   'informationSection': 'Informations',
+
+  // --- App version (#43) ---
+  'appVersion': 'Version',
+  'appVersionDescription': 'Touchez pour la copier dans un rapport',
+  'versionCopied': 'Version copiée',
 };

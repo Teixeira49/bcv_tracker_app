@@ -88,6 +88,17 @@ class _SettingsMenu extends StatelessWidget {
                 // No `value`: this row reports no state, it opens a screen.
                 onTap: () => Get.toNamed<void>(AppRoutes.settingsAbout),
               ),
+              SettingsMenuTile(
+                icon: Icons.sell_outlined,
+                title: AppMessages.appVersion,
+                description: AppMessages.appVersionDescription,
+                // The installed package's own figure, never a constant (#43).
+                value: Get.find<AppInfoService>().versionLabel,
+                // Copies rather than navigates, so it ends in a copy icon: a
+                // chevron would promise a screen that does not exist.
+                trailingIcon: Icons.copy_rounded,
+                onTap: () => copyVersion(context),
+              ),
             ],
           ),
         ],
