@@ -2,6 +2,7 @@ import 'package:bcv_tracker_app/config/routes/routes.dart';
 import 'package:get/get.dart';
 
 import '../../features/dashboard/presentation/page/dashboard_page.dart';
+import '../../features/settings/presentation/page/settings_about_page.dart';
 import '../../features/settings/presentation/page/settings_decimals_page.dart';
 import '../../features/settings/presentation/page/settings_language_page.dart';
 import '../../features/settings/presentation/page/settings_market_page.dart';
@@ -54,6 +55,10 @@ class AppPages {
     GetPage(
       name: AppRoutes.settingsDecimals,
       page: () => const SettingsDecimalsPage(),
+    ),
+    GetPage(
+      name: AppRoutes.settingsAbout,
+      page: () => const SettingsAboutPage(),
     ),
   ];
 }

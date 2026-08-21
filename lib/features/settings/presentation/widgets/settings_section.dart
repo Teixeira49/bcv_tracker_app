@@ -19,10 +19,19 @@ class SettingsSection extends StatelessWidget {
     super.key,
     required this.title,
     required this.children,
+    this.note,
   });
 
   /// Group heading. Must come from `AppMessages` (see `i18n-convention.md`).
   final String title;
+
+  /// One line under the heading, for a group whose title does not say enough.
+  ///
+  /// Added for the About screen's data sources (#42), where the list needs to
+  /// explain what it is a list *of* before the nine brand names mean anything.
+  /// Optional, and omitted by every settings group: «Apariencia» over a theme
+  /// row explains itself.
+  final String? note;
 
   /// The entries of the group, usually [SettingsMenuTile]s.
   ///
@@ -87,8 +96,8 @@ class SettingsMenuTile extends StatelessWidget {
     super.key,
     required this.icon,
     required this.title,
-    required this.value,
     required this.onTap,
+    this.value,
     this.description,
   });
 
@@ -101,7 +110,11 @@ class SettingsMenuTile extends StatelessWidget {
   /// What the setting is set to **right now**, already resolved for display:
   /// the language's own name, the market's tab label, the theme's label. This
   /// widget formats nothing.
-  final String value;
+  ///
+  /// `null` for a row that has no state to report — «About» opens a screen, it
+  /// is not set to anything. The cell is still reserved when it is null, so the
+  /// chevrons of a group stay in one column.
+  final String? value;
 
   /// One line saying what the setting decides. Optional, because an entry whose
   /// name already says it (a future "About") should not be padded with a
@@ -169,21 +182,24 @@ class SettingsMenuTile extends StatelessWidget {
           // and leaves the rest of its share as slack at the end of the row,
           // which pulled the value and the chevron away from the right edge.
           // Tight, its box reaches the chevron and `TextAlign.end` puts the
-          // text against it.
-          Expanded(
-            flex: 5,
-            child: Text(
-              value,
-              textAlign: TextAlign.end,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: ColorValues.textBrandSecondary(context),
+          // text against it. The `Spacer` below is tight for the same reason.
+          if (value == null)
+            const Spacer(flex: 5)
+          else
+            Expanded(
+              flex: 5,
+              child: Text(
+                value!,
+                textAlign: TextAlign.end,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: ColorValues.textBrandSecondary(context),
+                ),
               ),
             ),
-          ),
           Icon(
             Icons.chevron_right_rounded,
             size: 20,

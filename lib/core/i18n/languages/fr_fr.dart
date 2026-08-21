@@ -104,4 +104,28 @@ const Map<String, String> frFr = {
   'decimalsExample': 'Exemple',
   'decreaseAction': 'Une de moins',
   'increaseAction': 'Une de plus',
+
+  // --- About screen (#42) ---
+  'aboutView': 'À propos',
+  'aboutDescription': 'L\'application, ses sources et sa licence',
+  'aboutIntro':
+      'Ce qu\'est cette application, d\'où viennent ses taux et qui la maintient.',
+  'appTagline':
+      'Consultez les taux de la BCV et du marché parallèle, et convertissez entre devises.',
+  'dataSourcesSection': 'Sources de données',
+  'dataSourcesNote':
+      'Chaque taux affiché provient de l\'une de ces sources. Touchez-en une pour aller à son origine.',
+  'projectSection': 'Projet',
+  'creditsSection': 'Crédits',
+  'marketKindOfficial': 'Officiel',
+  'marketKindPeerToPeer': 'Marché P2P',
+  'marketKindAggregator': 'Agrégateur',
+  'licenseLabel': 'Licence',
+  'appRepositoryLabel': 'Dépôt de l\'application',
+  'backendRepositoryLabel': 'Dépôt du backend',
+  'apiDocsLabel': 'Documentation de l\'API',
+  'developedByLabel': 'Développé par',
+  'reportIssueLabel': 'Signaler un problème',
+  'openLinkError': 'Impossible d\'ouvrir le lien',
+  'informationSection': 'Informations',
 };

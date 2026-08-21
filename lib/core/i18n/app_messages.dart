@@ -257,4 +257,56 @@ class AppMessages {
   static String get decreaseAction => 'decreaseAction'.tr;
 
   static String get increaseAction => 'increaseAction'.tr;
+
+  // --- About screen (#42) ---
+
+  /// Heading of the menu group that holds «About» — and, from #43, the app's
+  /// version. Kept apart from `aboutView`: in Italian both words are
+  /// «Informazioni», so the entry is «Info sull'app» to keep the group and its
+  /// row from reading as the same label twice.
+  static String get informationSection => 'informationSection'.tr;
+
+  static String get aboutView => 'aboutView'.tr;
+
+  static String get aboutDescription => 'aboutDescription'.tr;
+
+  static String get aboutIntro => 'aboutIntro'.tr;
+
+  /// One sentence saying what the app does, under its name.
+  static String get appTagline => 'appTagline'.tr;
+
+  static String get dataSourcesSection => 'dataSourcesSection'.tr;
+
+  static String get dataSourcesNote => 'dataSourcesNote'.tr;
+
+  static String get projectSection => 'projectSection'.tr;
+
+  static String get creditsSection => 'creditsSection'.tr;
+
+  /// What kind of reference a market publishes — the labels of `MarketKind`.
+  ///
+  /// The market **names** are not translated (they are institutions and
+  /// brands); what a market *is* has to be, because that is the part the user
+  /// reads to judge the number.
+  static String get marketKindOfficial => 'marketKindOfficial'.tr;
+
+  static String get marketKindPeerToPeer => 'marketKindPeerToPeer'.tr;
+
+  static String get marketKindAggregator => 'marketKindAggregator'.tr;
+
+  static String get licenseLabel => 'licenseLabel'.tr;
+
+  static String get appRepositoryLabel => 'appRepositoryLabel'.tr;
+
+  static String get backendRepositoryLabel => 'backendRepositoryLabel'.tr;
+
+  static String get apiDocsLabel => 'apiDocsLabel'.tr;
+
+  static String get developedByLabel => 'developedByLabel'.tr;
+
+  static String get reportIssueLabel => 'reportIssueLabel'.tr;
+
+  /// Shown when a link cannot be opened — no browser, or the platform refused.
+  /// A silent tap is indistinguishable from a broken screen.
+  static String get openLinkError => 'openLinkError'.tr;
 }

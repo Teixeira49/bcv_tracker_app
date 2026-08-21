@@ -103,4 +103,28 @@ const Map<String, String> deDe = {
   'decimalsExample': 'Beispiel',
   'decreaseAction': 'Eine weniger',
   'increaseAction': 'Eine mehr',
+
+  // --- About screen (#42) ---
+  'aboutView': 'Über die App',
+  'aboutDescription': 'Die App, ihre Quellen und ihre Lizenz',
+  'aboutIntro':
+      'Was diese App ist, woher ihre Kurse stammen und wer sie pflegt.',
+  'appTagline':
+      'Sieh dir die Kurse der BCV und des Parallelmarkts an und rechne Währungen um.',
+  'dataSourcesSection': 'Datenquellen',
+  'dataSourcesNote':
+      'Jeder Kurs stammt aus einer dieser Quellen. Tippe eine an, um zum Ursprung zu gelangen.',
+  'projectSection': 'Projekt',
+  'creditsSection': 'Danksagungen',
+  'marketKindOfficial': 'Offiziell',
+  'marketKindPeerToPeer': 'P2P-Markt',
+  'marketKindAggregator': 'Aggregator',
+  'licenseLabel': 'Lizenz',
+  'appRepositoryLabel': 'Repository der App',
+  'backendRepositoryLabel': 'Repository des Backends',
+  'apiDocsLabel': 'API-Dokumentation',
+  'developedByLabel': 'Entwickelt von',
+  'reportIssueLabel': 'Problem melden',
+  'openLinkError': 'Der Link konnte nicht geöffnet werden',
+  'informationSection': 'Informationen',
 };

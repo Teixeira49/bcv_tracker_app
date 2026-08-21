@@ -76,6 +76,6 @@ print(f"{len(union)} claves — {'paridad OK' if ok else 'DESINCRONIZADO'}")
 PY
 ```
 
-A la última actualización de esta regla los 10 archivos están en paridad con **94 claves**, y `AppMessages` expone exactamente esas. Si el script reporta una diferencia, el cambio está incompleto.
+A la última actualización de esta regla los 10 archivos están en paridad con **113 claves**, y `AppMessages` expone exactamente esas. Si el script reporta una diferencia, el cambio está incompleto.
 
 Además, si la clave nueva no se expone en `AppMessages`, no la uses: agrégala primero como getter.
