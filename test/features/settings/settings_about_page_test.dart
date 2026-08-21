@@ -309,13 +309,17 @@ void main() {
     // de decodificar antes de que Alchemist capture, así que el golden deja un
     // hueco donde va el logo y no puede vigilar esto. Es la comprobación que
     // sustituye a la referencia que no existe.
-    testWidgets('en modo claro se tiñe de midnight, no de blanco', (
+    testWidgets('en modo claro se tiñe del azul de marca, no de blanco', (
       WidgetTester tester,
     ) async {
       // El defecto que reportó el propietario al probarlo: el arte es blanco
       // monocromo, correcto sobre la franja oscura e invisible aquí, que es la
       // primera pantalla que lo pone sobre una superficie clara.
-      expect(await logoInk(tester, AppTheme.lightTheme), AppColors.midnight);
+      //
+      // `primary` y no `midnight`: el degradado de la franja va de uno al otro,
+      // y la marca tiene que leerse como parte de esa familia en vez de casi
+      // negra.
+      expect(await logoInk(tester, AppTheme.lightTheme), AppColors.primary);
     });
 
     testWidgets('en modo oscuro se tiñe de blanco', (
